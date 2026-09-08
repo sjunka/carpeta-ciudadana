@@ -1,0 +1,8 @@
+node_modules
+dist
+.DS_Store
+*.local
+
+# Material de terceros: no se publica.
+# Contiene el documento de un compañero y fotos de clase con nombres visibles.
+docs/referencias/

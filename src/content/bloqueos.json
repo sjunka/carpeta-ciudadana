@@ -1,0 +1,324 @@
+{
+  "bloqueos": [
+    {
+      "id": "B-01",
+      "estado": "critico",
+      "etiqueta": null,
+      "pregunta": "¿Existe un contrato común de transferencia entre operadores, o cada equipo define el suyo?",
+      "campos": [
+        {
+          "titulo": "Por qué bloquea",
+          "texto": "Es el corazón del caso y hoy es literalmente indefinible. Dato nuevo: sólo 16 de los 70 operadores del directorio publican endpoint de transferencia — el 77 % es inalcanzable, así que la federación ya no interopera de hecho."
+        },
+        {
+          "titulo": "Asunción provisional",
+          "texto": "Contrato REST propio POST /transfer/citizen y POST /documents/inbound, versionado y con OpenAPI publicado. Asumimos que sólo interoperaremos con nosotros mismos."
+        },
+        {
+          "titulo": "Qué cambia según la respuesta",
+          "texto": "Contrato común → adaptadores triviales y saga estándar. Cada equipo el suyo → anti-corruption layer y N adaptadores: cambia todo el borde de integración y el modelo de despliegue."
+        }
+      ]
+    },
+    {
+      "id": "B-16",
+      "estado": "critico",
+      "etiqueta": null,
+      "pregunta": "¿Publicar transferAPIURL es obligatorio para operar? 54 de 70 operadores no lo tienen.",
+      "campos": [
+        {
+          "titulo": "Por qué bloquea",
+          "texto": "Define si el directorio lista operadores operativos o es sólo un registro de equipos del curso. Cambia a quién podemos entregar documentos y qué significa «operador registrado». Nadie valida el campo en el alta."
+        },
+        {
+          "titulo": "Asunción provisional",
+          "texto": "Sólo los 16 operadores con endpoint son destinos válidos; el resto se trata como no afiliable y se reporta como error de entrega."
+        },
+        {
+          "titulo": "Qué cambia según la respuesta",
+          "texto": "Obligatorio → validación en el alta y un estado de operador. Opcional → el descubrimiento necesita health check propio por operador antes de cada entrega, más una política de fallback."
+        }
+      ]
+    },
+    {
+      "id": "B-02",
+      "estado": "critico",
+      "etiqueta": null,
+      "pregunta": "¿Qué significa endPointConfirm? ¿2PC, saga con compensación o un simple ACK?",
+      "campos": [
+        {
+          "titulo": "Por qué bloquea",
+          "texto": "Determina si la transferencia es atómica o eventualmente consistente, y por tanto si puede haber doble afiliación o ciudadano sin operador. Verificado: getOperators no devuelve el campo en absoluto y ninguno de los 70 operadores lo trae."
+        },
+        {
+          "titulo": "Asunción provisional",
+          "texto": "Saga en tres fases: initTransfer → destino confirma recepción íntegra → origen desafilia → destino registra. Carpeta origen en solo-lectura, compensación por timeout de 24 h."
+        },
+        {
+          "titulo": "Qué cambia según la respuesta",
+          "texto": "2PC real → coordinador, bloqueos distribuidos, peor disponibilidad. Saga → compensaciones, idempotencia y reconciliación, con estados intermedios visibles al usuario. Son dos arquitecturas distintas."
+        }
+      ]
+    },
+    {
+      "id": "B-03",
+      "estado": "critico",
+      "etiqueta": null,
+      "pregunta": "¿Quién es la Autoridad Certificadora y qué formato de firma se usa?",
+      "campos": [
+        {
+          "titulo": "Por qué bloquea",
+          "texto": "Todo el valor del sistema —autenticidad no discutible, sustituir apostillas— descansa en la firma. Verificado: authenticateDocument recibe una URL, no el binario, y el directorio no publica ninguna clave pública. La confianza federada no es construible con este contrato."
+        },
+        {
+          "titulo": "Asunción provisional",
+          "texto": "PKI simulada: firmamos con clave propia (JWS detached sobre SHA-256) y tratamos authenticateDocument como sello de tiempo simbólico, no como firma."
+        },
+        {
+          "titulo": "Qué cambia según la respuesta",
+          "texto": "MinTIC como CA raíz → servicio de firma centralizado, nuevo cuello de botella en el camino crítico. Firma por operador → modelo de confianza federado y distribución de claves públicas vía un directorio que hoy no tiene ese campo."
+        }
+      ]
+    },
+    {
+      "id": "B-04",
+      "estado": "critico",
+      "etiqueta": null,
+      "pregunta": "Analítica del Estado o centralizador mínimo: ¿cuál gana?",
+      "campos": [
+        {
+          "titulo": "Por qué bloquea",
+          "texto": "El PDF exige que el Estado analice los metadatos y que el centralizador almacene y transfiera lo mínimo. Son objetivos mutuamente excluyentes. Es la mayor incógnita de alcance del entregable."
+        },
+        {
+          "titulo": "Asunción provisional",
+          "texto": "Exportación batch nocturna de metadatos anonimizados a un data lake del Estado, fuera del camino del centralizador transaccional."
+        },
+        {
+          "titulo": "Qué cambia según la respuesta",
+          "texto": "Analítica federada (el Estado consulta a cada operador) exige una API analítica en cada operador. Centralizada (los operadores empujan) añade ETL, gobierno de datos y un problema de privacidad de primer orden."
+        }
+      ]
+    },
+    {
+      "id": "B-05",
+      "estado": "abierto",
+      "etiqueta": null,
+      "pregunta": "¿Qué servicios son básicos gratuitos y cuáles Premium?",
+      "campos": [
+        {
+          "titulo": "Por qué bloquea",
+          "texto": "Afecta el alcance, el modelo de dominio (cuotas, medición, facturación) y decide si hay que diseñar metering y tenancy Premium. El PDF sólo da el ejemplo de PQRS."
+        },
+        {
+          "titulo": "Asunción provisional",
+          "texto": "Básico: registro, carpeta, recepción, descarga, envío y traslado. Premium: casos PQRS, cuotas ampliadas, API B2B y retención extendida de no certificados."
+        },
+        {
+          "titulo": "Qué cambia según la respuesta",
+          "texto": "Premium real → contextos acotados de medición, tarificación y facturación, más un cuarto actor externo (pasarela de pagos) que hoy no está en el diagrama."
+        }
+      ]
+    },
+    {
+      "id": "B-06",
+      "estado": "abierto",
+      "etiqueta": null,
+      "pregunta": "Registraduría y correo entrante: ¿integración real o mocks?",
+      "campos": [
+        {
+          "titulo": "Por qué bloquea",
+          "texto": "RF-02, RF-06 y RF-07 son requisitos explícitos sin ningún medio de implementación. Cambia el esfuerzo y qué se puede demostrar."
+        },
+        {
+          "titulo": "Asunción provisional",
+          "texto": "Mock de Registraduría con contrato propio y buzón SMTP real capturando nuestro dominio."
+        },
+        {
+          "titulo": "Qué cambia según la respuesta",
+          "texto": "Integración real → adaptador de identidad y subsistema de correo entrante con antivirus, límites y anti-spam: dos componentes nuevos de primer nivel."
+        }
+      ]
+    },
+    {
+      "id": "B-07",
+      "estado": "resuelto",
+      "etiqueta": "Resuelto",
+      "pregunta": "MinTIC gestiona GovCarpeta. Prevalece el README sobre el PDF.",
+      "campos": [
+        {
+          "titulo": "Cómo se cerró",
+          "texto": "Confirmado: el Ministerio opera GovCarpeta además de prestar los servicios de interoperabilidad. La lectura del PDF —GovCarpeta como operador privado con convenio del MEN— queda descartada."
+        },
+        {
+          "titulo": "Qué cambia en el diagrama",
+          "texto": "MinTIC pasa a tener doble rol: centralizador y operador de carpetas. GovCarpeta sale de «Otros Operadores» y se anota dentro del actor MinTIC."
+        },
+        {
+          "titulo": "Lo que sigue abierto",
+          "texto": "Si el centralizador también opera carpetas hay conflicto de interés y asimetría competitiva frente a los operadores privados. Falta definir si esa rama operadora puede leer lo que pasa por el directorio."
+        }
+      ]
+    },
+    {
+      "id": "B-08",
+      "estado": "resuelto",
+      "etiqueta": "Resuelto",
+      "pregunta": "Semántica de validateCitizen: 200 = ocupado, 204 = libre.",
+      "campos": [
+        {
+          "titulo": "Cómo se cerró",
+          "texto": "Confirmado en vivo con cinco identificaciones distintas contra el servicio real. Ya no hace falta asumir nada ni arriesgarse a invertir la lógica de afiliación."
+        },
+        {
+          "titulo": "Residual",
+          "texto": "Sigue devolviendo una frase en español con espacio final en lugar de datos tipados, así que el anti-corruption layer con parseo se mantiene."
+        },
+        {
+          "titulo": "Qué haría falta para cerrarlo del todo",
+          "texto": "Que MinTIC devolviera JSON con operatorId. Ese día el adaptador de parseo desaparece."
+        }
+      ]
+    },
+    {
+      "id": "B-09",
+      "estado": "abierto",
+      "etiqueta": null,
+      "pregunta": "¿Hay autenticación entre operadores y hacia el centralizador?",
+      "campos": [
+        {
+          "titulo": "Por qué bloquea",
+          "texto": "Verificado: responde 200 sin credencial alguna y el Swagger no declara securityDefinitions. El CORS no es abierto: es una allowlist que devuelve 500 ante un origen desconocido en vez de denegar limpiamente."
+        },
+        {
+          "titulo": "Asunción provisional",
+          "texto": "mTLS más JWT firmado con la clave del operador para el tráfico entre pares; el tramo hacia el centralizador queda sin autenticar, como riesgo documentado."
+        },
+        {
+          "titulo": "Qué cambia según la respuesta",
+          "texto": "Si MinTIC emitiera credenciales → flujo de onboarding y rotación de claves, y el directorio pasa a ser también almacén de claves públicas."
+        }
+      ]
+    },
+    {
+      "id": "B-10",
+      "estado": "resuelto",
+      "etiqueta": "Resuelto con reserva",
+      "pregunta": "El centralizador ya responde. ¿Hay compromiso de disponibilidad para la sustentación?",
+      "campos": [
+        {
+          "titulo": "Cómo se cerró",
+          "texto": "La API volvió y toda la evidencia se revalidó contra ella. Pero estuvo caída ese mismo día: un solo dyno de Heroku sin redundancia. La caída no es hipotética."
+        },
+        {
+          "titulo": "Asunción provisional",
+          "texto": "Réplica local del repositorio del centralizador tras un feature flag, como contingencia para la demostración."
+        },
+        {
+          "titulo": "Qué cambia según la respuesta",
+          "texto": "Sin compromiso → caché local del directorio con TTL y modo degradado offline: la unicidad de afiliación pasa de consistencia fuerte a eventual."
+        }
+      ]
+    },
+    {
+      "id": "B-11",
+      "estado": "abierto",
+      "etiqueta": null,
+      "pregunta": "¿«A perpetuidad» convive con el derecho de supresión de datos personales?",
+      "campos": [
+        {
+          "titulo": "Por qué bloquea",
+          "texto": "Perpetuidad más almacenamiento inmutable es técnicamente incompatible con el borrado. Determina si el almacenamiento puede ser WORM o debe ser reversible."
+        },
+        {
+          "titulo": "Asunción provisional",
+          "texto": "Inmutabilidad sólo de los certificados; borrado permitido de los no certificados. El retiro del operador conserva los certificados."
+        },
+        {
+          "titulo": "Qué cambia según la respuesta",
+          "texto": "Borrado obligatorio → adiós object-lock: hace falta cripto-borrado destruyendo la clave del envelope, lo que cambia el diseño de KMS y de claves por documento."
+        }
+      ]
+    },
+    {
+      "id": "B-12",
+      "estado": "abierto",
+      "etiqueta": null,
+      "pregunta": "¿El entregable es sólo documental o incluye implementar el operador?",
+      "campos": [
+        {
+          "titulo": "Por qué bloquea",
+          "texto": "El README lista cuatro artefactos documentales pero el paréntesis dice que cada equipo «implementará» una solución. Cambia por completo la profundidad exigida."
+        },
+        {
+          "titulo": "Asunción provisional",
+          "texto": "Entregable documental, con las decisiones de integración ya tomadas para no rehacer el diseño después."
+        },
+        {
+          "titulo": "Qué cambia según la respuesta",
+          "texto": "Si hay implementación, B-01, B-02, B-03 y B-06 pasan de observaciones a bloqueantes duros de sprint, y el contrato entre equipos hay que negociarlo la primera semana."
+        }
+      ]
+    },
+    {
+      "id": "B-13",
+      "estado": "abierto",
+      "etiqueta": null,
+      "pregunta": "¿El correo del ciudadano es un buzón real de internet o un identificador interno?",
+      "campos": [
+        {
+          "titulo": "Por qué bloquea",
+          "texto": "Un buzón real implica MX propios, antivirus, anti-spam, cuotas y una superficie de ataque enorme. Un identificador no implica casi nada. Son varios componentes de diferencia."
+        },
+        {
+          "titulo": "Asunción provisional",
+          "texto": "Buzón real restringido: sólo se aceptan correos de remitentes verificados —entidades y operadores registrados—; el resto se rechaza."
+        },
+        {
+          "titulo": "Qué cambia según la respuesta",
+          "texto": "Buzón abierto → subsistema de correo completo (MTA, escaneo, cuarentena) con su propio perfil de disponibilidad y seguridad. Identificador → desaparece un componente entero."
+        }
+      ]
+    },
+    {
+      "id": "B-14",
+      "estado": "abierto",
+      "etiqueta": null,
+      "pregunta": "Enviar documentos por email a entidades no afiliadas contradice la confidencialidad. ¿Cómo se resuelve?",
+      "campos": [
+        {
+          "titulo": "Por qué bloquea",
+          "texto": "El correo es un canal no confiable; adjuntar documentos personales contradice RNF-12, que sale del propio PDF."
+        },
+        {
+          "titulo": "Asunción provisional",
+          "texto": "Enlace de descarga prefirmado de vida corta (72 h) más código OTP, en lugar de adjuntar el documento."
+        },
+        {
+          "titulo": "Qué cambia según la respuesta",
+          "texto": "Si deben ir adjuntos → cifrado S/MIME o contenedor cifrado con clave fuera de banda: un subsistema de distribución de claves adicional."
+        }
+      ]
+    },
+    {
+      "id": "B-15",
+      "estado": "abierto",
+      "etiqueta": null,
+      "pregunta": "¿Cuántos ciudadanos y documentos hay que soportar, y con qué presupuesto?",
+      "campos": [
+        {
+          "titulo": "Por qué bloquea",
+          "texto": "El PDF sólo dice «un país entero». Sin cifras los RNF no son verificables y el mapeo a QoS es retórica. Además determina si la arquitectura es monolito modular o distribuida."
+        },
+        {
+          "titulo": "Asunción provisional",
+          "texto": "50 M de ciudadanos en la federación, 10 % de cuota para nosotros, 30 % de crecimiento anual, ≤ USD 0,15 por carpeta al mes. Todo marcado como asunción."
+        },
+        {
+          "titulo": "Qué cambia según la respuesta",
+          "texto": "Un orden de magnitud menos → monolito modular con Postgres y object storage, mucho más barato. A la escala asumida → sharding, CQRS y mensajería asíncrona se vuelven obligatorios."
+        }
+      ]
+    }
+  ]
+}

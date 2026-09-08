@@ -1,0 +1,108 @@
+{
+  "endpoints": [
+    {
+      "metodo": "GET",
+      "path": "/apis/validateCitizen/{id}",
+      "comportamiento": "Confirmado en vivo: 200 = ya registrado, con string en prosa y espacio final. 204 sin cuerpo = libre.",
+      "critico": false
+    },
+    {
+      "metodo": "POST",
+      "path": "/apis/registerCitizen",
+      "comportamiento": "201 creado, 501 si ya existe, 500 error de aplicación.",
+      "critico": false
+    },
+    {
+      "metodo": "DELETE",
+      "path": "/apis/unregisterCitizen",
+      "comportamiento": "Datos en el body. Documenta 201 Deleted —no 200—, 204 si no existía.",
+      "critico": false
+    },
+    {
+      "metodo": "PUT",
+      "path": "/apis/authenticateDocument",
+      "comportamiento": "Recibe una URL prefirmada de S3, no el binario. El centralizador no descarga el documento que dice autenticar.",
+      "critico": true
+    },
+    {
+      "metodo": "POST",
+      "path": "/apis/registerOperator",
+      "comportamiento": "El contrato se contradice: required exige nameOperator y adress, que no existen en properties (name, address).",
+      "critico": true
+    },
+    {
+      "metodo": "PUT",
+      "path": "/apis/registerTransferEndPoint",
+      "comportamiento": "endPointConfirm es opcional y no se persiste.",
+      "critico": true
+    },
+    {
+      "metodo": "GET",
+      "path": "/apis/getOperators",
+      "comportamiento": "Devuelve 70 operadores. Campos reales: _id, operatorName, participants, transferAPIURL. Nada más.",
+      "critico": false
+    }
+  ],
+  "hallazgos": [
+    {
+      "n": "01",
+      "texto": "No existe ningún endpoint de documentos. Ni subir, ni transferir, ni consultar metadatos. El centralizador es puramente un directorio de identidad: todo el flujo documental del caso queda fuera de la API.",
+      "critico": true
+    },
+    {
+      "n": "02",
+      "texto": "Sólo 16 de los 70 operadores publican transferAPIURL. Los otros 54 son inalcanzables: no hay forma de transferirles un ciudadano ni de entregarles un documento. El 77 % del directorio es inerte, el campo no es obligatorio y nadie lo verifica.",
+      "critico": true
+    },
+    {
+      "n": "03",
+      "texto": "transferAPIURLConfirm no existe en la respuesta. No viene vacío: getOperators no proyecta el campo en absoluto y ninguno de los 70 lo trae. El protocolo de confirmación es inobservable desde fuera.",
+      "critico": true
+    },
+    {
+      "n": "04",
+      "texto": "validateCitizen devuelve prosa, no datos. «El ciudadano con id: 1234567890 se encuentra registrado en el operador: Operador Ciudadano » — con espacio final. Hay que parsear la frase, y el nombre extraído es la única clave de join contra un directorio que no garantiza unicidad.",
+      "critico": true
+    },
+    {
+      "n": "05",
+      "texto": "Semántica de validateCitizen: resuelta. 200 = ocupado, 204 = libre, confirmado con cinco identificaciones distintas. La ambigüedad del repositorio queda cerrada.",
+      "critico": false
+    },
+    {
+      "n": "06",
+      "texto": "authenticateDocument recibe una URL, no el documento. El centralizador no puede firmar un contenido que nunca descarga: como mucho sella una referencia. El no repudio del caso sigue sin soporte real.",
+      "critico": true
+    },
+    {
+      "n": "07",
+      "texto": "Cero autenticación. getOperators responde 200 sin ninguna credencial y el Swagger no declara securityDefinitions. Cualquiera en internet puede desafiliar a cualquier ciudadano con un DELETE.",
+      "critico": true
+    },
+    {
+      "n": "08",
+      "texto": "El CORS es una allowlist que se cae, no '*'. Sin Origin → 200; localhost:3000 → 200; un origen desconocido → 500 Internal Server Error, no una denegación limpia. El middleware lanza y nadie captura.",
+      "critico": true
+    },
+    {
+      "n": "09",
+      "texto": "El directorio no publica claves públicas. Sólo nombre, id y participantes. Sin material criptográfico no hay forma de verificar la firma de un operador par: la confianza federada no es construible con este contrato.",
+      "critico": true
+    },
+    {
+      "n": "10",
+      "texto": "Sin idempotencia, sin paginación, sin versionado, sin rate limiting y sin webhooks. Los 70 operadores llegan en una sola respuesta de 11 KB; descubrir cambios sólo es posible por polling.",
+      "critico": false
+    },
+    {
+      "n": "11",
+      "texto": "DELETE con body y operatorId como ObjectId de MongoDB: detalles de implementación filtrados al contrato público.",
+      "critico": false
+    },
+    {
+      "n": "12",
+      "texto": "Punto único de fallo. Un dyno de Heroku con una Mongo Atlas. Estuvo en 503 ese mismo día antes de volver: la caída no fue hipotética.",
+      "critico": false
+    }
+  ]
+}

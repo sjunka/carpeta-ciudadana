@@ -1,0 +1,19 @@
+{
+  "contexto": {
+    "titulo": "4.3 Representación gráfica",
+    "pasos": [
+      "1 · El ciudadano se afilia: el operador verifica identidad y afiliación única.",
+      "2 · Una entidad emite un documento firmado dirigido al ciudadano.",
+      "3 · El operador pregunta al centralizador ante qué operador está el destinatario.",
+      "4 · Los documentos viajan directos entre operadores. Nunca por el centralizador.",
+      "5 · El operador avisa al ciudadano y el documento aparece en su carpeta."
+    ]
+  },
+  "casosDeUso": {
+    "pasos": [
+      "1 · Lo que hace el ciudadano: afiliarse, consultar, compartir y autorizar.",
+      "2 · Lo que hace la entidad: emitir documentos y pedir documentos.",
+      "3 · Lo que el operador hace por debajo: verificar, enrutar y notificar."
+    ]
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "actores": [
+    {
+      "actor": "Ciudadano",
+      "descripcion": "Titular de la carpeta. Se afilia a un operador, recibe documentos, los consulta, los comparte y autoriza su uso.",
+      "interaccion": "Envío y recepción de datos personales, documentos y autorizaciones."
+    },
+    {
+      "actor": "Entidad pública",
+      "descripcion": "Emite documentos firmados dirigidos al ciudadano y le solicita documentación. MEN, Registraduría, embajadas, notarías.",
+      "interaccion": "Emisión de documentos firmados y radicación de peticiones."
+    },
+    {
+      "actor": "Empresa privada",
+      "descripcion": "Usa la carpeta como canal para pedir y recibir documentos de sus clientes, típicamente vía servicios Premium como PQRS.",
+      "interaccion": "Peticiones de documentos e integración por API."
+    },
+    {
+      "actor": "Operador de carpeta",
+      "descripcion": "Empresa que presta el servicio con infraestructura propia. Ofrece servicios básicos gratuitos y Premium tarifados. <b>Es nuestro sistema.</b>",
+      "interaccion": "Custodia documental, enrutamiento y entrega entre pares."
+    },
+    {
+      "actor": "Centralizador MinTIC",
+      "descripcion": "Provee los servicios técnicos de base para la interoperabilidad: directorio de afiliación, directorio de operadores y autenticación de documentos. También opera GovCarpeta.",
+      "interaccion": "Comunicación por API: validación, registro y resolución de operador."
+    },
+    {
+      "actor": "Administrador del operador",
+      "descripcion": "Usuario interno que gestiona el funcionamiento técnico del sistema.",
+      "interaccion": "Control interno de usuarios, bitácoras y soporte."
+    },
+    {
+      "actor": "Estado (analítica)",
+      "descripcion": "Consume información agregada derivada de los metadatos para responder preguntas en notarías, educación y Registraduría.",
+      "interaccion": "Consumo de metadatos anonimizados, nunca de contenido."
+    }
+  ],
+  "flujo": [
+    "<b>El ciudadano se registra</b> en el operador y entrega sus datos personales.",
+    "<b>El operador verifica la identidad</b> contra la Registraduría y consulta al centralizador que el ciudadano no esté afiliado a otro operador.",
+    "<b>El operador registra la afiliación</b> en el centralizador, genera la cuenta de correo inmutable y sube el documento de identidad firmado.",
+    "<b>Una entidad emite un documento firmado</b> dirigido al ciudadano desde su propio operador.",
+    "<b>El operador emisor pregunta al centralizador</b> ante qué operador está afiliado el destinatario.",
+    "<b>Los documentos viajan directamente</b> del operador emisor al operador destino, con sus metadatos y su firma. El contenido nunca pasa por el centralizador.",
+    "<b>El operador destino avisa al ciudadano</b> por correo y SMS, y el documento aparece en su carpeta.",
+    "<b>Cuando alguien pide documentos</b>, el ciudadano autoriza o rechaza uno por uno, y solo entonces el paquete sale firmado hacia el solicitante."
+  ],
+  "logica": [
+    "El <b>operador es el núcleo</b>. Todo lo demás está afuera y se conecta por una interfaz.",
+    "La <b>línea de automatización</b> separa a las personas del software. A su izquierda hay gente; a su derecha, sistemas.",
+    "La <b>línea de integración</b> separa nuestro sistema de los sistemas ajenos que no controlamos.",
+    "Cada flecha lleva <b>los datos que viajan</b>, no el verbo de la acción. Así se ve qué información cruza cada frontera.",
+    "En <span style=\"color:var(--sello);font-weight:600\">rojo</span>, el flujo documental entre operadores: es el único que mueve documentos completos, y es el que hoy <b>no tiene contrato definido</b>."
+  ],
+  "idea": "Todo lo que va hacia MinTIC son identificadores. Todo lo que va hacia otro operador son documentos. Esa asimetría es la decisión de arquitectura que sostiene el resto.",
+  "cierre": "El centralizador responde una sola pregunta: <b>¿ante qué operador está afiliado esta cédula?</b> Con esa respuesta, nuestro operador abre una conexión directa con el operador destino y le entrega el documento. Por eso el Estado puede pedir que el centralizador maneje la mínima cantidad de transacciones: no es un bus por donde pasa el tráfico, es una guía telefónica que se consulta una vez y se cachea."
+}

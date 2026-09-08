@@ -1,0 +1,34 @@
+/* El artefacto traía un reset del host; aquí lo declaramos nosotros. */
+html { color-scheme: light dark; }
+body { margin: 0; }
+img { max-width: 100%; }
+[hidden] { display: none !important; }
+
+:root{
+  --paper:#EDF0F1; --card:#FFFFFF; --sunk:#E3E8EA;
+  --ink:#16232C; --ink-2:#42565F; --ink-3:#71858E;
+  --rule:#CDD6D9; --rule-soft:#DEE5E7;
+  --sello:#AE3126; --sello-soft:#F6E4E1;
+  --teal:#186A5E; --teal-soft:#DDEBE7;
+  --amber:#94681A; --amber-soft:#F6EBD6;
+  --shadow:0 1px 2px rgba(22,35,44,.06),0 8px 24px -16px rgba(22,35,44,.35);
+  --navh:59px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#101A20; --card:#16232B; --sunk:#1D2C35;
+  --ink:#E4EBED; --ink-2:#A8BBC2; --ink-3:#7C929B;
+  --rule:#2B3D47; --rule-soft:#22333C;
+  --sello:#E8887C; --sello-soft:#3A1F1C;
+  --teal:#6FBFAE; --teal-soft:#16302C;
+  --amber:#D9AC5C; --amber-soft:#332714;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px -16px rgba(0,0,0,.8);
+}}
+:root[data-theme="dark"]{
+  --paper:#101A20; --card:#16232B; --sunk:#1D2C35;
+  --ink:#E4EBED; --ink-2:#A8BBC2; --ink-3:#7C929B;
+  --rule:#2B3D47; --rule-soft:#22333C;
+  --sello:#E8887C; --sello-soft:#3A1F1C;
+  --teal:#6FBFAE; --teal-soft:#16302C;
+  --amber:#D9AC5C; --amber-soft:#332714;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px -16px rgba(0,0,0,.8);
+}

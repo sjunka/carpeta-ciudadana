@@ -1,0 +1,116 @@
+{
+  "filas": [
+    {
+      "rnf": "RNF-01, 02, 03",
+      "atributo": "Disponibilidad",
+      "metrica": "Uptime mensual, MTTR",
+      "objetivo": "≥ 99,95 % lectura · MTTR ≤ 30 min",
+      "tactica": "Redundancia activa multizona, circuit breaker hacia operadores externos, degradación a solo lectura.",
+      "friccion": "El techo real lo pone el centralizador de MinTIC, que no controlamos y que estuvo caído el 5 de septiembre."
+    },
+    {
+      "rnf": "RNF-04, 05",
+      "atributo": "Rendimiento",
+      "metrica": "p95 y p99 de latencia",
+      "objetivo": "p95 ≤ 2 s en consulta · p95 ≤ 30 s entre operadores",
+      "tactica": "CQRS con vista materializada del índice de carpeta, CDN para descargas, URL prefirmadas.",
+      "friccion": "Consistencia eventual: un documento recién llegado puede tardar en verse. Aceptable porque el caso descarta el tiempo real."
+    },
+    {
+      "rnf": "RNF-06, 07",
+      "atributo": "Fiabilidad",
+      "metrica": "Casos de doble afiliación · tasa de entrega",
+      "objetivo": "Cero dobles afiliaciones · entrega eventual 100 %",
+      "tactica": "Afiliación con consistencia fuerte contra el centralizador; documentos por mensajería asíncrona con outbox e idempotencia.",
+      "friccion": "La asincronía hace más difícil dar respuesta clara al ciudadano. Choca de frente con RNF-16."
+    },
+    {
+      "rnf": "RNF-08, 09",
+      "atributo": "Escalabilidad",
+      "metrica": "Carpetas soportadas · peticiones/s",
+      "objetivo": "50 M de carpetas · 5.000 pet./s en pico",
+      "tactica": "Servicios sin estado con autoescalado, partición por identificación del ciudadano, almacenamiento desacoplado del cómputo.",
+      "friccion": "Particionar por cédula complica las consultas analíticas transversales que pide RF-08."
+    },
+    {
+      "rnf": "RNF-10, 11, 12",
+      "atributo": "Seguridad",
+      "metrica": "% cifrado · accesos fuera de política",
+      "objetivo": "100 % cifrado · cero accesos indebidos",
+      "tactica": "Cifrado por sobre con gestión de llaves, autorización por atributos con alcance por documento, URL prefirmadas de vida corta.",
+      "friccion": "El segundo factor obligatorio es el mayor enemigo de la usabilidad en población de baja apropiación tecnológica."
+    },
+    {
+      "rnf": "RNF-13",
+      "atributo": "No repudio",
+      "metrica": "% de documentos con firma verificable",
+      "objetivo": "100 %",
+      "tactica": "Firma sobre el documento con sellado de tiempo y verificación en la frontera de entrada.",
+      "friccion": "Sin autoridad certificadora definida, «firmado» es decorativo. Es el bloqueo B-03."
+    },
+    {
+      "rnf": "RNF-14, 15",
+      "atributo": "Auditoría y cumplimiento",
+      "metrica": "Eventos auditados/s · hallazgos de auditoría",
+      "objetivo": "Consulta ≤ 5 s · cero hallazgos críticos",
+      "tactica": "Log append-only en almacenamiento inmutable separado, clasificación y minimización de datos.",
+      "friccion": "El volumen de auditoría puede superar al documental. Y la perpetuidad choca con el derecho de supresión."
+    },
+    {
+      "rnf": "RNF-16, 17, 18",
+      "atributo": "Usabilidad",
+      "metrica": "Tasa de éxito de tarea · SUS · WCAG",
+      "objetivo": "≥ 90 % · SUS ≥ 80 · nivel AA",
+      "tactica": "Asistentes paso a paso, valores por defecto seguros, canal SMS, lenguaje claro y deshacer.",
+      "friccion": "Cada control de seguridad que añadimos resta un punto de usabilidad. El caso pone la usabilidad como máxima prioridad."
+    },
+    {
+      "rnf": "RNF-19, 22",
+      "atributo": "Interoperabilidad",
+      "metrica": "% de transferencias automáticas",
+      "objetivo": "100 % hacia operadores del directorio",
+      "tactica": "Capa anticorrupción por operador, contrato versionado, saga de transferencia con confirmación.",
+      "friccion": "Hoy imposible: solo 16 de 70 operadores publican endpoint. Es el bloqueo B-01."
+    },
+    {
+      "rnf": "RNF-20, 21",
+      "atributo": "Eficiencia del centralizador",
+      "metrica": "Transacciones y bytes hacia el centro",
+      "objetivo": "≤ 4 transacciones · ≤ 2 KB",
+      "tactica": "El centralizador como directorio, no como bus: solo índices y punteros, entrega entre pares, caché local con TTL.",
+      "friccion": "Menos tráfico al centro es menos observabilidad para el Estado, que la necesita para RF-08."
+    },
+    {
+      "rnf": "RNF-23",
+      "atributo": "Recuperabilidad",
+      "metrica": "RPO · RTO",
+      "objetivo": "RPO ≤ 5 min · RTO ≤ 30 min",
+      "tactica": "Copias continuas con recuperación a un punto en el tiempo, réplicas entre regiones, ensayos semestrales.",
+      "friccion": "Un RTO de 30 minutos es incompatible con recuperar petabytes. Solo aplica al índice, no al contenido."
+    },
+    {
+      "rnf": "RNF-24, 28",
+      "atributo": "Coste",
+      "metrica": "USD por carpeta activa al mes",
+      "objetivo": "≤ USD 0,15",
+      "tactica": "Almacenamiento por niveles, deduplicación y compresión, con cuota para los no certificados.",
+      "friccion": "El nivel de archivo frío rompe la disponibilidad: recuperar tarda horas. «A perpetuidad y siempre disponible» es caro por definición."
+    },
+    {
+      "rnf": "RNF-25, 26",
+      "atributo": "Mantenibilidad",
+      "metrica": "Cambios por tipo documental · MTTD",
+      "objetivo": "Cero cambios en el núcleo · detección ≤ 5 min",
+      "tactica": "Esquemas de metadatos declarativos y versionados, métricas y trazas distribuidas por transferencia.",
+      "friccion": "Un esquema flexible dificulta las consultas analíticas fuertemente tipadas."
+    },
+    {
+      "rnf": "RNF-27",
+      "atributo": "Portabilidad",
+      "metrica": "Dependencias propietarias",
+      "objetivo": "Cero bloqueos de proveedor",
+      "tactica": "Abstracción del almacenamiento de objetos y de la mensajería tras interfaces propias.",
+      "friccion": "Ser agnóstico cuesta: se renuncia a servicios gestionados que serían más baratos y rápidos."
+    }
+  ]
+}
