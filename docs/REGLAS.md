@@ -140,16 +140,32 @@ Para las secciones de prosa (4, 6 y los pies de diagrama):
 
 ---
 
-## 8. Paleta y tipografía del artefacto — congeladas
+## 8. Sistema de diseño — Notion
 
-| Rol | Claro | Oscuro |
-|---|---|---|
-| Papel | `#EDF0F1` | `#101A20` |
-| Tarjeta | `#FFFFFF` | `#16232B` |
-| Tinta | `#16232C` | `#E4EBED` |
-| Acento (sello) | `#AE3126` | `#E8887C` |
-| Confirmado (verde) | `#186A5E` | `#6FBFAE` |
-| Asunción (ámbar) | `#94681A` | `#D9AC5C` |
+La especificación completa vive en `docs/DESIGN.md` y los tokens en `src/styles/tokens.css`.
+**En las hojas de estilo no se escribe ningún hex.** Todo sale de un token.
 
-Tipografía: **Zilla Slab** títulos, **Source Sans 3** cuerpo, **IBM Plex Mono** identificadores.
-En diagramas: **Instrument Serif** título, **Geist** nombres, **Geist Mono** datos técnicos.
+Las cinco reglas que no se rompen:
+
+1. **Un solo acento estructural: el azul `--primary`.** Pinta acciones, enlaces, el indicador
+   de sección activa y el foco. Nada más lo usa.
+2. **La paleta de stickers solo decora y marca estado.** Nunca pinta una acción ni una
+   estructura. Aquí se usa para: `--st-caso` verde (confirmado), `--st-asuncion` naranja
+   (lo inventamos), `--st-bloqueo` morado (escalado al profesor).
+3. **La jerarquía la lleva el peso, no el color.** La prioridad Alta es una píldora de tinta
+   sólida, Media es contorno, Baja es tinta tenue. Tres colores para tres niveles sería ruido.
+4. **La página vive en papel cálido `--canvas-soft`; las tarjetas son blancas `--surface`.**
+   Ese contraste crea figura y fondo sin necesidad de sombras.
+5. **La elevación es filete más `--e-1`.** Nunca una sombra dura. El único momento invertido
+   de la página es la portada, con la banda noche `--secondary`. No se repite en ninguna otra.
+
+Radios: campos 4px, botones utilitarios 8px, tarjetas 12px, contenedores grandes 16px,
+píldoras y avatares `--r-full`. Los campos de formulario nunca llevan radio de píldora.
+
+Tipografía: **Inter** en todo, sustituyendo a NotionInter. Los titulares van en 700 con
+tracking negativo explícito, que se hace más negativo cuanto mayor es el tamaño. El cuerpo
+se queda en 400. **IBM Plex Mono** solo para identificadores, rutas y código.
+
+En los diagramas: el sistema en construcción va en `--ink-secondary` con texto claro; el flujo
+crítico usa `--primary`; la línea de automatización usa `--accent-orange` porque marca una
+frontera, no una acción.

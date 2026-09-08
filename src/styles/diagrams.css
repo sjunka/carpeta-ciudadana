@@ -1,43 +1,56 @@
-/* ---- diagramas ---- */
-.dd{--p:var(--card);--ink2:var(--ink);--mut:var(--ink-2);--sft:var(--ink-3);--rl:var(--rule);--ac:var(--sello);--lk:var(--teal);
-  display:block;width:100%;height:auto;min-width:900px;font-family:'Geist',ui-sans-serif,system-ui,sans-serif}
-.dd .bg{fill:var(--card)}
-.dd .n-sut{fill:#3D4A52;stroke:#16232C;stroke-width:1.5}
-.dd .n-sys{fill:rgba(22,35,44,.04);stroke:rgba(22,35,44,.42);stroke-width:1}
-.dd .n-per{fill:rgba(66,86,95,.10);stroke:var(--ink-3);stroke-width:1.2}
-.dd .per-fill{fill:var(--ink-3)}
-.dd .bnd-auto{stroke:var(--sello);stroke-width:1.2;stroke-dasharray:7 6}
-.dd .bnd-int{stroke:rgba(22,35,44,.45);stroke-width:1.2;stroke-dasharray:7 6}
-.dd .bnd-lab{font-size:8px;font-family:'Geist Mono',ui-monospace,monospace;text-anchor:middle;letter-spacing:.14em;font-weight:600}
-.dd .bnd-lab.auto{fill:var(--sello)} .dd .bnd-lab.int{fill:var(--ink-2)}
-.dd .hair{stroke:var(--rule);stroke-width:.8}
-.dd .ln-m{stroke:var(--ink-2);stroke-width:1.2;fill:none}
-.dd .ln-a{stroke:var(--sello);stroke-width:1.6;fill:none}
-.dd .mk-m{fill:var(--ink-2)} .dd .mk-a{fill:var(--sello)}
-.dd .nname{fill:var(--ink);font-size:12px;font-weight:600;text-anchor:middle}
-.dd .nsub{fill:var(--ink-2);font-size:9px;font-family:'Geist Mono',ui-monospace,monospace;text-anchor:middle}
-.dd .sut{fill:#F2F5F6;font-size:16px;font-weight:600;text-anchor:middle}
-.dd .sut-sub{fill:rgba(242,245,246,.62);font-size:8px;font-family:'Geist Mono',ui-monospace,monospace;text-anchor:middle;letter-spacing:.08em}
-.dd .alab{fill:var(--ink-3);font-size:8px;font-family:'Geist Mono',ui-monospace,monospace;text-anchor:middle;letter-spacing:.06em}
-.dd .alab.ac{fill:var(--sello)}
-.dd .lgd{fill:var(--ink-2);font-size:8px;font-family:'Geist Mono',ui-monospace,monospace;letter-spacing:.06em}
-.dd .lgd-t{fill:var(--ink-2);font-size:8px;font-family:'Geist Mono',ui-monospace,monospace;letter-spacing:.14em}
-.dd .sys-bnd{fill:none;stroke:rgba(22,35,44,.34);stroke-width:1.2;stroke-dasharray:6 5}
-.dd .zone{fill:rgba(22,35,44,.025);stroke:rgba(22,35,44,.10);stroke-width:.8}
-.dd .zlab{fill:var(--ink-3);font-size:7px;font-family:'Geist Mono',ui-monospace,monospace;letter-spacing:.14em}
-.dd .uc{fill:var(--card);stroke:rgba(22,35,44,.40);stroke-width:1}
-.dd .uc.foc{fill:var(--sello-soft);stroke:var(--sello);stroke-width:1.4}
-.dd .ucn{fill:var(--ink);font-size:11px;font-weight:600;text-anchor:middle}
-.dd .ucn.sm{font-size:10px}
-.dd .uct{fill:var(--ink-3);font-size:8px;font-family:'Geist Mono',ui-monospace,monospace;text-anchor:middle;letter-spacing:.04em}
-.dd .uct.ac{fill:var(--sello)}
-:root:not([data-theme="light"]) .dd .n-sys,:root[data-theme="dark"] .dd .n-sys{fill:rgba(228,235,237,.05);stroke:rgba(228,235,237,.34)}
-:root:not([data-theme="light"]) .dd .n-per,:root[data-theme="dark"] .dd .n-per{fill:rgba(168,187,194,.12)}
-:root:not([data-theme="light"]) .dd .n-sut,:root[data-theme="dark"] .dd .n-sut{fill:#33454F;stroke:#7C929B}
-:root:not([data-theme="light"]) .dd .bnd-int,:root[data-theme="dark"] .dd .bnd-int{stroke:rgba(228,235,237,.42)}
-:root:not([data-theme="light"]) .dd .sys-bnd,:root[data-theme="dark"] .dd .sys-bnd{stroke:rgba(228,235,237,.34)}
-:root:not([data-theme="light"]) .dd .zone,:root[data-theme="dark"] .dd .zone{fill:rgba(228,235,237,.03);stroke:rgba(228,235,237,.10)}
-:root:not([data-theme="light"]) .dd .uc,:root[data-theme="dark"] .dd .uc{stroke:rgba(228,235,237,.38)}
+/* ============================================================
+   Diagramas — mismo sistema de tokens.
+   El acento estructural del dibujo es el azul de marca; la línea de
+   automatización usa la naranja de la paleta de stickers porque marca
+   una frontera, no una acción.
+   ============================================================ */
+.dd {
+  display: block; width: 100%; height: auto; min-width: 900px;
+  font-family: var(--font);
+}
+.dd .bg { fill: var(--surface) }
+
+/* Nodos */
+.dd .n-sut { fill: var(--ink-secondary); stroke: var(--ink); stroke-width: 1 }
+.dd .n-sys { fill: var(--canvas-soft); stroke: var(--hairline); stroke-width: 1 }
+.dd .n-per { fill: var(--canvas-soft); stroke: var(--hairline); stroke-width: 1.2 }
+.dd .per-fill { fill: var(--ink-faint) }
+.dd .uc { fill: var(--surface); stroke: var(--hairline); stroke-width: 1 }
+.dd .uc.foc { fill: var(--surface); stroke: var(--primary); stroke-width: 1.6 }
+
+/* Fronteras */
+.dd .bnd-auto { stroke: var(--accent-orange); stroke-width: 1.2; stroke-dasharray: 7 6 }
+.dd .bnd-int { stroke: var(--ink-faint); stroke-width: 1.2; stroke-dasharray: 7 6 }
+.dd .sys-bnd { fill: none; stroke: var(--hairline); stroke-width: 1.2; stroke-dasharray: 6 5 }
+.dd .zone { fill: var(--canvas-soft); stroke: var(--hairline); stroke-width: .8 }
+.dd .hair { stroke: var(--hairline); stroke-width: .8 }
+
+/* Conectores */
+.dd .ln-m { stroke: var(--ink-faint); stroke-width: 1.2; fill: none }
+.dd .ln-a { stroke: var(--primary); stroke-width: 1.6; fill: none }
+.dd .mk-m { fill: var(--ink-faint) }
+.dd .mk-a { fill: var(--primary) }
+
+/* Texto */
+.dd .nname { fill: var(--ink); font-size: 12px; font-weight: 600; text-anchor: middle }
+.dd .nsub { fill: var(--ink-muted); font-size: 11px; font-weight: 400; text-anchor: middle }
+.dd .sut { fill: var(--on-primary); font-size: 16px; font-weight: 700; letter-spacing: -.25px; text-anchor: middle }
+.dd .sut-sub { fill: rgba(255,255,255,.66); font-size: 9px; font-weight: 600; letter-spacing: .125px; text-anchor: middle }
+.dd .alab { fill: var(--ink-muted); font-family: var(--font-mono); font-size: 9px; text-anchor: middle; letter-spacing: .04em }
+.dd .alab.ac { fill: var(--primary); font-weight: 600 }
+.dd .bnd-lab { font-size: 9px; font-weight: 600; letter-spacing: .125px; text-anchor: middle }
+.dd .bnd-lab.auto { fill: var(--accent-orange) }
+.dd .bnd-lab.int { fill: var(--ink-faint) }
+.dd .zlab { fill: var(--ink-faint); font-size: 9px; font-weight: 600; letter-spacing: .125px }
+.dd .ucn { fill: var(--ink); font-size: 12px; font-weight: 600; text-anchor: middle }
+.dd .ucn.sm { font-size: 11px }
+.dd .uct { fill: var(--ink-faint); font-family: var(--font-mono); font-size: 9px; text-anchor: middle }
+.dd .uct.ac { fill: var(--primary) }
+.dd .lgd { fill: var(--ink-muted); font-size: 10px }
+.dd .lgd-t { fill: var(--ink-faint); font-size: 10px; font-weight: 600; letter-spacing: .125px }
+.dd .tag { fill: var(--ink-faint); font-family: var(--font-mono); font-size: 8px; text-anchor: middle; letter-spacing: .1em }
+.dd .tag-ext { fill: none; stroke: var(--hairline); stroke-width: .8 }
+
 /* ---- animación: mismo contenido, revelado por pasos ----
    El estado lo lleva el contenedor .dd-host; el SVG solo marca sus grupos st1…st5. */
 @keyframes dd-in { from { opacity: 0 } to { opacity: 1 } }

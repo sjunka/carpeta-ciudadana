@@ -14,8 +14,8 @@ export default function ContextDiagram() {
     {/* BOUNDARY LINES */}
     <line x1="296" y1="72" x2="296" y2="656" className="bnd-auto"/>
     <line x1="784" y1="72" x2="784" y2="656" className="bnd-int"/>
-    <rect x="176" y="708" width="240" height="16" rx="2" className="bg"/>
-    <text x="296" y="720" className="bnd-lab auto">LÍNEA DE AUTOMATIZACIÓN</text>
+    <rect x="184" y="48" width="224" height="16" rx="2" className="bg"/>
+    <text x="296" y="60" className="bnd-lab auto">LÍNEA DE AUTOMATIZACIÓN</text>
     <rect x="696" y="48" width="176" height="16" rx="2" className="bg"/>
     <text x="784" y="60" className="bnd-lab int">INTEGRACIÓN CON…</text>
     

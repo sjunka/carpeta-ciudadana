@@ -1,34 +1,171 @@
-/* El artefacto traía un reset del host; aquí lo declaramos nosotros. */
+/* ============================================================
+   Sistema de diseño — Notion
+   Fuente: docs/DESIGN.md (getdesign.md/notion)
+
+   Reglas que gobiernan todo lo demás:
+   · Un solo acento estructural: el azul. Nada más pinta una acción.
+   · La paleta de stickers solo decora y marca estado. Nunca pinta estructura.
+   · El lienzo es papel cálido; las tarjetas son blancas. Ese contraste crea figura y fondo.
+   · La elevación es filete más sombra casi invisible, nunca una sombra dura.
+   · La jerarquía la lleva el peso tipográfico, no el color.
+   ============================================================ */
+
 html { color-scheme: light dark; }
 body { margin: 0; }
 img { max-width: 100%; }
 [hidden] { display: none !important; }
 
-:root{
-  --paper:#EDF0F1; --card:#FFFFFF; --sunk:#E3E8EA;
-  --ink:#16232C; --ink-2:#42565F; --ink-3:#71858E;
-  --rule:#CDD6D9; --rule-soft:#DEE5E7;
-  --sello:#AE3126; --sello-soft:#F6E4E1;
-  --teal:#186A5E; --teal-soft:#DDEBE7;
-  --amber:#94681A; --amber-soft:#F6EBD6;
-  --shadow:0 1px 2px rgba(22,35,44,.06),0 8px 24px -16px rgba(22,35,44,.35);
-  --navh:59px;
+:root {
+  /* ---- Marca: único acento estructural ---- */
+  --primary: #0075de;
+  --primary-active: #005bab;
+  --secondary: #213183;      /* banda "noche", un solo momento por página */
+  --on-primary: #ffffff;
+
+  /* ---- Superficies ---- */
+  --canvas: #ffffff;
+  --canvas-soft: #f6f5f4;    /* lienzo de la página */
+  --surface: #ffffff;        /* tarjetas y campos */
+  --hairline: #e6e6e6;
+
+  /* ---- Tinta ---- */
+  --ink: #000000;
+  --ink-secondary: #31302e;
+  --ink-muted: #615d59;
+  --ink-faint: #a39e98;
+
+  /* ---- Paleta de stickers: decoración y estado, nunca estructura ---- */
+  --accent-sky: #62aef0;
+  --accent-purple: #d6b6f6;
+  --accent-purple-deep: #391c57;
+  --accent-pink: #ff64c8;
+  --accent-orange: #dd5b00;
+  --accent-orange-deep: #793400;
+  --accent-teal: #2a9d99;
+  --accent-green: #1aae39;
+  --accent-brown: #523410;
+
+  /* ---- Estados del documento, mapeados a la paleta de stickers ---- */
+  --st-caso: var(--accent-green);
+  --st-caso-bg: #e8f7eb;
+  --st-asuncion: var(--accent-orange);
+  --st-asuncion-bg: #fbeee4;
+  --st-bloqueo: var(--accent-purple-deep);
+  --st-bloqueo-bg: #f0e7fa;
+
+  /* ---- Radios ---- */
+  --r-xs: 4px;
+  --r-sm: 5px;
+  --r-md: 8px;
+  --r-lg: 12px;
+  --r-xl: 16px;
+  --r-full: 9999px;
+
+  /* ---- Espaciado, base 8 ---- */
+  --s-xxs: 4px;
+  --s-xs: 8px;
+  --s-sm: 12px;
+  --s-md: 16px;
+  --s-lg: 24px;
+  --s-xl: 28px;
+  --s-xxl: 32px;
+
+  /* ---- Elevación: muchas capas casi transparentes ---- */
+  --e-1:
+    rgba(0, 0, 0, 0.01) 0 0.175px 1.041px,
+    rgba(0, 0, 0, 0.02) 0 0.8px 2.925px,
+    rgba(0, 0, 0, 0.027) 0 2.025px 7.847px,
+    rgba(0, 0, 0, 0.04) 0 4px 18px;
+  --e-2:
+    rgba(0, 0, 0, 0.012) 0 0.4px 2px,
+    rgba(0, 0, 0, 0.02) 0 1.6px 6px,
+    rgba(0, 0, 0, 0.03) 0 5px 16px,
+    rgba(0, 0, 0, 0.05) 0 23px 52px;
+
+  /* ---- Tipografía: una sola familia ---- */
+  --font: "Inter", -apple-system, system-ui, "Segoe UI", Helvetica, Arial, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+
+  --navh: 59px;
 }
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --paper:#101A20; --card:#16232B; --sunk:#1D2C35;
-  --ink:#E4EBED; --ink-2:#A8BBC2; --ink-3:#7C929B;
-  --rule:#2B3D47; --rule-soft:#22333C;
-  --sello:#E8887C; --sello-soft:#3A1F1C;
-  --teal:#6FBFAE; --teal-soft:#16302C;
-  --amber:#D9AC5C; --amber-soft:#332714;
-  --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px -16px rgba(0,0,0,.8);
-}}
-:root[data-theme="dark"]{
-  --paper:#101A20; --card:#16232B; --sunk:#1D2C35;
-  --ink:#E4EBED; --ink-2:#A8BBC2; --ink-3:#7C929B;
-  --rule:#2B3D47; --rule-soft:#22333C;
-  --sello:#E8887C; --sello-soft:#3A1F1C;
-  --teal:#6FBFAE; --teal-soft:#16302C;
-  --amber:#D9AC5C; --amber-soft:#332714;
-  --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px -16px rgba(0,0,0,.8);
+
+/* ============================================================
+   Modo oscuro. Notion es un sistema de día; aquí se invierte con
+   su misma lógica: papel cálido oscuro, tarjeta un paso por encima,
+   y el azul aclarado para que siga siendo legible sobre fondo oscuro.
+   ============================================================ */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --primary: #529cff;
+    --primary-active: #7db4ff;
+    --secondary: #1b2666;
+    --on-primary: #ffffff;
+
+    --canvas: #191918;
+    --canvas-soft: #191918;
+    --surface: #252525;
+    --hairline: #373737;
+
+    --ink: #f5f4f2;
+    --ink-secondary: #d4d2ce;
+    --ink-muted: #9b9691;
+    --ink-faint: #6f6a65;
+
+    --accent-purple: #b28ce0;
+    --accent-purple-deep: #c9a9ee;
+    --accent-orange: #ff8f45;
+    --accent-teal: #47c4bf;
+    --accent-green: #4ed36c;
+
+    --st-caso: var(--accent-green);
+    --st-caso-bg: #16301c;
+    --st-asuncion: var(--accent-orange);
+    --st-asuncion-bg: #35220f;
+    --st-bloqueo: var(--accent-purple-deep);
+    --st-bloqueo-bg: #2a1c3d;
+
+    --e-1:
+      rgba(0, 0, 0, 0.2) 0 0.8px 2.925px,
+      rgba(0, 0, 0, 0.28) 0 4px 18px;
+    --e-2:
+      rgba(0, 0, 0, 0.3) 0 1.6px 6px,
+      rgba(0, 0, 0, 0.45) 0 23px 52px;
+  }
+}
+
+:root[data-theme="dark"] {
+  --primary: #529cff;
+  --primary-active: #7db4ff;
+  --secondary: #1b2666;
+  --on-primary: #ffffff;
+
+  --canvas: #191918;
+  --canvas-soft: #191918;
+  --surface: #252525;
+  --hairline: #373737;
+
+  --ink: #f5f4f2;
+  --ink-secondary: #d4d2ce;
+  --ink-muted: #9b9691;
+  --ink-faint: #6f6a65;
+
+  --accent-purple: #b28ce0;
+  --accent-purple-deep: #c9a9ee;
+  --accent-orange: #ff8f45;
+  --accent-teal: #47c4bf;
+  --accent-green: #4ed36c;
+
+  --st-caso: var(--accent-green);
+  --st-caso-bg: #16301c;
+  --st-asuncion: var(--accent-orange);
+  --st-asuncion-bg: #35220f;
+  --st-bloqueo: var(--accent-purple-deep);
+  --st-bloqueo-bg: #2a1c3d;
+
+  --e-1:
+    rgba(0, 0, 0, 0.2) 0 0.8px 2.925px,
+    rgba(0, 0, 0, 0.28) 0 4px 18px;
+  --e-2:
+    rgba(0, 0, 0, 0.3) 0 1.6px 6px,
+    rgba(0, 0, 0, 0.45) 0 23px 52px;
 }

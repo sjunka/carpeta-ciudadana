@@ -1,106 +1,295 @@
-*{box-sizing:border-box}
-body{background:var(--paper);color:var(--ink);font-family:"Source Sans 3",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
-h1,h2,h3{font-family:"Zilla Slab",Georgia,serif;text-wrap:balance;margin:0}
-code,.mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace}
-.wrap{max-width:1180px;margin:0 auto;padding:0 24px}
-header.masthead{border-bottom:2px solid var(--ink);background:var(--card)}
-.mast-in{max-width:1180px;margin:0 auto;padding:34px 24px 26px;display:grid;gap:18px}
-.stamp{display:inline-flex;align-items:center;gap:9px;align-self:start;border:1.5px solid var(--sello);color:var(--sello);background:var(--sello-soft);padding:5px 12px;border-radius:2px;font-size:11.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase}
-.stamp::before{content:"";width:7px;height:7px;background:var(--sello);border-radius:50%}
-h1{font-size:clamp(30px,4.6vw,46px);font-weight:700;line-height:1.08;letter-spacing:-.015em}
-h1 .sub{display:block;font-family:"Source Sans 3",sans-serif;font-weight:400;font-size:clamp(15px,1.9vw,18px);color:var(--ink-2);letter-spacing:0;margin-top:10px;line-height:1.45;max-width:64ch}
-.meta{display:flex;flex-wrap:wrap;gap:0;border-top:1px solid var(--rule);padding-top:16px}
-.meta div{padding-right:28px;margin-right:28px;border-right:1px solid var(--rule-soft)}
-.meta div:last-child{border-right:0;margin-right:0;padding-right:0}
-.meta dt{font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
-.meta dd{margin:3px 0 0;font-size:15px;font-weight:600;font-variant-numeric:tabular-nums}
-.meta dd.alert{color:var(--sello)}
-.meta dd.ok{color:var(--teal)}
-nav.toc{position:sticky;top:0;z-index:50;background:var(--paper);border-bottom:1px solid var(--rule);backdrop-filter:saturate(1.6) blur(6px)}
-.toc-in{max-width:1180px;margin:0 auto;padding:0 24px;display:flex;gap:2px;overflow-x:auto;scrollbar-width:thin}
-.toc-in a{flex:none;padding:12px 13px;font-size:13px;font-weight:600;color:var(--ink-2);text-decoration:none;border-bottom:2px solid transparent;white-space:nowrap}
-.toc-in a:hover{color:var(--ink);border-bottom-color:var(--rule)}
-.toc-in a.on{color:var(--sello);border-bottom-color:var(--sello)}
-.toc-in a:focus-visible{outline:2px solid var(--teal);outline-offset:-2px}
-section{padding:46px 0 10px;scroll-margin-top:56px}
-.sec-head{display:flex;align-items:baseline;gap:14px;border-bottom:1px solid var(--rule);padding-bottom:10px;margin-bottom:22px;flex-wrap:wrap}
-.sec-num{font-family:"IBM Plex Mono",monospace;font-size:12px;font-weight:600;color:var(--sello);letter-spacing:.08em}
-.sec-head h2{font-size:clamp(21px,2.6vw,27px);font-weight:600;letter-spacing:-.01em}
-.sec-head p{margin:0;font-size:14px;color:var(--ink-3);flex:1 1 260px}
-h3.dom{font-size:15px;letter-spacing:.06em;color:var(--ink-2);margin:28px 0 0;font-family:"IBM Plex Mono",monospace;font-weight:600}
-h3.dom span{color:var(--ink-3);font-weight:400;letter-spacing:0;font-family:"Source Sans 3",sans-serif}
-p{max-width:74ch}
-p.lede{font-size:17px;color:var(--ink-2);max-width:68ch}
-.tw{overflow-x:auto;border:1px solid var(--rule);border-radius:3px;background:var(--card);box-shadow:var(--shadow);margin:16px 0}
-table{border-collapse:collapse;width:100%;font-size:14.5px;min-width:640px}
-thead th{background:var(--sunk);text-align:left;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2);font-weight:700;padding:10px 14px;border-bottom:1px solid var(--rule)}
-/* Cabecera fija mientras dure su propia tabla. El sticky lo acota el <table>,
-   así que se suelta solo al terminar los datos y vuelve el scroll normal. */
-@media (min-width:1060px){
-  .tw{overflow-x:visible}
-  thead th{position:sticky;top:var(--navh);z-index:5;box-shadow:0 1px 0 var(--rule),0 6px 10px -8px rgba(22,35,44,.28)}
-  :root:not([data-theme="light"]) thead th{box-shadow:0 1px 0 var(--rule),0 6px 10px -8px rgba(0,0,0,.6)}
-  :root[data-theme="dark"] thead th{box-shadow:0 1px 0 var(--rule),0 6px 10px -8px rgba(0,0,0,.6)}
+/* ============================================================
+   Aplicación del sistema Notion a este documento.
+   Todo color, radio y sombra sale de tokens.css. Aquí no hay hex.
+   ============================================================ */
+
+* { box-sizing: border-box }
+
+body {
+  background: var(--canvas-soft);
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: 16px;
+  line-height: 1.5;
+  font-feature-settings: "lnum" 1, "locl" 1;
+  -webkit-font-smoothing: antialiased;
 }
-td{padding:10px 14px;border-bottom:1px solid var(--rule-soft);vertical-align:top}
-tbody tr:last-child td{border-bottom:0}
-tbody tr:hover{background:var(--sunk)}
-td.id{font-family:"IBM Plex Mono",monospace;font-size:12.5px;font-weight:600;color:var(--ink-2);white-space:nowrap}
-td.nm{font-weight:600}
-table.wide{min-width:960px}
-.pri{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:1px 7px;border-radius:2px;white-space:nowrap}
-.p-a{background:var(--sello-soft);color:var(--sello);border:1px solid var(--sello)}
-.p-m{background:var(--amber-soft);color:var(--amber);border:1px solid var(--amber)}
-.p-b{background:var(--sunk);color:var(--ink-3);border:1px solid var(--rule)}
-.flag{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;padding:1px 6px;border-radius:2px;vertical-align:1px;white-space:nowrap}
-.f-asum{background:var(--amber-soft);color:var(--amber);border:1px solid var(--amber)}
-.f-firme{background:var(--teal-soft);color:var(--teal);border:1px solid var(--teal)}
-.f-block{background:var(--sello-soft);color:var(--sello);border:1px solid var(--sello)}
-.note{display:block;font-size:13px;color:var(--ink-3);font-style:italic;margin-top:4px}
-tr.asum td.id{box-shadow:inset 3px 0 0 var(--amber)}
-tr.block td.id{box-shadow:inset 3px 0 0 var(--sello)}
-.filter{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--card);border:1px solid var(--rule);border-radius:3px;padding:10px 14px;margin:16px 0;box-shadow:var(--shadow)}
-.filter span.lab{font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);font-weight:700}
-.filter button,.diagctl button{font:inherit;font-size:13px;font-weight:600;cursor:pointer;background:transparent;color:var(--ink-2);border:1px solid var(--rule);border-radius:2px;padding:5px 11px}
-.filter button:hover,.diagctl button:hover{border-color:var(--ink-3);color:var(--ink)}
-.filter button[aria-pressed="true"],.diagctl button[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
-.filter button:focus-visible,.diagctl button:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
-.filter .count{margin-left:auto;font-size:13px;color:var(--ink-3);font-variant-numeric:tabular-nums}
-.diagctl{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:18px 0 10px}
-.diagctl .lab{font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);font-weight:700;margin-right:2px}
-.diagctl .step{margin-left:auto;font-size:13px;color:var(--ink-2);font-style:italic;font-family:"Source Sans 3",sans-serif}
-.diagbox{border:1px solid var(--rule);border-radius:3px;background:var(--card);box-shadow:var(--shadow);padding:16px;overflow-x:auto}
-.blockers{display:grid;gap:14px;margin-top:20px}
-.bk{background:var(--card);border:1px solid var(--rule);border-left:4px solid var(--ink-3);border-radius:3px;padding:16px 18px;box-shadow:var(--shadow);display:grid;gap:10px}
-.bk.crit{border-left-color:var(--sello)}
-.bk.done{border-left-color:var(--teal);opacity:.82}
-.bk.done .bk-id{color:var(--teal)}
-.bk-solved{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;background:var(--teal-soft);color:var(--teal);border:1px solid var(--teal);border-radius:2px;padding:1px 6px}
-.bk-top{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
-.bk-id{font-family:"IBM Plex Mono",monospace;font-size:13px;font-weight:600;color:var(--sello)}
-.bk-q{font-family:"Zilla Slab",Georgia,serif;font-size:18px;font-weight:600;line-height:1.3;flex:1 1 300px;min-width:0}
-.bk-grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));border-top:1px solid var(--rule-soft);padding-top:12px}
-.bk-grid h4{margin:0 0 3px;font-family:"Source Sans 3",sans-serif;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);font-weight:700}
-.bk-grid p{margin:0;font-size:14px;color:var(--ink-2);max-width:none}
-.bk-grid .why p{color:var(--ink)}
-.finds{border:1px solid var(--rule);border-radius:3px;background:var(--card);box-shadow:var(--shadow);margin:18px 0}
-.find{display:grid;grid-template-columns:34px 1fr;gap:14px;padding:14px 16px;border-bottom:1px solid var(--rule-soft)}
-.find:last-child{border-bottom:0}
-.find .n{font-family:"IBM Plex Mono",monospace;font-size:12px;font-weight:600;color:var(--ink-3);padding-top:2px}
-.find p{margin:0;font-size:14.5px;max-width:none}
-.find.hot .n{color:var(--sello)}
-.find.hot{background:linear-gradient(90deg,var(--sello-soft) 0 3px,transparent 3px)}
-ol.flow{padding-left:22px;max-width:76ch;counter-reset:none}
-ol.flow li{margin-bottom:9px;font-size:15px}
-ol.flow li b{color:var(--ink)}
-ul.logic{padding-left:20px;max-width:74ch}
-ul.logic li{margin-bottom:7px;font-size:15px}
-.simple{display:grid;gap:22px;margin-top:8px}
-.simple .qa{background:var(--card);border:1px solid var(--rule);border-radius:3px;padding:20px 22px;box-shadow:var(--shadow)}
-.simple .qa h3{font-size:20px;font-weight:600;margin-bottom:8px;color:var(--sello)}
-.simple .qa p{margin:0 0 10px;font-size:15.5px}
-.simple .qa p:last-child{margin-bottom:0}
-.pull{border-left:3px solid var(--sello);padding:2px 0 2px 16px;margin:16px 0;font-family:"Zilla Slab",Georgia,serif;font-size:19px;line-height:1.35;color:var(--ink);max-width:60ch}
-footer{border-top:2px solid var(--ink);margin-top:50px;padding:24px 0 44px;font-size:13.5px;color:var(--ink-3)}
-a{color:var(--sello)}
-@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* ---- Escala tipográfica ---- */
+h1, h2, h3, h4 { margin: 0; font-family: var(--font); text-wrap: balance }
+h1 { font-size: clamp(40px, 5vw, 64px); font-weight: 700; line-height: 1.0; letter-spacing: -2.125px }
+h2 { font-size: clamp(26px, 3vw, 40px); font-weight: 700; line-height: 1.1; letter-spacing: -1px }
+h3 { font-size: 22px; font-weight: 700; line-height: 1.27; letter-spacing: -0.25px }
+p { margin: 0 0 var(--s-md); max-width: 74ch }
+code, .mono { font-family: var(--font-mono) }
+a { color: var(--primary); text-decoration: none }
+a:hover { text-decoration: underline }
+:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; border-radius: var(--r-xs) }
+
+.wrap { max-width: 1180px; margin: 0 auto; padding: 0 var(--s-lg) }
+
+/* ============================================================
+   Portada — la banda "noche". Único momento invertido de la página.
+   ============================================================ */
+.masthead { background: var(--secondary); color: var(--on-primary) }
+.mast-in {
+  max-width: 1180px; margin: 0 auto;
+  padding: var(--s-xxl) var(--s-lg) var(--s-xl);
+  display: grid; gap: var(--s-lg);
+}
+.stamp {
+  align-self: start;
+  display: inline-flex; align-items: center; gap: var(--s-xs);
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--on-primary);
+  border-radius: var(--r-full);
+  padding: var(--s-xxs) var(--s-sm);
+  font-size: 12px; font-weight: 600; line-height: 1.33; letter-spacing: 0.125px;
+}
+.stamp::before { content: ""; width: 6px; height: 6px; border-radius: var(--r-full); background: var(--accent-pink) }
+.masthead h1 { color: var(--on-primary) }
+.masthead h1 .sub {
+  display: block; margin-top: var(--s-md);
+  font-size: clamp(16px, 1.8vw, 20px); font-weight: 400; line-height: 1.4; letter-spacing: -0.125px;
+  color: rgba(255, 255, 255, 0.74); max-width: 64ch;
+}
+.meta {
+  display: flex; flex-wrap: wrap; gap: var(--s-lg) var(--s-xxl);
+  border-top: 1px solid rgba(255, 255, 255, 0.16);
+  padding-top: var(--s-lg); margin: 0;
+}
+.meta dt { font-size: 12px; font-weight: 600; line-height: 1.33; letter-spacing: 0.125px; color: rgba(255, 255, 255, 0.62) }
+.meta dd { margin: var(--s-xxs) 0 0; font-size: 16px; font-weight: 600; color: var(--on-primary) }
+.meta dd.alert { color: var(--accent-pink) }
+.meta dd.ok { color: var(--accent-green) }
+
+/* ============================================================
+   Navegación — barra blanca fina, indicador en azul.
+   ============================================================ */
+.toc {
+  position: sticky; top: 0; z-index: 50;
+  background: var(--canvas); border-bottom: 1px solid var(--hairline);
+}
+.toc-in {
+  max-width: 1180px; margin: 0 auto; padding: 0 var(--s-lg);
+  display: flex; gap: var(--s-xxs); overflow-x: auto; scrollbar-width: thin;
+}
+.toc-in a {
+  flex: none; padding: var(--s-md) var(--s-sm);
+  font-size: 15px; font-weight: 500; line-height: 1.33;
+  color: var(--ink-muted); border-bottom: 2px solid transparent;
+  white-space: nowrap; text-decoration: none;
+}
+.toc-in a:hover { color: var(--ink); text-decoration: none }
+.toc-in a.on { color: var(--primary); border-bottom-color: var(--primary) }
+
+/* ============================================================
+   Secciones
+   ============================================================ */
+section { padding: var(--s-xxl) 0 var(--s-xs); scroll-margin-top: calc(var(--navh) + var(--s-xs)) }
+.sec-head {
+  display: flex; align-items: baseline; gap: var(--s-md); flex-wrap: wrap;
+  border-bottom: 1px solid var(--hairline);
+  padding-bottom: var(--s-sm); margin-bottom: var(--s-lg);
+}
+.sec-num { font-family: var(--font-mono); font-size: 12px; font-weight: 600; color: var(--primary) }
+.sec-head h2 { font-size: clamp(26px, 2.6vw, 40px) }
+.sec-head p { margin: 0; font-size: 15px; line-height: 1.33; color: var(--ink-muted); flex: 1 1 280px }
+
+h3.dom {
+  margin: var(--s-xxl) 0 0;
+  font-size: 20px; font-weight: 600; line-height: 1.4; letter-spacing: -0.125px;
+  color: var(--ink);
+}
+h3.dom span { font-weight: 400; font-size: 15px; color: var(--ink-muted); letter-spacing: 0 }
+
+p.lede { font-size: 16px; color: var(--ink-secondary); max-width: 68ch }
+.pull {
+  border-left: 3px solid var(--primary);
+  padding: var(--s-xxs) 0 var(--s-xxs) var(--s-md);
+  margin: var(--s-lg) 0;
+  font-size: 20px; font-weight: 600; line-height: 1.4; letter-spacing: -0.125px;
+  color: var(--ink); max-width: 60ch;
+}
+
+/* ============================================================
+   Tablas — cabecera en papel cálido, filas separadas por filete.
+   La cabecera queda fija mientras dure su propia tabla.
+   ============================================================ */
+.tw {
+  overflow-x: auto;
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  margin: var(--s-md) 0;
+}
+table { border-collapse: collapse; width: 100%; font-size: 15px; line-height: 1.33; min-width: 640px }
+table.wide { min-width: 960px }
+thead th {
+  background: var(--canvas-soft);
+  text-align: left;
+  font-family: var(--font-mono);
+  font-size: 12px; font-weight: 600; line-height: 1.33; letter-spacing: 0.125px;
+  text-transform: uppercase; color: var(--ink-muted);
+  padding: var(--s-sm) var(--s-md);
+  border-bottom: 1px solid var(--hairline);
+}
+td { padding: var(--s-sm) var(--s-md); border-bottom: 1px solid var(--hairline); vertical-align: top }
+tbody tr:last-child td { border-bottom: 0 }
+tbody tr:hover { background: var(--canvas-soft) }
+td.id { font-family: var(--font-mono); font-size: 13px; font-weight: 500; color: var(--ink-muted); white-space: nowrap }
+td.nm { font-weight: 600; color: var(--ink) }
+
+@media (min-width: 1060px) {
+  .tw { overflow-x: visible }
+  thead th {
+    position: sticky; top: var(--navh); z-index: 5;
+    box-shadow: 0 1px 0 var(--hairline), var(--e-1);
+  }
+}
+
+/* ---- Franja de estado a la izquierda de la fila ---- */
+tr.asum td.id { box-shadow: inset 3px 0 0 var(--st-asuncion) }
+tr.block td.id { box-shadow: inset 3px 0 0 var(--st-bloqueo) }
+
+/* ============================================================
+   Píldoras de estado — paleta de stickers, nunca el azul.
+   ============================================================ */
+.flag {
+  display: inline-block;
+  font-size: 12px; font-weight: 600; line-height: 1.33; letter-spacing: 0.125px;
+  padding: var(--s-xxs) var(--s-xs);
+  border-radius: var(--r-full);
+  white-space: nowrap; vertical-align: 1px;
+}
+.f-asum { background: var(--st-asuncion-bg); color: var(--st-asuncion) }
+.f-block { background: var(--st-bloqueo-bg); color: var(--st-bloqueo) }
+.f-firme { background: var(--st-caso-bg); color: var(--st-caso) }
+
+/* ---- Prioridad: la jerarquía la lleva el peso, no el color ---- */
+.pri {
+  display: inline-block;
+  font-size: 12px; font-weight: 600; line-height: 1.33; letter-spacing: 0.125px;
+  padding: var(--s-xxs) var(--s-xs);
+  border-radius: var(--r-full); white-space: nowrap;
+}
+.p-a { background: var(--ink); color: var(--canvas) }
+.p-m { background: transparent; color: var(--ink-secondary); box-shadow: inset 0 0 0 1px var(--hairline) }
+.p-b { background: transparent; color: var(--ink-faint) }
+
+.note { display: block; font-size: 14px; line-height: 1.43; color: var(--ink-faint); margin-top: var(--s-xxs) }
+
+/* ============================================================
+   Filtro y controles — botones utilitarios de 8px.
+   ============================================================ */
+.filter, .diagctl { display: flex; align-items: center; gap: var(--s-xs); flex-wrap: wrap }
+.filter {
+  background: var(--surface); border: 1px solid var(--hairline);
+  border-radius: var(--r-lg); padding: var(--s-sm) var(--s-md); margin: var(--s-md) 0;
+}
+.diagctl { margin: var(--s-lg) 0 var(--s-sm) }
+.filter .lab, .diagctl .lab {
+  font-size: 12px; font-weight: 600; line-height: 1.33; letter-spacing: 0.125px;
+  color: var(--ink-faint); margin-right: var(--s-xxs);
+}
+.filter button, .diagctl button {
+  font: inherit; font-size: 16px; font-weight: 500; line-height: 1.5;
+  cursor: pointer; background: var(--surface); color: var(--ink);
+  border: 1px solid var(--hairline); border-radius: var(--r-md);
+  padding: var(--s-xxs) 14px;
+}
+.filter button:hover, .diagctl button:hover { border-color: var(--ink-faint) }
+.filter button[aria-pressed="true"], .diagctl button[aria-pressed="true"] {
+  background: var(--primary); color: var(--on-primary); border-color: var(--primary);
+}
+.filter button:active, .diagctl button:active { transform: scale(0.97) }
+.filter .count { margin-left: auto; font-size: 14px; color: var(--ink-faint) }
+.diagctl .step { margin-left: auto; font-size: 15px; color: var(--ink-muted) }
+
+.diagbox {
+  border: 1px solid var(--hairline); border-radius: var(--r-xl);
+  background: var(--surface); padding: var(--s-lg); overflow-x: auto;
+}
+
+/* ============================================================
+   Bloqueos — tarjeta con banda de estado a la izquierda.
+   ============================================================ */
+.blockers { display: grid; gap: var(--s-md); margin-top: var(--s-lg) }
+.bk {
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  border-left: 4px solid var(--ink-faint);
+  border-radius: var(--r-lg);
+  padding: var(--s-lg);
+  display: grid; gap: var(--s-sm);
+}
+.bk.crit { border-left-color: var(--st-bloqueo); box-shadow: var(--e-1) }
+.bk.done { border-left-color: var(--st-caso) }
+.bk.done .bk-id { color: var(--st-caso) }
+.bk-top { display: flex; align-items: baseline; gap: var(--s-sm); flex-wrap: wrap }
+.bk-id { font-family: var(--font-mono); font-size: 14px; font-weight: 600; color: var(--st-bloqueo) }
+.bk-solved {
+  font-size: 12px; font-weight: 600; letter-spacing: 0.125px;
+  background: var(--st-caso-bg); color: var(--st-caso);
+  border-radius: var(--r-full); padding: var(--s-xxs) var(--s-xs);
+}
+.bk-q { font-size: 22px; font-weight: 700; line-height: 1.27; letter-spacing: -0.25px; flex: 1 1 320px; min-width: 0 }
+.bk-grid {
+  display: grid; gap: var(--s-md);
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  border-top: 1px solid var(--hairline); padding-top: var(--s-sm);
+}
+.bk-grid h4 {
+  margin: 0 0 var(--s-xxs);
+  font-size: 12px; font-weight: 600; line-height: 1.33; letter-spacing: 0.125px;
+  color: var(--ink-faint);
+}
+.bk-grid p { margin: 0; font-size: 15px; line-height: 1.33; color: var(--ink-muted); max-width: none }
+.bk-grid .why p { color: var(--ink-secondary) }
+
+/* ============================================================
+   Hallazgos de la API
+   ============================================================ */
+.finds {
+  border: 1px solid var(--hairline); border-radius: var(--r-lg);
+  background: var(--surface); margin: var(--s-md) 0; overflow: hidden;
+}
+.find {
+  display: grid; grid-template-columns: 32px 1fr; gap: var(--s-md);
+  padding: var(--s-md); border-bottom: 1px solid var(--hairline);
+}
+.find:last-child { border-bottom: 0 }
+.find .n { font-family: var(--font-mono); font-size: 13px; font-weight: 500; color: var(--ink-faint) }
+.find p { margin: 0; font-size: 15px; line-height: 1.43; max-width: none }
+.find.hot { background: linear-gradient(90deg, var(--st-bloqueo) 0 3px, transparent 3px) }
+.find.hot .n { color: var(--st-bloqueo) }
+
+/* ============================================================
+   Listas y tarjetas de prosa
+   ============================================================ */
+ol.flow { padding-left: var(--s-lg); max-width: 76ch }
+ol.flow li { margin-bottom: var(--s-xs); font-size: 16px; line-height: 1.5 }
+ul.logic { padding-left: var(--s-md); max-width: 74ch }
+ul.logic li { margin-bottom: var(--s-xs); font-size: 16px; line-height: 1.5 }
+
+.simple { display: grid; gap: var(--s-lg); margin-top: var(--s-xs) }
+.qa {
+  background: var(--surface); border: 1px solid var(--hairline);
+  border-radius: var(--r-lg); padding: var(--s-lg);
+}
+.qa h3 { font-size: 22px; font-weight: 700; line-height: 1.27; letter-spacing: -0.25px; margin-bottom: var(--s-sm); color: var(--ink) }
+.qa p { margin: 0 0 var(--s-sm); font-size: 16px; line-height: 1.5; color: var(--ink-secondary) }
+.qa p:last-child { margin-bottom: 0 }
+
+/* ============================================================
+   Pie — banda de papel cálido
+   ============================================================ */
+footer {
+  background: var(--canvas-soft);
+  border-top: 1px solid var(--hairline);
+  margin-top: var(--s-xxl);
+  padding: var(--s-xxl) 0;
+}
+footer p { font-size: 14px; line-height: 1.43; color: var(--ink-muted); margin: 0 }
+
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important } }

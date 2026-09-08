@@ -51,7 +51,7 @@
     "La <b>línea de automatización</b> separa a las personas del software. A su izquierda hay gente; a su derecha, sistemas.",
     "La <b>línea de integración</b> separa nuestro sistema de los sistemas ajenos que no controlamos.",
     "Cada flecha lleva <b>los datos que viajan</b>, no el verbo de la acción. Así se ve qué información cruza cada frontera.",
-    "En <span style=\"color:var(--sello);font-weight:600\">rojo</span>, el flujo documental entre operadores: es el único que mueve documentos completos, y es el que hoy <b>no tiene contrato definido</b>."
+    "En <b style=\"color:var(--primary)\">azul</b>, el flujo documental entre operadores: es el único que mueve documentos completos, y es el que hoy <b>no tiene contrato definido</b>."
   ],
   "idea": "Todo lo que va hacia MinTIC son identificadores. Todo lo que va hacia otro operador son documentos. Esa asimetría es la decisión de arquitectura que sostiene el resto.",
   "cierre": "El centralizador responde una sola pregunta: <b>¿ante qué operador está afiliado esta cédula?</b> Con esa respuesta, nuestro operador abre una conexión directa con el operador destino y le entrega el documento. Por eso el Estado puede pedir que el centralizador maneje la mínima cantidad de transacciones: no es un bus por donde pasa el tráfico, es una guía telefónica que se consulta una vez y se cachea."
