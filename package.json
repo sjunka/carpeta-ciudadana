@@ -8,7 +8,8 @@
     "dev": "vite",
     "build": "npm run check && vite build",
     "preview": "vite preview",
-    "check": "node scripts/check-content.mjs"
+    "check": "node scripts/check-content.mjs",
+    "artifact": "npm run build && node scripts/build-artifact.mjs"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.3.4",

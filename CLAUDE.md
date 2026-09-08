@@ -7,6 +7,18 @@ Actúa siempre como **experto en Arquitecturas Avanzadas de Software**. Responde
 Lee `docs/REGLAS.md`. Manda sobre cualquier criterio propio: fija el esqueleto de secciones,
 el formato de los requerimientos, la gramática de los diagramas y la paleta.
 
+## Única fuente de verdad
+
+`src/content/*.json`. De ahí salen tanto el sitio como el espejo.
+
+| Destino | Cómo se genera | ¿Se edita? |
+|---|---|---|
+| Sitio en GitHub Pages | `git push` a `main` | No, es salida |
+| Espejo en Artifact | `npm run artifact`, republicar sobre la misma URL | **Nunca** |
+| `docs/entrega-1.md` | A mano, hoy desactualizado | Pendiente de generar |
+
+El espejo es de solo lectura por decisión: dos sitios editables se desincronizan.
+
 ## Cómo se cambia el contenido
 
 **Todo el texto vive en `src/content/*.json`. Los componentes no llevan texto.**

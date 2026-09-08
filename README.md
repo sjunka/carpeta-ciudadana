@@ -43,6 +43,19 @@ lo ejecuta primero, así que un error de contenido no puede llegar al sitio.
 
 Cada push a `main` construye y publica en GitHub Pages mediante `.github/workflows/deploy.yml`.
 
+### Espejo para compartir
+
+Existe un espejo del sitio como Artifact de Claude, útil para pasarle un enlace privado al
+equipo sin darles el repositorio.
+
+```sh
+npm run artifact     # genera dist/artifact.html
+```
+
+**El espejo no se edita nunca.** Es salida del build, igual que `dist/`. Se regenera desde
+`src/content/*.json` y se republica sobre la misma URL para conservar el enlace. Si algo hay
+que cambiar, se cambia en el JSON y se vuelve a generar.
+
 ## Material de referencia
 
 `docs/referencias/` no se versiona: contiene material de terceros (el documento de un
