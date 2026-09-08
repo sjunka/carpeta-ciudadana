@@ -11,7 +11,7 @@
 .dd .bg { fill: var(--surface) }
 
 /* Nodos */
-.dd .n-sut { fill: var(--ink-secondary); stroke: var(--ink); stroke-width: 1 }
+.dd .n-sut { fill: var(--sut-fill); stroke: var(--ink); stroke-width: 1 }
 .dd .n-sys { fill: var(--canvas-soft); stroke: var(--hairline); stroke-width: 1 }
 .dd .n-per { fill: var(--canvas-soft); stroke: var(--hairline); stroke-width: 1.2 }
 .dd .per-fill { fill: var(--ink-faint) }
@@ -35,20 +35,20 @@
 .dd .nname { fill: var(--ink); font-size: 12px; font-weight: 600; text-anchor: middle }
 .dd .nsub { fill: var(--ink-muted); font-size: 11px; font-weight: 400; text-anchor: middle }
 .dd .sut { fill: var(--on-primary); font-size: 16px; font-weight: 700; letter-spacing: -.25px; text-anchor: middle }
-.dd .sut-sub { fill: rgba(255,255,255,.66); font-size: 9px; font-weight: 600; letter-spacing: .125px; text-anchor: middle }
+.dd .sut-sub { fill: rgba(255,255,255,.82); font-size: 9px; font-weight: 600; letter-spacing: .125px; text-anchor: middle }
 .dd .alab { fill: var(--ink-muted); font-family: var(--font-mono); font-size: 9px; text-anchor: middle; letter-spacing: .04em }
-.dd .alab.ac { fill: var(--primary); font-weight: 600 }
+.dd .alab.ac { fill: var(--primary-text); font-weight: 600 }
 .dd .bnd-lab { font-size: 9px; font-weight: 600; letter-spacing: .125px; text-anchor: middle }
-.dd .bnd-lab.auto { fill: var(--accent-orange) }
-.dd .bnd-lab.int { fill: var(--ink-faint) }
-.dd .zlab { fill: var(--ink-faint); font-size: 9px; font-weight: 600; letter-spacing: .125px }
+.dd .bnd-lab.auto { fill: var(--st-asuncion) }
+.dd .bnd-lab.int { fill: var(--ink-faint-text) }
+.dd .zlab { fill: var(--ink-faint-text); font-size: 9px; font-weight: 600; letter-spacing: .125px }
 .dd .ucn { fill: var(--ink); font-size: 12px; font-weight: 600; text-anchor: middle }
 .dd .ucn.sm { font-size: 11px }
-.dd .uct { fill: var(--ink-faint); font-family: var(--font-mono); font-size: 9px; text-anchor: middle }
-.dd .uct.ac { fill: var(--primary) }
+.dd .uct { fill: var(--ink-faint-text); font-family: var(--font-mono); font-size: 9px; text-anchor: middle }
+.dd .uct.ac { fill: var(--primary-text) }
 .dd .lgd { fill: var(--ink-muted); font-size: 10px }
-.dd .lgd-t { fill: var(--ink-faint); font-size: 10px; font-weight: 600; letter-spacing: .125px }
-.dd .tag { fill: var(--ink-faint); font-family: var(--font-mono); font-size: 8px; text-anchor: middle; letter-spacing: .1em }
+.dd .lgd-t { fill: var(--ink-faint-text); font-size: 10px; font-weight: 600; letter-spacing: .125px }
+.dd .tag { fill: var(--ink-faint-text); font-family: var(--font-mono); font-size: 8px; text-anchor: middle; letter-spacing: .1em }
 .dd .tag-ext { fill: none; stroke: var(--hairline); stroke-width: .8 }
 
 /* ---- animación: mismo contenido, revelado por pasos ----

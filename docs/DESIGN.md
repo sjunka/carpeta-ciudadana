@@ -1,498 +1,757 @@
----
-version: alpha
-name: Notion Analysis
-description: An analysis of Notion's design language — a warm, paper-calm productivity system built on an off-white canvas, near-black Inter type, and a single confident blue, punctuated by a playful multi-color sticker palette that does all the personality work while the chrome stays quiet.
+# DESIGN.md — Carpeta Ciudadana
 
-colors:
-  primary: "#0075de"
-  primary-active: "#005bab"
-  secondary: "#213183"
-  on-primary: "#ffffff"
-  canvas: "#ffffff"
-  canvas-soft: "#f6f5f4"
-  surface: "#ffffff"
-  ink: "#000000"
-  ink-secondary: "#31302e"
-  ink-muted: "#615d59"
-  ink-faint: "#a39e98"
-  hairline: "#e6e6e6"
-  accent-sky: "#62aef0"
-  accent-purple: "#d6b6f6"
-  accent-purple-deep: "#391c57"
-  accent-pink: "#ff64c8"
-  accent-orange: "#dd5b00"
-  accent-orange-deep: "#793400"
-  accent-teal: "#2a9d99"
-  accent-green: "#1aae39"
-  accent-brown: "#523410"
+## 1. Visual Theme & Atmosphere
 
-typography:
-  display-1:
-    fontFamily: NotionInter
-    fontSize: 64px
-    fontWeight: 700
-    lineHeight: 1.0
-    letterSpacing: -2.125px
-  display-2:
-    fontFamily: NotionInter
-    fontSize: 54px
-    fontWeight: 700
-    lineHeight: 1.04
-    letterSpacing: -1.875px
-  heading-1:
-    fontFamily: NotionInter
-    fontSize: 40px
-    fontWeight: 700
-    lineHeight: 1.1
-    letterSpacing: -1px
-  heading-2:
-    fontFamily: NotionInter
-    fontSize: 26px
-    fontWeight: 700
-    lineHeight: 1.23
-    letterSpacing: -0.625px
-  heading-3:
-    fontFamily: NotionInter
-    fontSize: 22px
-    fontWeight: 700
-    lineHeight: 1.27
-    letterSpacing: -0.25px
-  title:
-    fontFamily: NotionInter
-    fontSize: 20px
-    fontWeight: 600
-    lineHeight: 1.4
-    letterSpacing: -0.125px
-  body-md:
-    fontFamily: NotionInter
-    fontSize: 16px
-    fontWeight: 400
-    lineHeight: 1.5
-    letterSpacing: 0
-  body-sm:
-    fontFamily: NotionInter
-    fontSize: 15px
-    fontWeight: 400
-    lineHeight: 1.33
-    letterSpacing: 0
-  button:
-    fontFamily: NotionInter
-    fontSize: 16px
-    fontWeight: 500
-    lineHeight: 1.5
-    letterSpacing: 0
-  caption:
-    fontFamily: NotionInter
-    fontSize: 14px
-    fontWeight: 400
-    lineHeight: 1.43
-    letterSpacing: 0
-  eyebrow:
-    fontFamily: NotionInter
-    fontSize: 12px
-    fontWeight: 600
-    lineHeight: 1.33
-    letterSpacing: 0.125px
+### Producto
 
-rounded:
-  xs: 4px
-  sm: 5px
-  md: 8px
-  lg: 12px
-  xl: 16px
-  full: 9999px
+**Carpeta Ciudadana** es un operador de una infraestructura nacional de documentos digitales. La interfaz debe transmitir tres ideas en el primer vistazo:
 
-spacing:
-  xxs: 4px
-  xs: 8px
-  sm: 12px
-  md: 16px
-  lg: 24px
-  xl: 28px
-  xxl: 32px
+1. **Esto es mío:** el ciudadano tiene control sobre su carpeta y decide qué documento sale.
+2. **Esto es seguro:** los documentos están protegidos, las autorizaciones son explícitas y las acciones importantes dejan evidencia.
+3. **Esto es sencillo:** el ciudadano no necesita entender la arquitectura distribuida para usar el servicio.
 
-components:
-  nav-bar:
-    backgroundColor: "{colors.canvas}"
-    textColor: "{colors.ink}"
-    typography: "{typography.body-sm}"
-    padding: 16px
-  button-primary:
-    backgroundColor: "{colors.primary}"
-    textColor: "{colors.on-primary}"
-    typography: "{typography.button}"
-    rounded: "{rounded.full}"
-  button-primary-pressed:
-    backgroundColor: "{colors.primary-active}"
-    textColor: "{colors.on-primary}"
-  button-secondary:
-    backgroundColor: "{colors.surface}"
-    textColor: "{colors.ink}"
-    typography: "{typography.button}"
-    rounded: "{rounded.full}"
-  button-utility:
-    backgroundColor: "{colors.surface}"
-    textColor: "{colors.ink}"
-    typography: "{typography.button}"
-    rounded: "{rounded.md}"
-    padding: 4px 14px
-  button-icon-circular:
-    backgroundColor: "rgba(0, 0, 0, 0.05)"
-    textColor: "{colors.on-primary}"
-    rounded: "{rounded.full}"
-  badge-pill:
-    backgroundColor: "{colors.surface}"
-    textColor: "{colors.primary}"
-    typography: "{typography.eyebrow}"
-    rounded: "{rounded.full}"
-    padding: 4px 8px
-  feature-card:
-    backgroundColor: "{colors.surface}"
-    textColor: "{colors.ink}"
-    typography: "{typography.body-md}"
-    rounded: "{rounded.lg}"
-    padding: 24px
-  feature-card-elevated:
-    backgroundColor: "{colors.surface}"
-    textColor: "{colors.ink}"
-    rounded: "{rounded.lg}"
-    padding: 24px
-  pricing-plan-card:
-    backgroundColor: "{colors.surface}"
-    textColor: "{colors.ink}"
-    typography: "{typography.body-sm}"
-    rounded: "{rounded.md}"
-    padding: 24px
-  pricing-plan-card-featured:
-    backgroundColor: "{colors.canvas-soft}"
-    textColor: "{colors.ink}"
-    rounded: "{rounded.md}"
-    padding: 24px
-  text-input:
-    backgroundColor: "{colors.surface}"
-    textColor: "{colors.ink}"
-    typography: "{typography.body-sm}"
-    rounded: "{rounded.xs}"
-    padding: 6px
-  hero-band:
-    backgroundColor: "{colors.secondary}"
-    textColor: "{colors.on-primary}"
-    typography: "{typography.display-1}"
-    padding: 32px
-  footer:
-    backgroundColor: "{colors.canvas-soft}"
-    textColor: "{colors.ink-secondary}"
-    typography: "{typography.caption}"
-    padding: 32px
+### Dirección visual
 
-  # ─── Examples (illustrative) — auto-derived; resolve any TO_FILL markers below ───
-  ex-pricing-tier:
-    description: "Default Pricing tier card. Re-uses feature-card chrome with brand canvas-soft surface."
-    backgroundColor: "{colors.canvas-soft}"
-    textColor: "{colors.ink}"
-    borderColor: "{colors.hairline}"
-    rounded: "{rounded.xl}"
-    padding: "{spacing.lg}"
-  ex-pricing-tier-featured:
-    description: "Featured/highlighted tier — polarity-flipped surface (dark fill + light text in light mode, light fill + dark text in dark mode)."
-    backgroundColor: "{colors.ink}"
-    textColor: "{colors.on-primary}"
-    rounded: "{rounded.xl}"
-    padding: "{spacing.lg}"
-  ex-product-selector:
-    description: "What's Included summary card — re-purposed for SaaS / B2B verticals (NOT a literal product gallery)."
-    backgroundColor: "{colors.surface}"
-    rounded: "{rounded.xl}"
-    padding: "{spacing.lg}"
-  ex-cart-drawer:
-    description: "Subscription summary — re-purposed for SaaS / B2B (line items per add-on, not literal cart)."
-    backgroundColor: "{colors.surface}"
-    rounded: "{rounded.xl}"
-    padding: "{spacing.lg}"
-    item-divider: "{colors.hairline}"
-  ex-app-shell-row:
-    description: "Sidebar nav row inside the App Shell example. Active state uses brand primary as the indicator."
-    backgroundColor: "{colors.canvas}"
-    activeIndicator: "{colors.primary}"
-    rounded: "{rounded.sm}"
-    padding: "{spacing.sm} {spacing.md}"
-  ex-data-table-cell:
-    description: "Default data-table th + td chrome. Header uses mono-caps eyebrow typography; body uses body-sm."
-    headerBackground: "{colors.canvas-soft}"
-    headerTypography: "{typography.eyebrow}"
-    bodyTypography: "{typography.body-sm}"
-    cellPadding: "{spacing.sm} {spacing.md}"
-    rowBorder: "{colors.hairline}"
-  ex-auth-form-card:
-    description: "Sign-in / sign-up card. Re-uses feature-card chrome with text-input primitives inside."
-    backgroundColor: "{colors.surface}"
-    rounded: "{rounded.xl}"
-    padding: "{spacing.lg}"
-  ex-modal-card:
-    description: "Modal dialog surface — same chrome as feature-card with elevated shadow."
-    backgroundColor: "{colors.surface}"
-    rounded: "{rounded.xl}"
-    padding: "{spacing.lg}"
-  ex-empty-state-card:
-    description: "Empty-state illustration frame."
-    backgroundColor: "{colors.canvas-soft}"
-    rounded: "{rounded.xl}"
-    padding: "{spacing.xxl}"
-    captionTypography: "{typography.body-md}"
-  ex-toast:
-    description: "Toast notification surface — feature-card shape + medium shadow."
-    backgroundColor: "{colors.surface}"
-    rounded: "{rounded.xl}"
-    padding: "{spacing.sm} {spacing.md}"
-    typography: "{typography.body-sm}"
+Usar una estética de **servicio público digital premium**: limpia, tranquila, confiable y altamente legible.
+
+La referencia conceptual combina:
+- el **minimalismo cálido y estructurado de Notion** para organización y sensación de espacio;
+- la **claridad editorial de Mintlify** para lectura, jerarquía y densidad controlada;
+- la **precisión funcional de Linear** para estados, tablas y acciones del sistema.
+
+No copiar identidades de marca ni estilos literalmente. Crear una identidad propia para Carpeta Ciudadana.
+
+### Sensación objetivo
+
+- Confianza sin rigidez institucional.
+- Tecnología avanzada sin apariencia de "software para ingenieros".
+- Mucho espacio visual, pero sin desperdiciar pantalla en vistas operativas.
+- Bordes suaves, superficies claras y contrastes sobrios.
+- Microinteracciones discretas: la interfaz debe sentirse estable, no juguetona.
+
+### Densidad
+
+- **Ciudadano:** densidad baja-media; una decisión principal por zona.
+- **Solicitudes/autorizaciones:** densidad media; comparar documentos rápidamente debe ser posible.
+- **Administrador:** densidad media-alta; tablas y trazabilidad son válidas cuando aportan información.
+
+### Regla principal
+
+> La interfaz siempre debe explicar qué está pasando, qué puede hacer el usuario y qué efecto tendrá su acción.
+
+Nunca usar una pantalla donde seguridad, estado o autorización dependan únicamente del color o de un icono ambiguo.
 
 ---
 
+## 2. Color Palette & Roles
 
-## Overview
+La paleta usa neutros cálidos/fríos muy claros con un **verde institucional propio** como color de confianza y acción primaria. Los estados semánticos se reservan para comunicar información operativa.
 
-Notion looks like a well-organized desk in good daylight. The dominant surface is not pure white but a warm, paper-soft off-white — `{colors.canvas-soft}` (#f6f5f4) — that takes the clinical edge off the screen and makes long pages feel like a document rather than an app. Type is set in `NotionInter` (a tuned Inter) in near-black `{colors.ink}` at large, tightly-tracked weights, so headlines read as confident statements with very little letter-spacing slack at display sizes (`{typography.display-1}` pulls −2.125px of tracking at 64px). The whole system whispers in greys and blacks, then says exactly one thing in colour: a single, dependable blue, `{colors.primary}` (#0075de), reserved almost entirely for the primary call-to-action and inline links.
+### Core palette
 
-Against that quiet chrome, Notion lets a **playful multi-colour sticker palette** carry all of the brand's personality — purple, pink, orange, teal, green and sky-blue appear as small illustrated blocks, app-icon stickers, and category dots scattered through the marketing pages. These colours never structure the layout or paint a CTA; they decorate. The discipline is deliberate: the interface stays monochrome-plus-blue so the content (and the cheerful illustrations) can breathe. The one exception to the bright daylight is the homepage hero, which inverts into a deep indigo "night" band (`{colors.secondary}`) with white type and glowing sticker constellations — a single dark island in an otherwise light document.
-
-Surfaces are defined by hairlines and the faintest layered shadows rather than heavy elevation. Cards round at a friendly 12px (`{rounded.lg}`), the marketing CTAs are fully-pill-shaped (`{rounded.full}`), and utility buttons round at a tighter 8px (`{rounded.md}`). Nothing is loud; the brand's character comes from restraint plus one well-placed splash of joy.
-
-**Key Characteristics:**
-- Warm paper-soft canvas `{colors.canvas-soft}` over pure white, never clinical
-- Near-black `{colors.ink}` `NotionInter` type with tight negative tracking at display sizes (`{typography.display-1}`)
-- Exactly one structural accent — Notion blue `{colors.primary}` — reserved for CTAs and links
-- A decorative-only multi-colour sticker palette (`{colors.accent-purple}`, `{colors.accent-pink}`, `{colors.accent-orange}`, `{colors.accent-teal}`, `{colors.accent-green}`, `{colors.accent-sky}`) that adds personality without ever painting structure
-- Pill-shaped marketing CTAs (`{rounded.full}`) contrasted with 8px utility buttons (`{rounded.md}`)
-- Elevation by hairline + barely-there layered shadow, not heavy drop-shadows
-- A single dark indigo hero "night" band (`{colors.secondary}`) inverting the otherwise daylight page rhythm
-
-## Colors
-
-> Source pages analysed: the Notion home page plus Pricing, Enterprise, Product (AI), Product (Agents), and Startups. Every secondary page resolved to the same core palette — Notion runs one tightly-scoped system across the marketing site.
-
-### Brand & Accent
-- **Notion Blue** (`{colors.primary}` — #0075de): the single structural accent. Primary CTA fill ("Get Notion free"), inline link colour, active-tab and focus signal. This is the only colour that ever paints an action.
-- **Pressed Blue** (`{colors.primary-active}` — #005bab): the darker press state of the primary CTA.
-- **Deep Indigo** (`{colors.secondary}` — #213183): the dark hero "night" band background and its sticker-constellation field; a deep brand-blue used for full-bleed inverted sections.
-
-The remaining colours form Notion's **decorative sticker palette** — they appear only as illustrated blocks, app stickers and category dots, never as CTAs or structural fills:
-- **Sticker Sky** (`{colors.accent-sky}` — #62aef0)
-- **Sticker Purple** (`{colors.accent-purple}` — #d6b6f6) / **Deep Purple** (`{colors.accent-purple-deep}` — #391c57)
-- **Sticker Pink** (`{colors.accent-pink}` — #ff64c8)
-- **Sticker Orange** (`{colors.accent-orange}` — #dd5b00) / **Deep Orange** (`{colors.accent-orange-deep}` — #793400)
-- **Sticker Teal** (`{colors.accent-teal}` — #2a9d99)
-- **Sticker Green** (`{colors.accent-green}` — #1aae39)
-- **Sticker Brown** (`{colors.accent-brown}` — #523410)
-
-### Surface
-- **White** (`{colors.canvas}` / `{colors.surface}` — #ffffff): card and panel surfaces, nav bar, form fields.
-- **Warm Paper** (`{colors.canvas-soft}` — #f6f5f4): the signature page canvas and the footer band — a warm off-white that gives the whole site its document-like calm.
-- **Hairline** (`{colors.hairline}` — #e6e6e6): 1px card borders and dividers, a black-at-10%-on-white blend kept solid for token reuse.
-
-### Text
-- **Ink** (`{colors.ink}` — #000000): primary headings and body text (rendered at ~95% alpha for a soft true-black).
-- **Warm Charcoal** (`{colors.ink-secondary}` — #31302e): secondary body copy and footer text.
-- **Stone** (`{colors.ink-muted}` — #615d59): supporting / muted copy.
-- **Ash** (`{colors.ink-faint}` — #a39e98): captions, metadata, placeholder text.
-
-### Semantic
-Notion's marketing surfaces do not expose a dedicated error/success palette in the system chrome — status is carried by the sticker palette (e.g. `{colors.accent-green}` for affirmative ticks) rather than a separate semantic ramp.
-
-## Typography
-
-### Font Family
-The entire system is set in **`NotionInter`** — Notion's tuned cut of Inter — with a fallback stack of `Inter, -apple-system, system-ui, "Segoe UI", Helvetica, Arial`. A single family carries everything from 64px display headlines to 12px eyebrows; there is no serif, no monospace display face. OpenType `lnum` (lining numerals) and `locl` features are enabled on body and heading roles.
-
-### Hierarchy
-
-| Token | Size | Weight | Line Height | Letter Spacing | Use |
-|---|---|---|---|---|---|
-| `{typography.display-1}` | 64px | 700 | 1.0 | −2.125px | Hero headline ("Meet the night shift") |
-| `{typography.display-2}` | 54px | 700 | 1.04 | −1.875px | Large section headlines |
-| `{typography.heading-1}` | 40px | 700 | 1.1 | −1px | Section headlines ("Plans and features") |
-| `{typography.heading-2}` | 26px | 700 | 1.23 | −0.625px | Sub-section headings |
-| `{typography.heading-3}` | 22px | 700 | 1.27 | −0.25px | Card titles |
-| `{typography.title}` | 20px | 600 | 1.4 | −0.125px | Feature titles, callouts |
-| `{typography.body-md}` | 16px | 400 | 1.5 | 0 | Default body copy |
-| `{typography.body-sm}` | 15px | 400 | 1.33 | 0 | Dense body, table rows, nav |
-| `{typography.button}` | 16px | 500 | 1.5 | 0 | Button labels |
-| `{typography.caption}` | 14px | 400 | 1.43 | 0 | Captions, footnotes |
-| `{typography.eyebrow}` | 12px | 600 | 1.33 | +0.125px | Pill badges, small labels |
-
-### Principles
-Notion's type voice is **tight, heavy, and quiet-confident**. Headlines lean on weight 700 and aggressive negative tracking (more negative the larger the size) so display copy feels set, not stretched. Body copy stays at a comfortable 1.5 line-height for document readability. The contrast between a heavy 700 headline and a calm 400 body is the primary expressive lever — there is no decorative typography, only a clear hierarchy.
-
-### Note on Font Substitutes
-`NotionInter` is a proprietary tuning of the open-source **Inter** family — substitute Inter directly. To approximate Notion's display tightness, apply the negative letter-spacing values in the table above explicitly (Inter at default tracking will read looser than `NotionInter`).
-
-## Layout
-
-### Spacing System
-- **Base unit**: 8px.
-- **Tokens (front matter)**: `{spacing.xxs}` 4px · `{spacing.xs}` 8px · `{spacing.sm}` 12px · `{spacing.md}` 16px · `{spacing.lg}` 24px · `{spacing.xl}` 28px · `{spacing.xxl}` 32px.
-- Card interior padding lands around `{spacing.lg}` (24px); utility buttons use a tight 4px/14px; form fields pad at `{spacing.xxs}`-scale 6px. Section gaps stack the larger steps.
-
-### Grid & Container
-Content is centred in a wide max-width column (~1080–1300px on desktop per the extracted breakpoints) with generous outer gutters. Feature sections alternate between full-width text blocks and 2-up / 3-up card grids; the pricing page widens to a 4-column plan table. The dark hero spans full-bleed edge to edge while body sections respect the centred container.
-
-### Whitespace Philosophy
-Whitespace is the primary grouping device. Sections are separated by large vertical gaps rather than rules, and cards sit on the warm canvas with quiet hairlines instead of heavy frames. The effect is document-like: airy, scannable, and never crowded.
-
-### Responsive Strategy
-
-#### Breakpoints
-| Name | Width | Key Changes |
+| Token | Hex | Rol |
 |---|---|---|
-| Wide | 1440px+ | Full multi-column grids, widest container |
-| Desktop | 1080–1300px | Standard centred container, 3-up card grids |
-| Tablet | 768–840px | Grids collapse to 2-up, nav begins condensing |
-| Mobile | ≤600px | Single-column stacks, hamburger nav, full-width CTAs |
+| `ink-950` | `#17201C` | Texto principal, títulos críticos |
+| `ink-700` | `#46514C` | Texto secundario |
+| `ink-500` | `#6E7974` | Texto auxiliar, metadata |
+| `surface-0` | `#FFFFFF` | Fondo de contenido principal |
+| `surface-50` | `#F7F8F6` | Fondo general |
+| `surface-100` | `#EEF1EE` | Secciones, fondos sutiles |
+| `surface-200` | `#E0E5E1` | Bordes y divisores |
+| `brand-700` | `#176B53` | Acción primaria, enlaces importantes |
+| `brand-600` | `#218161` | Hover/énfasis |
+| `brand-100` | `#DCEFE8` | Fondo de confianza/estado aprobado |
+| `brand-50` | `#EFF8F4` | Superficie tenue para bloques de confianza |
 
-#### Touch Targets
-Pill CTAs (`button-primary`, `button-secondary`) and utility buttons (`button-utility`) carry comfortable tap padding; aim for a 44×44px minimum hit area on mobile by preserving vertical padding even as labels shrink.
+### Semantic palette
 
-#### Collapsing Strategy
-The top nav condenses to a hamburger below the tablet breakpoint; multi-column card grids collapse to a single stacked column; the pricing plan table reflows from 4 side-by-side columns into stacked plan cards. Section padding tightens but the warm-canvas rhythm is preserved.
-
-#### Image Behavior
-Product screenshots and illustration tiles sit inside rounded `{rounded.lg}` frames and scale fluidly within their grid cell. Sticker illustrations are small fixed-scale decorative assets that re-flow but do not crop.
-
-## Elevation & Depth
-
-| Level | Treatment | Use |
+| Token | Hex | Rol |
 |---|---|---|
-| 0 — Flat | Hairline border `{colors.hairline}`, no shadow | Default cards on the warm canvas |
-| 1 — Soft | Layered micro-shadow: `rgba(0,0,0,0.01) 0 0.175px 1.041px`, `0.02 0 0.8px 2.925px`, `0.027 0 2.025px 7.847px`, `0.04 0 4px 18px` | Raised feature cards, floating buttons |
-| 2 — Elevated | Deeper 5-stop stack ending in `rgba(0,0,0,0.05) 0 23px 52px` | Modals, popovers, the elevated white pill on the dark hero |
+| `success-700` | `#216A45` | Acción completada, documento verificado |
+| `success-50` | `#EDF7F1` | Fondo de éxito |
+| `warning-700` | `#895B13` | Pendiente, requiere atención |
+| `warning-50` | `#FFF7E8` | Fondo de advertencia |
+| `danger-700` | `#B43B37` | Rechazo, revocación, fallo |
+| `danger-50` | `#FDEEEE` | Fondo de error |
+| `info-700` | `#245C83` | Información contextual |
+| `info-50` | `#EEF6FC` | Fondo informativo |
 
-Notion's elevation philosophy is **barely-there**: shadows are built from many near-transparent layers so surfaces feel gently lifted off the paper rather than dramatically dropped. Most cards rely on a hairline alone.
+### Uso del color
 
-### Decorative Depth
-The brand's real depth cue is **illustration**, not shadow. The dark indigo hero (`{colors.secondary}`) uses glowing sticker stickers and a starfield to create a sense of a lit night scene, and feature sections layer small colourful app-icon stickers over plain surfaces to add playful dimensionality. Colour-blocked illustration tiles (purple, pink, orange, teal headers on otherwise-white cards) provide visual rhythm.
+- El verde es el **color de acción y confianza**, no un adorno decorativo.
+- `danger` aparece solamente cuando existe una consecuencia real: rechazar, revocar, borrar, bloquear o error.
+- `warning` comunica pendiente o información que merece revisión.
+- Nunca usar verde/rojo como único indicador de estado. Acompañar con texto e iconografía.
+- Evitar gradientes fuertes, fondos saturados y colores neón.
+- No utilizar el color de marca en grandes superficies si reduce contraste o hace que la interfaz parezca promocional.
 
-## Shapes
+### Tema claro y oscuro
 
-### Border Radius Scale
+La interfaz ofrece un conmutador explícito de tema, además de respetar la preferencia del
+sistema mientras el usuario no elija. La elección se recuerda entre visitas.
 
-| Token | Value | Use |
-|---|---|---|
-| `{rounded.xs}` | 4px | Form fields, small tags, inline chips |
-| `{rounded.sm}` | 5px | Menu items, list rows, status pills |
-| `{rounded.md}` | 8px | Utility / nav buttons, smaller cards |
-| `{rounded.lg}` | 12px | Feature cards, illustration frames, content tiles |
-| `{rounded.xl}` | 16px | Large containers, image wells |
-| `{rounded.full}` | 9999px | Marketing pill CTAs, badges, circular icon buttons |
+- El tema no cambia el significado de un color: `danger` sigue siendo `danger` en ambos temas.
+- Cada par texto/fondo cumple AA en los **dos** temas, no solo en el claro.
+- Los diagramas heredan los mismos tokens que la interfaz. Un diagrama legible en claro y
+  gris sobre gris en oscuro es un fallo, no un detalle estético.
+- Un color de relleno de marca no sirve como color de texto sobre ese mismo relleno al
+  invertir el tema: se reserva un token de "texto sobre acento" por tema.
 
-### Photography Geometry
-Product screenshots are framed in rounded `{rounded.lg}` / `{rounded.xl}` wells, typically full-bleed within their container with a hairline edge. Illustration tiles use colour-blocked header bands above white card bodies. Avatars and app-icon stickers are small, sometimes fully circular (`{rounded.full}`). There is no heavy art-direction crop — images scale within their rounded frame.
+### Contraste
 
-## Components
+Todo texto, controles y estados deben diseñarse para cumplir **WCAG 2.1 AA**. Priorizar contraste, foco visible y legibilidad sobre fidelidad estética.
 
-> **No hover states documented.** Every spec below documents Default and Active/Pressed states only. Variants live as separate `components:` front-matter entries and are described in their own sub-blocks.
+---
 
-### Navigation
+## 3. Typography Rules
 
-**`nav-bar`** — Top navigation
-- White surface `{colors.canvas}`, `{colors.ink}` link text at `{typography.body-sm}`, padding `{spacing.md}`. Sits as a slim sticky bar; left wordmark, centre product/solutions menu links, right "Log in" text link plus a `button-utility` "Get Notion free" CTA. Condenses to a hamburger below the tablet breakpoint.
+### Tipografía
+
+Usar **Inter** como familia principal si está disponible. Si no, utilizar un sans-serif del sistema con métricas similares.
+
+Los títulos no requieren serif. La identidad debe sentirse institucional y moderna mediante proporción, espacio y jerarquía, no mediante una tipografía ornamental.
+
+### Escala
+
+| Token | Tamaño | Peso | Uso |
+|---|---:|---:|---|
+| `display` | 40 px / 48 px | 700 | Hero excepcional, bienvenida |
+| `h1` | 32 px / 40 px | 700 | Títulos de página |
+| `h2` | 24 px / 32 px | 700 | Secciones |
+| `h3` | 19 px / 28 px | 650 | Sub-secciones, tarjetas importantes |
+| `body-lg` | 18 px / 28 px | 400 | Introducciones, mensajes guía |
+| `body` | 16 px / 24 px | 400 | Texto principal |
+| `body-medium` | 16 px / 24 px | 600 | Labels y énfasis |
+| `small` | 14 px / 20 px | 400 | Ayuda, metadata |
+| `caption` | 12 px / 16 px | 600 | Etiquetas técnicas o auxiliares |
+
+### Reglas
+
+- Mantener `body` en 16 px como tamaño base.
+- Evitar párrafos largos sin subdivisión.
+- Usar frases simples y verbos directos: **“Autorizar”**, **“Rechazar”**, **“Descargar”**, **“Compartir”**.
+- No esconder información crítica en texto pequeño.
+- Para estados legales o de seguridad, mostrar primero el significado y después el detalle técnico.
+- Nunca comunicar una acción crítica únicamente con un icono.
+
+### Voz de interfaz
+
+Hablar como un servicio que guía, no como un sistema que ordena.
+
+Preferir:
+- “Tienes una solicitud pendiente.”
+- “Elige los documentos que quieres compartir.”
+- “Este documento tiene una firma verificable.”
+
+Evitar:
+- “Error de autorización.” cuando se puede explicar qué ocurrió.
+- “Submit”, “Payload”, “Endpoint”, “Token”, “ObjectId” u otros términos de implementación en la interfaz ciudadana.
+
+---
+
+## Iconography
+
+Use Lucide Icons as the single icon library.
+
+Rules:
+- Never use emojis as UI icons.
+- Never mix multiple icon libraries.
+- Use 20px icons for standard interface actions.
+- Use 24px icons for primary navigation and prominent states.
+- Default stroke width: 1.75–2px.
+- Icons must always have semantic meaning.
+- Use icons together with text for critical actions.
+- Do not rely on color alone to communicate status.
+- Maintain consistent alignment and optical weight.
+
+### Implementación
+
+```sh
+npm install lucide-react
+```
+
+```jsx
+import { ShieldCheck } from 'lucide-react'
+
+<ShieldCheck size={20} strokeWidth={1.75} aria-hidden="true" />
+```
+
+El icono es decorativo cuando va acompañado de texto: lleva `aria-hidden="true"` y el
+texto es quien nombra la acción. Cuando el control es solo icono, el botón lleva
+`aria-label` con el mismo verbo que usaría la etiqueta visible.
+
+El color del trazo sale siempre de un token (`currentColor` por defecto). No se pinta
+un icono con un hex directo.
+
+---
+
+## 4. Component Styling
 
 ### Buttons
 
-**`button-primary`** — Primary CTA ("Get Notion free")
-- Background `{colors.primary}`, text `{colors.on-primary}`, type `{typography.button}`, fully pill-shaped `{rounded.full}`. The single blue action on any page.
-- Pressed state lives in `button-primary-pressed` (background `{colors.primary-active}`); marketing buttons also apply a brief `scale(0.9)` press transform.
+#### Primary
 
-**`button-primary-pressed`**
-- Background `{colors.primary-active}`, text `{colors.on-primary}` — the depressed state of the primary CTA.
+Usado para la **única acción principal** del contexto.
 
-**`button-secondary`** — Secondary CTA ("Request a demo")
-- White surface `{colors.surface}`, text `{colors.ink}`, type `{typography.button}`, pill `{rounded.full}`, carried by the soft Level-1 shadow. Pairs beside `button-primary` in the hero.
+- Fondo: `brand-700`.
+- Texto: blanco.
+- Altura mínima: 44 px; preferir 48 px en flujos móviles.
+- Radio: 10 px.
+- Peso: 600.
+- Hover: `brand-600`.
+- Focus: anillo visible de 2–3 px.
+- Disabled: fondo neutro y texto de contraste suficiente.
 
-**`button-utility`** — Nav / plan-select button
-- White surface `{colors.surface}`, text `{colors.ink}`, type `{typography.button}`, tighter `{rounded.md}` (8px), padding `4px 14px`, 1px `{colors.hairline}` border. Used for the nav CTA and pricing plan-select buttons where the marketing pill would be too large.
+Ejemplos: `Autorizar`, `Compartir documentos`, `Continuar`.
 
-**`button-icon-circular`** — Carousel / media control
-- Circular `{rounded.full}` control with a translucent `rgba(0,0,0,0.05)` fill and `{colors.on-primary}` glyph, used for slide and play/pause controls; applies a `scale(0.9)` press transform.
+#### Secondary
 
-### Cards & Containers
+- Fondo transparente o `surface-0`.
+- Borde `surface-200`.
+- Texto `ink-950`.
+- Radio 10 px.
 
-**`feature-card`** — Content / feature card
-- White surface `{colors.surface}`, `{colors.ink}` text, `{typography.body-md}`, rounded `{rounded.lg}` (12px), padding `{spacing.lg}` (24px). The workhorse marketing card; often topped by a colour-blocked illustration band from the sticker palette. Default elevation is flat (hairline only).
+Ejemplos: `Ver detalles`, `Cancelar`, `Volver`.
 
-**`feature-card-elevated`** — Raised feature card
-- Same chrome as `feature-card` with the soft Level-1 layered shadow for cards that float above the canvas (testimonials, floating product panels).
+#### Destructive
 
-**`pricing-plan-card`** — Pricing plan column
-- White surface `{colors.surface}`, `{colors.ink}` text, `{typography.body-sm}`, rounded `{rounded.md}` (8px), padding `{spacing.lg}`. A bordered column listing a plan's price and feature checklist, with a `button-utility` select action.
+Usar solo para rechazo, revocación o eliminación.
 
-**`pricing-plan-card-featured`** — Highlighted plan column
-- Warm `{colors.canvas-soft}` fill to lift the recommended tier off the white siblings, same `{rounded.md}` shape and padding. Distinguished by surface tint rather than a coloured border.
+- Fondo preferente blanco/neutral con borde/texto `danger-700`.
+- Cuando la acción exige confirmación, explicar la consecuencia en el modal antes de ejecutar.
 
-### Inputs & Forms
+### Cards
 
-**`text-input`** — Text / number field
-- White surface `{colors.surface}`, `{colors.ink}` text, `{typography.body-sm}`, 1px `rgb(221,221,221)` border, rounded `{rounded.xs}` (4px), padding `6px`. Square-ish corners deliberately tighter than the pill CTAs. Focus adds the soft Level-1 shadow.
+Las tarjetas son el principal contenedor de información del ciudadano.
 
-### Signature Components
+- Fondo: `surface-0`.
+- Borde de 1 px `surface-200`.
+- Radio: 14 px.
+- Padding: 20–24 px.
+- Sombra mínima o inexistente en estado normal.
+- Hover: cambio muy leve de borde/superficie, nunca elevación exagerada.
 
-**`hero-band`** — Dark "night" hero
-- Full-bleed deep indigo `{colors.secondary}` band carrying `{typography.display-1}` white headline, sticker-constellation field, and a `button-primary` + `button-secondary` CTA pair. The single inverted dark island in an otherwise daylight page.
+Usos:
+- Resumen de carpeta.
+- Documento individual.
+- Solicitud de documentos.
+- Estado de transferencia.
+- Seguridad y cuenta.
 
-**`badge-pill`** — Eyebrow / category pill
-- White surface `{colors.surface}`, `{colors.primary}` text, `{typography.eyebrow}` (12px / 600), fully pill `{rounded.full}`, padding `4px 8px`. Small labels such as the pricing "Essential for staying organized" eyebrow and category tags.
+### Document card
 
-**`footer`** — Site footer
-- Warm `{colors.canvas-soft}` band, `{colors.ink-secondary}` link text at `{typography.caption}`, padding `{spacing.xxl}`. Multi-column link directory closing every page.
+Cada documento debe mostrar claramente:
 
-### Examples (illustrative)
+1. nombre del documento;
+2. entidad emisora;
+3. fecha;
+4. estado de firma/verificación;
+5. acción principal;
+6. menú secundario para opciones adicionales.
 
-> Kit-mirror demonstration surfaces. Each `ex-*` entry references brand-native primitives so downstream consumers (`/preview-design`, `/generate-kit`) re-skin the same 10 surfaces consistently.
+No esconder la diferencia entre **documento oficial firmado** y **documento temporal no firmado**.
 
-**`ex-pricing-tier`** — Default Pricing tier card. Re-uses feature-card chrome with brand canvas-soft surface.
-- Properties: `backgroundColor`, `textColor`, `borderColor`, `rounded`, `padding`
+### Status badge
 
-**`ex-pricing-tier-featured`** — Featured/highlighted tier — polarity-flipped surface (dark fill + light text in light mode, light fill + dark text in dark mode).
-- Properties: `backgroundColor`, `textColor`, `rounded`, `padding`
+Los estados se representan con **texto + icono + color semántico**.
 
-**`ex-product-selector`** — What's Included summary card — re-purposed for SaaS / B2B verticals (NOT a literal product gallery).
-- Properties: `backgroundColor`, `rounded`, `padding`
+Estados recomendados:
+- `Verificado`
+- `Pendiente`
+- `Requiere atención`
+- `Rechazado`
+- `Revocado`
+- `Transferido`
+- `Temporal / sin firma`
 
-**`ex-cart-drawer`** — Subscription summary — re-purposed for SaaS / B2B (line items per add-on, not literal cart).
-- Properties: `backgroundColor`, `rounded`, `padding`, `item-divider`
+### Inputs
 
-**`ex-app-shell-row`** — Sidebar nav row inside the App Shell example. Active state uses brand primary as the indicator.
-- Properties: `backgroundColor`, `activeIndicator`, `rounded`, `padding`
+- Altura: 44–48 px.
+- Borde 1 px `surface-200`.
+- Radio 10 px.
+- Label siempre visible; no depender solo de placeholder.
+- Error mostrado debajo del campo con lenguaje humano y acción concreta.
+- En campos sensibles, explicar por qué se necesita el dato cuando sea relevante.
 
-**`ex-data-table-cell`** — Default data-table th + td chrome. Header uses mono-caps eyebrow typography; body uses body-sm.
-- Properties: `headerBackground`, `headerTypography`, `bodyTypography`, `cellPadding`, `rowBorder`
+### Navigation
 
-**`ex-auth-form-card`** — Sign-in / sign-up card. Re-uses feature-card chrome with text-input primitives inside.
-- Properties: `backgroundColor`, `rounded`, `padding`
+Desktop:
+- Sidebar izquierda, ancho aproximado 240–260 px.
+- Logo/nombre arriba.
+- Secciones claras y cortas.
+- Perfil/seguridad al final.
 
-**`ex-modal-card`** — Modal dialog surface — same chrome as feature-card with elevated shadow.
-- Properties: `backgroundColor`, `rounded`, `padding`
+Mobile:
+- No convertir el sidebar en una navegación lateral estrecha.
+- Usar navegación compacta y acciones prioritarias visibles.
+- Mantener siempre accesibles: carpeta, solicitudes y perfil/seguridad.
 
-**`ex-empty-state-card`** — Empty-state illustration frame.
-- Properties: `backgroundColor`, `rounded`, `padding`, `captionTypography`
+### Modal / confirmation
 
-**`ex-toast`** — Toast notification surface — feature-card shape + medium shadow.
-- Properties: `backgroundColor`, `rounded`, `padding`, `typography`
+Las acciones sensibles deben mostrar:
+- qué se va a hacer;
+- qué documentos están incluidos;
+- quién recibirá la información;
+- por cuánto tiempo o bajo qué contexto, cuando aplique;
+- qué ocurrirá después.
 
+Para autorizar una compartición, el botón debe decir **qué se autoriza**, no simplemente “Aceptar”.
 
-## Do's and Don'ts
+### Toasts / banners
+
+Usar toast para éxito simple y no crítico.
+
+Usar banner o bloque persistente cuando el usuario deba tomar una decisión o exista una consecuencia relevante.
+
+### Loading / empty states
+
+Los estados vacíos nunca deben parecer un error.
+
+Ejemplos:
+- “Todavía no tienes documentos.”
+- “No tienes solicitudes pendientes.”
+- “Esta sección aparecerá cuando recibas tu primer documento.”
+
+---
+
+## 5. Layout Principles
+
+### Grid
+
+- Max-width de contenido: **1200–1280 px**.
+- Columna principal cómoda para lectura: **720–840 px**.
+- Gutter desktop: 24–32 px.
+- Gutter mobile: 16 px.
+
+### Spacing scale
+
+Usar una escala basada en 4 px:
+
+`4 / 8 / 12 / 16 / 20 / 24 / 32 / 40 / 48 / 64 / 80`
+
+### Page structure
+
+Cada página debe tener, en este orden cuando corresponda:
+
+1. Título claro.
+2. Contexto breve.
+3. Estado o tarea pendiente más importante.
+4. Contenido principal.
+5. Ayuda o información secundaria.
+
+### Home / Dashboard del ciudadano
+
+El dashboard no debe parecer un panel de analítica. Debe parecer una **puerta de entrada a la carpeta**.
+
+Orden recomendado:
+
+1. saludo/contexto;
+2. alertas o solicitudes que requieren acción;
+3. resumen de documentos;
+4. últimos documentos recibidos;
+5. accesos rápidos;
+6. seguridad/actividad reciente cuando sea útil.
+
+### Information hierarchy
+
+En cualquier vista, el usuario debe poder identificar en menos de unos segundos:
+- dónde está;
+- qué está pendiente;
+- cuál es la acción principal;
+- qué información es sensible o irreversible.
+
+### Whitespace
+
+Usar espacio para separar conceptos, no para decorar.
+
+Evitar:
+- bloques enormes de color;
+- más de una acción primaria compitiendo en la misma sección;
+- tarjetas sin función;
+- dashboards con métricas irrelevantes para el ciudadano.
+
+---
+
+## 6. Depth & Elevation
+
+La interfaz debe apoyarse principalmente en **bordes, superficies y separación espacial**, no en sombras fuertes.
+
+### Elevation tokens
+
+| Token | Uso |
+|---|---|
+| `elevation-0` | Contenido normal |
+| `elevation-1` | Tarjetas flotantes, dropdowns |
+| `elevation-2` | Modal, picker, panel temporal |
+| `elevation-3` | Situaciones excepcionales; evitar en vistas normales |
+
+### Shadow philosophy
+
+- Sombras suaves y amplias.
+- Ningún elemento debe parecer físicamente elevado muchos centímetros.
+- Un modal debe distinguirse claramente del fondo, pero sin aspecto de popup publicitario.
+
+### Borders
+
+- 1 px, neutro y de bajo contraste.
+- Usar el borde para agrupar y la sombra para establecer capas, no al revés.
+
+---
+
+## 7. Do's and Don'ts
 
 ### Do
-- Reserve `{colors.primary}` for the primary action, inline links, and the active/focus signal — nothing decorative.
-- Keep the page on the warm `{colors.canvas-soft}` canvas; use pure white `{colors.surface}` for cards and fields to create gentle figure/ground.
-- Let the sticker palette (`{colors.accent-pink}`, `{colors.accent-teal}`, `{colors.accent-orange}`, …) live only in illustrations, icon tiles and category dots.
-- Set headlines in heavy `{typography.display-1}`/`{typography.heading-1}` with their negative tracking applied explicitly.
-- Use pill `{rounded.full}` for marketing CTAs and tighter `{rounded.md}` for nav/utility buttons — the contrast is intentional.
-- Define surfaces with `{colors.hairline}` and the barely-there Level-1 shadow rather than heavy drop-shadows.
-- Reserve the deep indigo `{colors.secondary}` "night" treatment for a single hero moment, not repeated bands.
+
+- Diseñar primero el flujo crítico de **autorizar una solicitud**.
+- Mostrar claramente qué documentos se van a compartir.
+- Mostrar la entidad que solicita y el contexto de la solicitud.
+- Diferenciar documentos verificados de temporales.
+- Usar lenguaje no técnico para ciudadanos.
+- Hacer visibles los estados de transferencia y recepción.
+- Mantener una jerarquía visual estable en todas las pantallas.
+- Diseñar primero mobile y después ampliar a desktop.
+- Proveer foco de teclado visible y targets táctiles amplios.
+- Mantener la misma terminología en navegación, botones, notificaciones y mensajes.
 
 ### Don't
-- Don't paint a CTA or structural fill in any sticker-palette colour — those are decoration only.
-- Don't introduce a second structural accent alongside `{colors.primary}`.
-- Don't put pill `{rounded.full}` radii on form fields — inputs stay tight at `{rounded.xs}` (4px).
-- Don't drop heavy shadows; Notion's elevation is many near-transparent layers, never a hard cast.
-- Don't set body copy in a heavy weight — keep 400 for readability and let weight 700 belong to headlines.
-- Don't place type on pure clinical white for full pages; the warm `{colors.canvas-soft}` is core to the brand calm.
+
+- No convertir el producto en un dashboard de infraestructura.
+- No usar estética de crypto/fintech para un producto público.
+- No usar verde para todo: el color debe tener significado.
+- No crear modales innecesarios para tareas normales.
+- No esconder el receptor de una transferencia detrás de texto secundario.
+- No pedir al ciudadano que interprete códigos técnicos para comprender un error.
+- No usar un spinner indefinido durante transferencias largas; mostrar estado y progreso.
+- No utilizar iconos como sustitutos de texto en acciones críticas.
+- No crear formularios de alta densidad cuando un asistente paso a paso resuelva mejor el flujo.
+- No diseñar pantallas separadas para cada excepción si un componente de estado puede resolverlas de forma consistente.
+
+---
+
+## 8. Responsive Behavior
+
+El producto debe ser **responsive desde el inicio** y funcionar en dispositivos de gama baja.
+
+### Breakpoints
+
+Usar breakpoints por necesidad de layout, no por modelo de dispositivo:
+
+- `sm`: 640 px
+- `md`: 768 px
+- `lg`: 1024 px
+- `xl`: 1280 px
+
+### Mobile rules
+
+- Padding lateral: 16 px.
+- Targets táctiles: mínimo 44 × 44 px.
+- Botones primarios: ancho completo cuando simplifique la tarea.
+- Tablas complejas: convertir en cards o filas expandibles.
+- Sidebar: sustituir por navegación compacta.
+- Formularios: una columna por defecto.
+- Mantener visible el resumen de la acción antes de confirmar.
+
+### Desktop rules
+
+- Mantener el contenido centrado.
+- Usar dos columnas solo cuando la segunda aporte contexto útil.
+- En solicitudes de documentos, permitir revisión lateral o resumen persistente si no reduce claridad.
+
+### Low bandwidth / low-end devices
+
+- Evitar animaciones pesadas.
+- No depender de imágenes para explicar estados.
+- Priorizar contenido HTML estructurado.
+- Mostrar estados de carga parciales y progresivos.
+- Evitar polling agresivo desde la interfaz.
+
+### Accessibility
+
+Cumplir **WCAG 2.1 AA** como criterio de diseño, no como revisión final.
+
+Requisitos visuales y de interacción:
+- contraste suficiente;
+- foco visible;
+- navegación por teclado;
+- labels asociados a inputs;
+- mensajes de error asociados al control;
+- orden de lectura correcto;
+- no depender solo de color;
+- soporte para zoom y tamaños de texto mayores;
+- componentes compatibles con lectores de pantalla.
+
+---
+
+## 9. Product-specific UX Patterns
+
+### A. Autorización de documentos — flujo más importante
+
+La autorización es el corazón de la experiencia porque convierte la arquitectura de privacidad en una acción entendible.
+
+#### Pantalla
+
+**Título:** `Una entidad solicita documentos`
+
+Mostrar inmediatamente:
+- entidad solicitante;
+- propósito/contexto;
+- fecha de solicitud;
+- lista de documentos;
+- estado de cada documento;
+- acción `Autorizar documentos`;
+- acción secundaria `Rechazar`.
+
+#### Antes de confirmar
+
+Mostrar un resumen:
+
+> “Vas a compartir 3 documentos con [entidad]. Esta acción quedará registrada.”
+
+Cuando el caso lo requiera, el segundo factor aparece **después de la revisión**, no antes de mostrar al usuario qué está autorizando.
+
+### B. Document detail
+
+La vista de un documento debe responder:
+
+- ¿Qué es?
+- ¿Quién lo emitió?
+- ¿Cuándo?
+- ¿Está firmado/verificado?
+- ¿Puedo descargarlo?
+- ¿Con quién lo he compartido?
+
+Los detalles criptográficos o técnicos se muestran bajo una sección secundaria del tipo **“Ver información de verificación”**.
+
+### C. Transferencia / mudanza de operador
+
+La mudanza debe sentirse como un proceso controlado, no como una configuración técnica.
+
+Mostrar:
+- operador actual;
+- nuevo operador;
+- progreso;
+- documentos o datos incluidos;
+- confirmación final;
+- resultado.
+
+Estados:
+`Preparando` → `Transfiriendo` → `Verificando` → `Completado` / `Requiere atención`.
+
+Nunca indicar simplemente “processing”.
+
+### D. Documento temporal
+
+Un temporal debe tener una señalización inequívoca:
+
+`Documento temporal · sin firma verificable`
+
+Acciones:
+- reemplazar;
+- descargar;
+- eliminar;
+- solicitar versión oficial cuando exista ese flujo.
+
+### E. Actividad y trazabilidad
+
+La trazabilidad es importante, pero el ciudadano no necesita ver un log técnico.
+
+Mostrar eventos como:
+- “Documento recibido de Ministerio de Educación.”
+- “Compartiste tu diploma con la Embajada.”
+- “Solicitud rechazada.”
+
+Cuando se abra el detalle, mostrar fecha, actor y acción con un lenguaje comprensible.
+
+### F. Notificaciones
+
+Prioridades:
+1. solicitud que requiere autorización;
+2. documento nuevo recibido;
+3. transferencia o mudanza terminada;
+4. evento de seguridad;
+5. información general.
+
+No bombardear al ciudadano con notificaciones para eventos técnicos internos.
+
+---
+
+## 10. Core Screens
+
+### Ciudadano
+
+1. **Inicio / Carpeta**
+2. **Mis documentos**
+3. **Detalle del documento**
+4. **Solicitudes**
+5. **Detalle de solicitud / autorización**
+6. **Subir documento temporal**
+7. **Compartir documentos**
+8. **Transferir mi carpeta / Cambiar de operador**
+9. **Notificaciones**
+10. **Perfil y seguridad**
+
+### Entidad
+
+1. Buscar/seleccionar ciudadano según la experiencia permitida.
+2. Crear solicitud de documentos.
+3. Ver estado de la solicitud.
+4. Recibir paquete autorizado.
+
+### Administrador del operador
+
+1. Salud del operador.
+2. Transferencias.
+3. Integraciones.
+4. Auditoría.
+5. Usuarios y permisos.
+6. Incidencias.
+
+El administrador puede tener una UI más densa, pero debe reutilizar los mismos tokens, componentes y estados.
+
+---
+
+## 11. Design Tokens — Implementation Starter
+
+```css
+:root {
+  --color-ink-950: #17201C;
+  --color-ink-700: #46514C;
+  --color-ink-500: #6E7974;
+
+  --color-surface-0: #FFFFFF;
+  --color-surface-50: #F7F8F6;
+  --color-surface-100: #EEF1EE;
+  --color-surface-200: #E0E5E1;
+
+  --color-brand-700: #176B53;
+  --color-brand-600: #218161;
+  --color-brand-100: #DCEFE8;
+  --color-brand-50: #EFF8F4;
+
+  --color-success-700: #216A45;
+  --color-success-50: #EDF7F1;
+  --color-warning-700: #895B13;
+  --color-warning-50: #FFF7E8;
+  --color-danger-700: #B43B37;
+  --color-danger-50: #FDEEEE;
+  --color-info-700: #245C83;
+  --color-info-50: #EEF6FC;
+
+  --radius-sm: 8px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  --shadow-1: 0 2px 10px rgba(23, 32, 28, 0.05);
+  --shadow-2: 0 12px 32px rgba(23, 32, 28, 0.10);
+}
+```
+
+---
+
+## 12. Agent Prompt Guide
+
+When an AI coding/design agent generates a new screen for this project, it should follow these rules:
+
+> Build the UI as a calm, trustworthy Colombian public digital service. Use a warm-neutral surface system with a restrained institutional green as the primary action color. Use Inter/system sans-serif, 16 px body text, rounded 10–14 px controls/cards, subtle borders, minimal shadows and generous spacing. Prioritize clarity over decoration. Every critical citizen action must state its consequence in plain language. Never expose implementation jargon such as API, endpoint, ObjectId, payload or token in the citizen-facing interface. Distinguish verified official documents from temporary unsigned documents. Use text + icon + color for statuses. Make the critical authorization flow understandable in no more than a few deliberate steps, with the requestor, purpose, selected documents and final action visible before confirmation. Design mobile-first, WCAG 2.1 AA, keyboard accessible, touch-friendly and usable on low-end devices. Keep dashboards calm and task-oriented; do not imitate crypto, trading, gaming or developer-tool aesthetics.
+
+### Preferred component vocabulary
+
+`PageHeader`, `Sidebar`, `BottomNav`, `DocumentCard`, `DocumentStatus`, `RequestCard`, `AuthorizationSummary`, `PrimaryButton`, `SecondaryButton`, `DangerButton`, `StepIndicator`, `Timeline`, `SecurityNotice`, `EmptyState`, `ErrorState`, `LoadingState`, `ConfirmationDialog`, `ActivityItem`, `Toast`.
+
+### Preferred copy vocabulary
+
+Use:
+- Carpeta
+- Documento
+- Documento temporal
+- Documento verificado
+- Solicitud
+- Autorizar
+- Rechazar
+- Compartir
+- Recibir
+- Transferir
+- Operador
+- Actividad
+- Seguridad
+
+Avoid:
+- Dashboard (use `Inicio` when speaking to citizens)
+- Payload
+- Endpoint
+- Token
+- ObjectId
+- Callback
+- Webhook
+- Job
+- Queue
+- Retry
+
+---
+
+## 13. Relationship to the Architecture
+
+This DESIGN.md defines **visual and interaction language**, not the software architecture.
+
+The UI should reflect the architecture's important boundaries without exposing implementation details:
+
+- The centralizador is a **directory/identity dependency**, not a document store in the UI mental model.
+- Documents move between operators; the user sees this as **recepción, transferencia o compartición**, not as internal messaging infrastructure.
+- Authorization is explicit and auditable.
+- Security and traceability must be visible as user outcomes, while cryptographic and integration details stay in secondary technical views.
+
+### Architecture-aware UI states
+
+The frontend must have explicit states for:
+- request created;
+- waiting for citizen authorization;
+- second-factor verification;
+- transfer in progress;
+- transfer completed;
+- transfer failed and recoverable;
+- document received;
+- signature verified;
+- signature verification unavailable;
+- temporary document uploaded;
+- notification sent / pending.
+
+Do not collapse these into a generic `loading` state.
+
+---
+
+## 14. Acceptance Checklist for New Screens
+
+Before accepting a new screen, verify:
+
+- [ ] The primary task is obvious without reading every word.
+- [ ] The interface uses the established color tokens.
+- [ ] Critical actions are at least 44 px high.
+- [ ] Focus state is visible.
+- [ ] Status is not communicated by color alone.
+- [ ] Citizen-facing copy contains no implementation jargon.
+- [ ] Official/verified vs temporary/unsigned documents are visually distinct.
+- [ ] Sensitive actions explain their consequence before confirmation.
+- [ ] Mobile layout is usable at narrow widths.
+- [ ] Empty, loading, success and error states are explicitly designed.
+- [ ] The screen remains understandable with increased text size.
+- [ ] The design preserves the calm, trustworthy public-service aesthetic.
+
+---
+
+## Source-informed design rationale
+
+This system is tailored to the project requirements rather than copied from a commercial product. The project describes six citizen-facing use cases and identifies usability, security, privacy, traceability, interoperability and accessibility as core concerns. The design therefore treats **authorization, document status, clarity of language and recovery/progress states** as first-class UI concepts.
+
+The selected visual direction is intentionally a hybrid: Notion is useful for calm organization and soft surfaces, Mintlify for reading clarity, and Linear for precise operational states. These references are starting points only; the resulting tokens and components above are a custom system for Carpeta Ciudadana.

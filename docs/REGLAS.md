@@ -142,10 +142,12 @@ Para las secciones de prosa (4, 6 y los pies de diagrama):
 
 ## 8. Sistema de diseño — Notion
 
-La especificación completa vive en `docs/DESIGN.md` y los tokens en `src/styles/tokens.css`.
+Los tokens viven en `src/styles/tokens.css`. `docs/DESIGN.md` es el sistema de diseño del
+**producto** Carpeta Ciudadana: manda en color, contraste, iconografía y tema, y de ahí salen
+las reglas transversales que este documento también cumple.
 **En las hojas de estilo no se escribe ningún hex.** Todo sale de un token.
 
-Las cinco reglas que no se rompen:
+Las siete reglas que no se rompen:
 
 1. **Un solo acento estructural: el azul `--primary`.** Pinta acciones, enlaces, el indicador
    de sección activa y el foco. Nada más lo usa.
@@ -158,6 +160,11 @@ Las cinco reglas que no se rompen:
    Ese contraste crea figura y fondo sin necesidad de sombras.
 5. **La elevación es filete más `--e-1`.** Nunca una sombra dura. El único momento invertido
    de la página es la portada, con la banda noche `--secondary`. No se repite en ninguna otra.
+6. **Los dos temas cumplen AA, y lo comprueba `npm run check`.** Un token de relleno no vale
+   como color de texto sobre ese mismo relleno al invertir el tema: para eso están
+   `--primary-text`, `--on-accent` y `--ink-faint-text`. `--ink-faint` solo pinta líneas.
+7. **Los iconos son Lucide, nunca emojis.** 20px y trazo 1.75 en controles, `aria-hidden`
+   cuando van con texto. Un estado nunca se comunica solo con color ni solo con un icono.
 
 Radios: campos 4px, botones utilitarios 8px, tarjetas 12px, contenedores grandes 16px,
 píldoras y avatares `--r-full`. Los campos de formulario nunca llevan radio de píldora.

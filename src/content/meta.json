@@ -3,6 +3,7 @@
   "titulo": "Carpeta Ciudadana",
   "subtitulo": "Requerimientos, atributos de calidad y contexto del Operador que vamos a construir. La evidencia de la API está verificada contra el servicio real; lo que el caso no permite decidir está marcado y escalado a la sección de bloqueos.",
   "favicon": "🗂️",
+  "tema": { "aOscuro": "Oscuro", "aClaro": "Claro" },
   "datos": [
     { "titulo": "Entrega", "valor": "12 sep 2026, 7:00 p. m." },
     { "titulo": "Funcionales", "valor": "65 en 9 dominios", "auto": "totalRF" },

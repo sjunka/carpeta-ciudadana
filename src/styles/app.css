@@ -22,7 +22,7 @@ h2 { font-size: clamp(26px, 3vw, 40px); font-weight: 700; line-height: 1.1; lett
 h3 { font-size: 22px; font-weight: 700; line-height: 1.27; letter-spacing: -0.25px }
 p { margin: 0 0 var(--s-md); max-width: 74ch }
 code, .mono { font-family: var(--font-mono) }
-a { color: var(--primary); text-decoration: none }
+a { color: var(--primary-text); text-decoration: none }
 a:hover { text-decoration: underline }
 :focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; border-radius: var(--r-xs) }
 
@@ -70,9 +70,32 @@ a:hover { text-decoration: underline }
   position: sticky; top: 0; z-index: 50;
   background: var(--canvas); border-bottom: 1px solid var(--hairline);
 }
-.toc-in {
+.toc-bar {
   max-width: 1180px; margin: 0 auto; padding: 0 var(--s-lg);
+  display: flex; align-items: center; gap: var(--s-md);
+}
+.toc-in {
+  flex: 1 1 auto; min-width: 0;
   display: flex; gap: var(--s-xxs); overflow-x: auto; scrollbar-width: thin;
+}
+
+/* ---- Conmutador de tema: icono Lucide + texto, nunca solo el icono ---- */
+.tema {
+  flex: none;
+  display: inline-flex; align-items: center; gap: var(--s-xs);
+  min-height: 36px; padding: var(--s-xxs) var(--s-sm);
+  font: inherit; font-size: 14px; font-weight: 500; line-height: 1.43;
+  cursor: pointer; color: var(--ink-secondary);
+  background: var(--surface); border: 1px solid var(--hairline);
+  border-radius: var(--r-md);
+}
+.tema:hover { border-color: var(--ink-faint); color: var(--ink) }
+.tema:active { transform: scale(0.97) }
+.tema svg { flex: none }
+
+@media (max-width: 640px) {
+  .tema span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%) }
+  .tema { padding: var(--s-xxs) }
 }
 .toc-in a {
   flex: none; padding: var(--s-md) var(--s-sm);
@@ -81,7 +104,7 @@ a:hover { text-decoration: underline }
   white-space: nowrap; text-decoration: none;
 }
 .toc-in a:hover { color: var(--ink); text-decoration: none }
-.toc-in a.on { color: var(--primary); border-bottom-color: var(--primary) }
+.toc-in a.on { color: var(--primary-text); border-bottom-color: var(--primary) }
 
 /* ============================================================
    Secciones
@@ -92,7 +115,7 @@ section { padding: var(--s-xxl) 0 var(--s-xs); scroll-margin-top: calc(var(--nav
   border-bottom: 1px solid var(--hairline);
   padding-bottom: var(--s-sm); margin-bottom: var(--s-lg);
 }
-.sec-num { font-family: var(--font-mono); font-size: 12px; font-weight: 600; color: var(--primary) }
+.sec-num { font-family: var(--font-mono); font-size: 12px; font-weight: 600; color: var(--primary-text) }
 .sec-head h2 { font-size: clamp(26px, 2.6vw, 40px) }
 .sec-head p { margin: 0; font-size: 15px; line-height: 1.33; color: var(--ink-muted); flex: 1 1 280px }
 
@@ -175,9 +198,9 @@ tr.block td.id { box-shadow: inset 3px 0 0 var(--st-bloqueo) }
 }
 .p-a { background: var(--ink); color: var(--canvas) }
 .p-m { background: transparent; color: var(--ink-secondary); box-shadow: inset 0 0 0 1px var(--hairline) }
-.p-b { background: transparent; color: var(--ink-faint) }
+.p-b { background: transparent; color: var(--ink-faint-text) }
 
-.note { display: block; font-size: 14px; line-height: 1.43; color: var(--ink-faint); margin-top: var(--s-xxs) }
+.note { display: block; font-size: 14px; line-height: 1.43; color: var(--ink-faint-text); margin-top: var(--s-xxs) }
 
 /* ============================================================
    Filtro y controles — botones utilitarios de 8px.
@@ -190,7 +213,7 @@ tr.block td.id { box-shadow: inset 3px 0 0 var(--st-bloqueo) }
 .diagctl { margin: var(--s-lg) 0 var(--s-sm) }
 .filter .lab, .diagctl .lab {
   font-size: 12px; font-weight: 600; line-height: 1.33; letter-spacing: 0.125px;
-  color: var(--ink-faint); margin-right: var(--s-xxs);
+  color: var(--ink-faint-text); margin-right: var(--s-xxs);
 }
 .filter button, .diagctl button {
   font: inherit; font-size: 16px; font-weight: 500; line-height: 1.5;
@@ -200,10 +223,10 @@ tr.block td.id { box-shadow: inset 3px 0 0 var(--st-bloqueo) }
 }
 .filter button:hover, .diagctl button:hover { border-color: var(--ink-faint) }
 .filter button[aria-pressed="true"], .diagctl button[aria-pressed="true"] {
-  background: var(--primary); color: var(--on-primary); border-color: var(--primary);
+  background: var(--primary); color: var(--on-accent); border-color: var(--primary);
 }
 .filter button:active, .diagctl button:active { transform: scale(0.97) }
-.filter .count { margin-left: auto; font-size: 14px; color: var(--ink-faint) }
+.filter .count { margin-left: auto; font-size: 14px; color: var(--ink-faint-text) }
 .diagctl .step { margin-left: auto; font-size: 15px; color: var(--ink-muted) }
 
 .diagbox {
@@ -242,7 +265,7 @@ tr.block td.id { box-shadow: inset 3px 0 0 var(--st-bloqueo) }
 .bk-grid h4 {
   margin: 0 0 var(--s-xxs);
   font-size: 12px; font-weight: 600; line-height: 1.33; letter-spacing: 0.125px;
-  color: var(--ink-faint);
+  color: var(--ink-faint-text);
 }
 .bk-grid p { margin: 0; font-size: 15px; line-height: 1.33; color: var(--ink-muted); max-width: none }
 .bk-grid .why p { color: var(--ink-secondary) }
@@ -259,7 +282,7 @@ tr.block td.id { box-shadow: inset 3px 0 0 var(--st-bloqueo) }
   padding: var(--s-md); border-bottom: 1px solid var(--hairline);
 }
 .find:last-child { border-bottom: 0 }
-.find .n { font-family: var(--font-mono); font-size: 13px; font-weight: 500; color: var(--ink-faint) }
+.find .n { font-family: var(--font-mono); font-size: 13px; font-weight: 500; color: var(--ink-faint-text) }
 .find p { margin: 0; font-size: 15px; line-height: 1.43; max-width: none }
 .find.hot { background: linear-gradient(90deg, var(--st-bloqueo) 0 3px, transparent 3px) }
 .find.hot .n { color: var(--st-bloqueo) }

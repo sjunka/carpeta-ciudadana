@@ -1,6 +1,7 @@
 /* ============================================================
    Sistema de diseño — Notion
-   Fuente: docs/DESIGN.md (getdesign.md/notion)
+   Fuente: análisis del lenguaje de Notion. Las reglas transversales de color,
+   contraste y tema viven en docs/DESIGN.md.
 
    Reglas que gobiernan todo lo demás:
    · Un solo acento estructural: el azul. Nada más pinta una acción.
@@ -17,10 +18,12 @@ img { max-width: 100%; }
 
 :root {
   /* ---- Marca: único acento estructural ---- */
-  --primary: #0075de;
+  --primary: #0075de;        /* rellenos, trazos y bordes de acento */
+  --primary-text: #005bab;   /* el mismo azul como TEXTO: AA sobre papel cálido */
   --primary-active: #005bab;
   --secondary: #213183;      /* banda "noche", un solo momento por página */
-  --on-primary: #ffffff;
+  --on-primary: #ffffff;     /* texto sobre la banda noche */
+  --on-accent: #ffffff;      /* texto sobre un relleno --primary */
 
   /* ---- Superficies ---- */
   --canvas: #ffffff;
@@ -32,7 +35,8 @@ img { max-width: 100%; }
   --ink: #000000;
   --ink-secondary: #31302e;
   --ink-muted: #615d59;
-  --ink-faint: #a39e98;
+  --ink-faint: #96928c;      /* líneas y trazos: 3:1 mínimo, nunca texto */
+  --ink-faint-text: #74706c; /* el escalón tenue cuando sí es texto: AA */
 
   /* ---- Paleta de stickers: decoración y estado, nunca estructura ---- */
   --accent-sky: #62aef0;
@@ -46,9 +50,9 @@ img { max-width: 100%; }
   --accent-brown: #523410;
 
   /* ---- Estados del documento, mapeados a la paleta de stickers ---- */
-  --st-caso: var(--accent-green);
+  --st-caso: #13812a;        /* verde oscurecido: es texto sobre su propio tinte */
   --st-caso-bg: #e8f7eb;
-  --st-asuncion: var(--accent-orange);
+  --st-asuncion: #b84c00;
   --st-asuncion-bg: #fbeee4;
   --st-bloqueo: var(--accent-purple-deep);
   --st-bloqueo-bg: #f0e7fa;
@@ -86,6 +90,8 @@ img { max-width: 100%; }
   --font: "Inter", -apple-system, system-ui, "Segoe UI", Helvetica, Arial, sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
 
+  --sut-fill: #31302e;       /* nodo del sistema en construcción, lleva texto claro */
+
   --navh: 59px;
 }
 
@@ -97,9 +103,11 @@ img { max-width: 100%; }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --primary: #529cff;
+    --primary-text: #7db4ff;
     --primary-active: #7db4ff;
     --secondary: #1b2666;
     --on-primary: #ffffff;
+    --on-accent: #0f1620;    /* invertido: sobre azul claro el texto va oscuro */
 
     --canvas: #191918;
     --canvas-soft: #191918;
@@ -109,7 +117,8 @@ img { max-width: 100%; }
     --ink: #f5f4f2;
     --ink-secondary: #d4d2ce;
     --ink-muted: #9b9691;
-    --ink-faint: #6f6a65;
+    --ink-faint: #75706b;
+    --ink-faint-text: #8f8b87;
 
     --accent-purple: #b28ce0;
     --accent-purple-deep: #c9a9ee;
@@ -124,6 +133,8 @@ img { max-width: 100%; }
     --st-bloqueo: var(--accent-purple-deep);
     --st-bloqueo-bg: #2a1c3d;
 
+    --sut-fill: #3b3b39;
+
     --e-1:
       rgba(0, 0, 0, 0.2) 0 0.8px 2.925px,
       rgba(0, 0, 0, 0.28) 0 4px 18px;
@@ -135,9 +146,11 @@ img { max-width: 100%; }
 
 :root[data-theme="dark"] {
   --primary: #529cff;
+  --primary-text: #7db4ff;
   --primary-active: #7db4ff;
   --secondary: #1b2666;
   --on-primary: #ffffff;
+  --on-accent: #0f1620;  /* invertido: sobre azul claro el texto va oscuro */
 
   --canvas: #191918;
   --canvas-soft: #191918;
@@ -147,7 +160,8 @@ img { max-width: 100%; }
   --ink: #f5f4f2;
   --ink-secondary: #d4d2ce;
   --ink-muted: #9b9691;
-  --ink-faint: #6f6a65;
+  --ink-faint: #75706b;
+  --ink-faint-text: #8f8b87;
 
   --accent-purple: #b28ce0;
   --accent-purple-deep: #c9a9ee;
@@ -161,6 +175,8 @@ img { max-width: 100%; }
   --st-asuncion-bg: #35220f;
   --st-bloqueo: var(--accent-purple-deep);
   --st-bloqueo-bg: #2a1c3d;
+
+  --sut-fill: #3b3b39;
 
   --e-1:
     rgba(0, 0, 0, 0.2) 0 0.8px 2.925px,

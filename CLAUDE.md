@@ -42,6 +42,8 @@ npm run dev       # revisa en el navegador
 - Toda referencia a un bloqueo apunta a un bloqueo que existe.
 - Todo RNF citado en el mapeo QoS existe.
 - Los contadores de la portada cuadran con los datos reales.
+- Cada par texto/fondo cumple WCAG AA en los dos temas, incluidos los diagramas, y los dos
+  bloques del tema oscuro (por preferencia del sistema y por atributo) no se han desincronizado.
 
 Si el validador se queja de una regla que ya no aplica, se cambia **la regla en `docs/REGLAS.md`
 y el validador en `scripts/check-content.mjs`**, en el mismo commit. Nunca se salta la validación.
@@ -57,7 +59,7 @@ src/
   hooks/       comportamiento (nav pegajosa, sección activa, pasos del diagrama)
   styles/      tokens.css · app.css · diagrams.css
 docs/          reglas, contexto del curso y la entrega en markdown
-scripts/       validador de contenido
+scripts/       validadores de contenido y de contraste
 ```
 
 ## Añadir una sección
