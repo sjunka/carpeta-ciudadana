@@ -6,10 +6,11 @@
   "description": "Documentación de arquitectura del Operador de Carpeta Ciudadana",
   "scripts": {
     "dev": "vite",
-    "build": "npm run check && vite build",
+    "build": "npm run check && npm run md && vite build",
     "preview": "vite preview",
     "check": "node scripts/check-content.mjs && node scripts/check-contrast.mjs",
-    "artifact": "npm run build && node scripts/build-artifact.mjs"
+    "artifact": "npm run build && node scripts/build-artifact.mjs",
+    "md": "node scripts/build-md.mjs"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.3.4",

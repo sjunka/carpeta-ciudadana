@@ -1,14 +1,14 @@
 # Carpeta Ciudadana — Entrega 1
 
-> Estructura y estilo gobernados por `REGLAS.md`. Artefacto publicado: https://claude.ai/code/artifact/982b7935-109f-4e5e-982e-a0503f2a6dbc
+> Generado por `npm run md` desde `src/content/*.json`. **No editar a mano.**
 
-> Fuentes: enunciado; caso de estudio (PDF completo); API GovCarpeta **verificada en vivo el 2026-09-05** con llamadas de solo lectura; lámina de *system context artifact* del curso.
+> Sitio: https://sjunka.github.io/carpeta-ciudadana/
 
+> Fuentes: enunciado del assignment; *Caso de estudio — Carpeta Ciudadana, Sistemas Distribuidos* (texto completo); API GovCarpeta, **verificada en vivo el 5 de septiembre de 2026** mediante llamadas de solo lectura a `getOperators`, `validateCitizen` y a las cabeceras CORS, más el contrato Swagger 2.0 servido por el propio host. No se ejecutó ninguna escritura. El diagrama de contexto sigue el modelo de *system context artifact* presentado en clase. La sección 04 se apoya en el material del curso: *Arquitectura de Software Moderna — Módulo I* (arquitectura nativa de la nube, *Twelve-Factor App* y drivers de granularidad de microservicios) y el *Software Requirements Specification Template* basado en ANSI/IEEE Std. 830-1984, §3.6 y §3.7.
 
 ---
 
 ## 1. Requerimientos funcionales
-
 
 ### RF-01 · Registro, afiliación y traslado
 
@@ -41,7 +41,7 @@ El corazón del producto: qué se guarda, con qué metadatos y por cuánto tiemp
 | RF-02.6 | Consulta y navegación | El ciudadano debe poder listar, buscar y filtrar sus documentos por tipo, entidad emisora, fecha y estado de certificación. | Alta |
 | RF-02.7 | Descarga e impresión | El ciudadano debe poder descargar e imprimir cualquier documento conservando la evidencia de firma. | Alta |
 | RF-02.8 | Recepción por correo | Todo documento enviado a la cuenta institucional del ciudadano debe ingresar automáticamente a su carpeta. **[BLOQUEO]** *B-13 · Falta definir si es un buzón real de internet o un identificador.* | Alta |
-| RF-02.9 | Sustitución de temporal | Cuando llegue la versión firmada de un documento cargado como temporal, el sistema debe relacionarlas y reemplazarlo conservando la trazabilidad. | Media |
+| RF-02.9 | Sustitución de temporal | El sistema debe permitir relacionar la versión firmada con el temporal que sustituye, conservando la trazabilidad de ambos. | Media |
 | RF-02.10 | Eliminación controlada | El ciudadano debe poder eliminar documentos no certificados; los certificados solo se retiran según la política de retención. **[BLOQUEO]** *B-11 · Perpetuidad y derecho de supresión no están conciliados.* | Media |
 | RF-02.11 | Bitácora del documento | El sistema debe registrar en una bitácora inalterable toda operación sobre cada documento: cargue, consulta, descarga, compartición y transferencia. | Alta |
 
@@ -52,13 +52,13 @@ Lo que convierte a un operador aislado en parte de una federación.
 | ID | Requerimiento | Descripción | Prioridad |
 |---|---|---|---|
 | RF-03.1 | Localización del operador destino | El operador debe consultar al centralizador ante qué operador está afiliado el destinatario antes de enviarle documentos. | Alta |
-| RF-03.2 | Transferencia directa | La transferencia de documentos y metadatos debe hacerse directamente entre operador origen y destino, sin que el contenido pase por el centralizador. | Alta |
+| RF-03.2 | Transferencia directa | El operador debe transferir los documentos y sus metadatos directamente al operador destino, sin que el contenido pase por el centralizador. | Alta |
 | RF-03.3 | Recepción de documentos externos | El operador debe exponer una interfaz para que otros operadores le entreguen documentos, validando firma y metadatos antes de aceptarlos. **[BLOQUEO]** *B-01 · No existe contrato MinTIC para esta interfaz.* | Alta |
-| RF-03.4 | Entrega alterna por correo | Si el destinatario no está afiliado a ningún operador, los documentos deben entregarse por correo electrónico, firmados. **[BLOQUEO]** *B-14 · El correo plano contradice el requisito de confidencialidad.* | Alta |
+| RF-03.4 | Entrega alterna por correo | El operador debe entregar los documentos por correo electrónico, firmados, cuando el destinatario no esté afiliado a ningún operador. **[BLOQUEO]** *B-14 · El correo plano contradice el requisito de confidencialidad.* | Alta |
 | RF-03.5 | Confirmación y reintento | Toda transferencia debe generar acuse de recibo, reintentarse ante fallas y ser idempotente. | Alta |
 | RF-03.6 | Solicitud de documentos a entidades | El ciudadano debe poder radicar solicitudes de expedición ante entidades y consultar el estado de cada una. | Alta |
 | RF-03.7 | Emisión por parte de la entidad | Una entidad afiliada debe poder cargar documentos firmados dirigidos a un ciudadano, disparando la resolución de operador y la entrega. | Alta |
-| RF-03.8 | Contrato común de intercambio | Todos los operadores deben implementar el mismo contrato de servicios definido por MinTIC para garantizar la interoperabilidad. **[BLOQUEO]** *B-01 · Hoy solo 16 de 70 operadores publican endpoint de transferencia.* | Alta |
+| RF-03.8 | Contrato común de intercambio | El operador debe implementar el contrato de servicios definido por MinTIC, idéntico para todos, para garantizar la interoperabilidad. **[BLOQUEO]** *B-01 · Hoy solo 16 de 70 operadores publican endpoint de transferencia.* | Alta |
 
 ### RF-04 · Compartición, solicitudes y autorizaciones
 
@@ -71,8 +71,8 @@ El consentimiento del ciudadano como puerta de todo movimiento de documentos.
 | RF-04.3 | Petición de documentos | Una entidad debe poder registrar, desde su propio operador, una petición dirigida a un ciudadano indicando qué documentos requiere y con qué finalidad. | Alta |
 | RF-04.4 | Autorización explícita | Ningún documento puede compartirse sin autorización expresa del titular; el sistema debe capturar la decisión de aprobar, aprobar en parte o rechazar. | Alta |
 | RF-04.5 | Vigencia y revocación | Las autorizaciones deben poder tener vigencia limitada y ser revocables por el ciudadano en cualquier momento. **[ASUNCIÓN]** *El caso no menciona vigencia; la añadimos por el requisito de confidencialidad.* | Media |
-| RF-04.6 | Seguimiento de solicitudes | Solicitante y ciudadano deben poder consultar el estado de cada petición: pendiente, autorizada, rechazada o entregada. | Media |
-| RF-04.7 | Compleción con faltantes | Si el ciudadano no tiene un documento solicitado, debe poder cargar una versión temporal y radicar en el mismo flujo la solicitud del definitivo. | Alta |
+| RF-04.6 | Seguimiento de solicitudes | El sistema debe permitir a solicitante y ciudadano consultar el estado de cada petición: pendiente, autorizada, rechazada o entregada. | Media |
+| RF-04.7 | Compleción con faltantes | El ciudadano debe poder cargar una versión temporal del documento que le falta y radicar en el mismo flujo la solicitud del definitivo. | Alta |
 
 ### RF-05 · Notificaciones
 
@@ -82,7 +82,7 @@ El canal por el que el ciudadano se entera de que algo pasó.
 |---|---|---|---|
 | RF-05.1 | Aviso por correo | El sistema debe notificar por correo al ciudadano cuando lleguen documentos nuevos a su carpeta. | Alta |
 | RF-05.2 | Aviso por SMS | El sistema debe notificar por SMS los eventos críticos, en particular las peticiones que requieren autorización. | Alta |
-| RF-05.3 | Centro de notificaciones | La interfaz debe presentar el historial de notificaciones y las alertas pendientes de atención. | Media |
+| RF-05.3 | Centro de notificaciones | El sistema debe presentar el historial de notificaciones y las alertas pendientes de atención. | Media |
 | RF-05.4 | Preferencias de canal | El ciudadano debe poder configurar por qué canales desea ser notificado. | Baja |
 
 ### RF-06 · Servicios del centralizador
@@ -119,7 +119,7 @@ Lo que el Estado quiere saber, sin tocar el contenido de los documentos.
 | ID | Requerimiento | Descripción | Prioridad |
 |---|---|---|---|
 | RF-08.1 | Consolidación de metadatos | El sistema debe consolidar periódicamente los metadatos de los documentos, nunca su contenido, en un repositorio analítico. **[BLOQUEO]** *B-04 · Choca con el mandato de mínima información en el centralizador.* | Media |
-| RF-08.2 | Anonimización | Los datos entregados para análisis deben estar disociados de la identidad del ciudadano, salvo autorización legal expresa. | Alta |
+| RF-08.2 | Anonimización | El sistema debe disociar de la identidad del ciudadano todo dato entregado para análisis, salvo autorización legal expresa. | Alta |
 | RF-08.3 | Contexto Notarías | El sistema debe permitir responder preguntas sobre actividad notarial: volúmenes, tipos de acto y distribución geográfica y temporal. | Media |
 | RF-08.4 | Contexto Educación | El sistema debe permitir responder preguntas sobre títulos y actas de grado emitidos: institución, programa, nivel y año. | Media |
 | RF-08.5 | Contexto Registraduría | El sistema debe permitir responder preguntas sobre documentos de identidad y cobertura de registro de la población. | Media |
@@ -137,8 +137,6 @@ Lo que impide que el sistema se convierta en una fuga de datos nacional.
 | RF-09.4 | Registro de auditoría | Toda operación de acceso, autorización y transferencia debe quedar registrada con usuario, fecha, origen y resultado, en un log no alterable. | Alta |
 | RF-09.5 | Consulta de accesos | El ciudadano debe poder consultar quién accedió a sus documentos y bajo qué autorización. | Media |
 | RF-09.6 | Gestión del consentimiento | El sistema debe registrar y conservar la evidencia del consentimiento otorgado por el ciudadano para cada compartición. | Alta |
-
----
 
 ## 2. Requerimientos no funcionales
 
@@ -172,10 +170,10 @@ Lo que impide que el sistema se convierta en una fuga de datos nacional.
 | RNF-26 | Modificabilidad | La arquitectura debe admitir nuevos tipos documentales sin rediseño. **[ASUNCIÓN]** | Nuevo tipo configurable con cero cambios en el núcleo; despliegues sin interrupción. |
 | RNF-27 | Libertad tecnológica | No hay restricción sobre tecnologías ni sobre la ubicación del almacenamiento, incluida la nube fuera del país. **[Del caso]** | Arquitectura agnóstica de proveedor, sin dependencias que impidan cambiar de nube. |
 | RNF-28 | Coste | El coste marginal debe sostener un modelo con servicios básicos gratuitos. **[ASUNCIÓN]** | ≤ USD 0,15 por carpeta activa al mes. |
+| RNF-29 | Desplegabilidad | Un cambio debe poder llegar a producción sin interrumpir el servicio ni coordinar despliegues entre equipos. **[ASUNCIÓN]** | Despliegue independiente por servicio; cero minutos de indisponibilidad planificada; reversión en ≤ 10 min. |
+| RNF-30 | Elasticidad | La capacidad debe seguir a la demanda de forma automática, sin intervención humana ni sobreaprovisionamiento permanente. **[ASUNCIÓN]** | Tiempo medio hasta la puesta en marcha de una instancia ≤ 60 s; utilización sostenida entre 50 % y 70 %. |
 
----
-
-## 3. Mapeo RNF vs QoS
+## 3. Mapeo de requerimientos no funcionales vs QoS
 
 | RNF | Atributo de QoS | Métrica o indicador | Objetivo / umbral | Táctica arquitectónica | Punto de fricción |
 |---|---|---|---|---|---|
@@ -192,126 +190,305 @@ Lo que impide que el sistema se convierta en una fuga de datos nacional.
 | RNF-23 | Recuperabilidad | RPO · RTO | RPO ≤ 5 min · RTO ≤ 30 min | Copias continuas con recuperación a un punto en el tiempo, réplicas entre regiones, ensayos semestrales. | Un RTO de 30 minutos es incompatible con recuperar petabytes. Solo aplica al índice, no al contenido. |
 | RNF-24, 28 | Coste | USD por carpeta activa al mes | ≤ USD 0,15 | Almacenamiento por niveles, deduplicación y compresión, con cuota para los no certificados. | El nivel de archivo frío rompe la disponibilidad: recuperar tarda horas. «A perpetuidad y siempre disponible» es caro por definición. |
 | RNF-25, 26 | Mantenibilidad | Cambios por tipo documental · MTTD | Cero cambios en el núcleo · detección ≤ 5 min | Esquemas de metadatos declarativos y versionados, métricas y trazas distribuidas por transferencia. | Un esquema flexible dificulta las consultas analíticas fuertemente tipadas. |
+| RNF-29, 30 | Agilidad operativa | Tiempo de entrega de un cambio · MTTS | Despliegue sin corte · arranque ≤ 60 s | Contenedores inmutables con despliegue progresivo, procesos sin estado y autoescalado por métrica de carga. | Arrancar rápido obliga a no cargar datos al inicio, y eso traslada latencia a la primera petición de cada instancia. |
 | RNF-27 | Portabilidad | Dependencias propietarias | Cero bloqueos de proveedor | Abstracción del almacenamiento de objetos y de la mensajería tras interfaces propias. | Ser agnóstico cuesta: se renuncia a servicios gestionados que serían más baratos y rápidos. |
 
----
+## 4. Restricciones de arquitectura
 
-## 4. Diagrama de contexto
+Lo que acota el diseño antes de diseñar: las restricciones que impone la plataforma, los límites que el sistema no debe cruzar y el tamaño que deberían tener las piezas. Sale del template del curso (§3.6 y §3.7) y del material de arquitectura nativa de la nube.
 
-Modelo: *system context artifact*. Sistema en construcción al centro, personas a la izquierda de la **línea de automatización**, sistemas TI a la derecha de la **línea de integración**, y en cada flecha los **datos** que viajan.
+### 4.1 Restricciones de diseño
+
+Lo que acota las opciones del diseño antes de empezar a diseñar. Cada restricción cita de dónde sale: el caso de estudio, un factor de la metodología *Twelve-Factor App* o un pilar de arquitectura nativa de la nube vistos en clase.
+
+| ID | Restricción | Descripción | Origen |
+|---|---|---|---|
+| RD-01 | Configuración fuera del artefacto | El sistema debe leer toda su configuración del entorno de ejecución, sin puertos, credenciales ni direcciones de otros operadores escritos en el código. **[ASUNCIÓN]** | Twelve-Factor III · Config |
+| RD-02 | Procesos sin estado | El sistema debe ejecutarse como procesos sin estado, de modo que cualquier instancia pueda atender cualquier petición sin sesiones pegajosas. **[ASUNCIÓN]** | Twelve-Factor VI · Processes |
+| RD-03 | Escalado horizontal | El sistema debe crecer añadiendo instancias y no ampliando la memoria o la CPU de las existentes. **[ASUNCIÓN]** | Twelve-Factor VIII · Concurrency |
+| RD-04 | Infraestructura inmutable | El sistema no debe parchear un entorno de ejecución en caliente: un cambio se aplica reemplazando la instancia por una construida de nuevo. **[ASUNCIÓN]** | Cloud native · Immutable infrastructure |
+| RD-05 | Servicios de respaldo enchufables | El sistema debe tratar la base de datos, el almacén de objetos y la mensajería como recursos adjuntos, intercambiables cambiando configuración y sin tocar el código. **[ASUNCIÓN]** | Twelve-Factor IV · Backing services |
+| RD-06 | Empaquetado en contenedores | El sistema debe distribuirse como imágenes de contenedor versionadas, de forma que desarrollo, pruebas y producción ejecuten el mismo artefacto. **[ASUNCIÓN]** | Cloud native · Containers · Twelve-Factor X |
+| RD-07 | Separación de construcción y ejecución | El sistema debe construirse una vez y desplegarse muchas, sin que la etapa de ejecución pueda alterar el artefacto construido. **[ASUNCIÓN]** | Twelve-Factor V · Build, release, run |
+| RD-08 | Diseño API-first | El sistema debe definir y publicar el contrato de sus interfaces antes de implementar la funcionalidad que las sirve, empezando por la interfaz federada entre operadores. **[ASUNCIÓN]** | Cloud native · API-first design |
+| RD-09 | Registros como flujo de eventos | El sistema no debe escribir ni rotar ficheros de registro: emite eventos a la salida estándar y el entorno de ejecución los recoge. **[ASUNCIÓN]** | Twelve-Factor XI · Logs |
+| RD-10 | Tareas de administración separadas | El sistema debe ejecutar las migraciones de datos y las cargas masivas como procesos puntuales aparte, con la misma versión y configuración que el servicio. **[ASUNCIÓN]** | Twelve-Factor XII · Admin processes |
+| RD-11 | Sin base de datos compartida | El sistema no debe integrar dos servicios a través de un esquema de datos común: la integración ocurre por interfaz publicada o por mensajería. **[ASUNCIÓN]** | Microservicios · Persistencia políglota |
+| RD-12 | Descomposición por capacidad de negocio | El sistema debe partirse en cortes verticales de negocio — afiliación, documento, entrega, autorización — y no en capas técnicas de presentación, lógica y datos. **[ASUNCIÓN]** | Microservicios · Capacidades de negocio |
+| RD-13 | Observabilidad desde el primer despliegue | El sistema debe emitir métricas, trazas distribuidas y eventos desde su primera versión desplegada, y no añadirlos cuando aparezca el primer incidente. **[ASUNCIÓN]** | Cloud native · Observability |
+| RD-14 | Centralizador externo no modificable | El sistema debe adaptarse al centralizador de MinTIC tal como está: no podemos cambiar su contrato, su disponibilidad ni su modelo de datos. **[Del caso]** | Caso de estudio |
+| RD-15 | Contrato GovCarpeta congelado | El sistema debe consumir la API GovCarpeta tal como se verificó: Swagger 2.0, sin definiciones de seguridad y sin versionado en la ruta. **[Del caso]** | Evidencia de la API · sección 08 |
+
+### 4.2 Requerimientos inversos
+
+Lo que el sistema **no** debe hacer. El template del curso los pide aparte (§3.6) porque un límite explícito evita que alguien lo cruce creyendo que mejora el producto.
+
+| ID | Límite | El sistema no debe… |
+|---|---|---|
+| RI-01 | Sin contenido por el centralizador | El sistema no debe hacer pasar el contenido de ningún documento por el centralizador de MinTIC; solo consulta y actualiza el directorio de afiliación. **[Del caso]** |
+| RI-02 | Sin garantías de tiempo real | El sistema no debe prometer entrega en tiempo real entre operadores, porque MinTIC descartó explícitamente ese requisito. **[Del caso]** |
+| RI-03 | Sin doble afiliación | El sistema no debe permitir que un ciudadano quede afiliado a dos operadores a la vez, ni siquiera de forma transitoria durante un traslado. **[Del caso]** |
+| RI-04 | Sin cambio de cuenta de correo | El sistema no debe permitir modificar la cuenta de correo institucional después del primer registro del ciudadano. **[Del caso]** |
+| RI-05 | Sin cuota para certificados | El sistema no debe limitar la cantidad ni el tamaño de los documentos certificados; la cuota aplica únicamente a los no certificados. **[Del caso]** |
+| RI-06 | Sin lectura por el operador | El operador no debe poder leer el contenido de un documento del ciudadano sin una autorización registrada y auditable del titular. **[ASUNCIÓN]** |
+| RI-07 | Sin cobro por servicios básicos | El operador no debe cobrar por las funciones que el caso define como servicios básicos; el cobro se limita a los servicios Premium. **[Del caso]** |
+| RI-08 | Sin entrega no autorizada | El sistema no debe entregar un documento a un tercero sin autorización explícita del ciudadano titular para esa petición concreta. **[Del caso]** |
+
+### 4.3 Drivers de granularidad
+
+Los nueve dominios funcionales pasados por los desintegradores de granularidad de la clase: alcance y función, volatilidad del código, escalabilidad y rendimiento, tolerancia a fallos y extensibilidad. Todavía no es una descomposición en servicios — es la evidencia que justificará esa decisión en la siguiente entrega.
+
+| Dominio | Driver dominante | Veredicto | Por qué |
+|---|---|---|---|
+| RF-01 · Afiliación | Tolerancia a fallos | Aislar | Es el único dominio que exige consistencia fuerte contra el centralizador. Mezclarlo con el resto arrastraría la carpeta entera a la disponibilidad de MinTIC. |
+| RF-02 · Gestión documental | Escalabilidad y rendimiento | Partir en dos | El índice de la carpeta se consulta miles de veces por cada escritura de contenido. Índice y almacenamiento tienen perfiles de carga opuestos y deben escalar por separado. |
+| RF-03 · Interoperabilidad | Tolerancia a fallos | Aislar | Habla con 70 operadores ajenos de fiabilidad desconocida. Un fallo en cascada aquí no puede tumbar la consulta de la carpeta propia. |
+| RF-04 · Autorizaciones | Alcance y función | Aislar | Cohesión muy alta alrededor de una sola idea — el consentimiento — y es el punto que toda operación de entrega tiene que consultar. |
+| RF-05 · Notificaciones | Escalabilidad y extensibilidad | Mantener unido | Correo y SMS son dos modos del mismo propósito: avisar. Es el ejemplo de la clase — hay cohesión, así que un solo servicio hace tres cosas. |
+| RF-06 · Centralizador | No aplica | Fuera del alcance | Es sistema externo. Aquí solo se diseña el adaptador con capa anticorrupción que lo consume. |
+| RF-07 · Premium | Volatilidad del código | Aislar | Es la parte que más cambia, porque la manda el mercado y no la norma. Encerrarla evita volver a probar el núcleo con cada cambio comercial. |
+| RF-08 · Analítica | Escalabilidad y rendimiento | Aislar | Consultas largas sobre metadatos de millones de carpetas. Compartir motor con lo transaccional pondría en riesgo el p95 de la carpeta. |
+| RF-09 · Seguridad y auditoría | Alcance y función | Partir en dos | Identidad y bitácora no tienen nada en común: una está en el camino crítico de cada petición, la otra solo escribe. No hay cohesión que las mantenga juntas. |
+
+## 5. Diagrama de contexto
+
+Sigue el modelo de *system context artifact*: el sistema en construcción al centro, las personas a un lado, los sistemas al otro, y en cada flecha los datos que viajan.
 
 Archivo: `diagramas/contexto-sistema.html`
 
-### 4.1 Actores
+### 5.1 Actores
 
 | Actor | Descripción | Tipo de interacción |
 |---|---|---|
-| Ciudadano | Titular de la carpeta. Se afilia, recibe, consulta, comparte y autoriza. | Datos personales, documentos y autorizaciones. |
-| Entidad pública | Emite documentos firmados y solicita documentación. MEN, Registraduría, embajadas, notarías. | Emisión de documentos firmados y radicación de peticiones. |
-| Empresa privada | Usa la carpeta para pedir y recibir documentos de sus clientes, vía Premium. | Peticiones de documentos e integración por API. |
-| Operador de carpeta | Empresa que presta el servicio con infraestructura propia. **Es nuestro sistema.** | Custodia documental, enrutamiento y entrega entre pares. |
-| Centralizador MinTIC | Directorio de afiliación, directorio de operadores y autenticación documental. También opera GovCarpeta. | API: validación, registro y resolución de operador. |
-| Administrador del operador | Usuario interno que gestiona el funcionamiento técnico. | Control de usuarios, bitácoras y soporte. |
-| Estado (analítica) | Consume metadatos agregados para notarías, educación y Registraduría. | Metadatos anonimizados, nunca contenido. |
+| Ciudadano | Titular de la carpeta. Se afilia a un operador, recibe documentos, los consulta, los comparte y autoriza su uso. | Envío y recepción de datos personales, documentos y autorizaciones. |
+| Entidad pública | Emite documentos firmados dirigidos al ciudadano y le solicita documentación. MEN, Registraduría, embajadas, notarías. | Emisión de documentos firmados y radicación de peticiones. |
+| Empresa privada | Usa la carpeta como canal para pedir y recibir documentos de sus clientes, típicamente vía servicios Premium como PQRS. | Peticiones de documentos e integración por API. |
+| Operador de carpeta | Empresa que presta el servicio con infraestructura propia. Ofrece servicios básicos gratuitos y Premium tarifados. **Es nuestro sistema.** | Custodia documental, enrutamiento y entrega entre pares. |
+| Centralizador MinTIC | Provee los servicios técnicos de base para la interoperabilidad: directorio de afiliación, directorio de operadores y autenticación de documentos. También opera GovCarpeta. | Comunicación por API: validación, registro y resolución de operador. |
+| Administrador del operador | Usuario interno que gestiona el funcionamiento técnico del sistema. | Control interno de usuarios, bitácoras y soporte. |
+| Estado (analítica) | Consume información agregada derivada de los metadatos para responder preguntas en notarías, educación y Registraduría. | Consumo de metadatos anonimizados, nunca de contenido. |
 
-### 4.2 Flujo de información
+### 5.2 Flujo de información
 
-1. El ciudadano se registra en el operador y entrega sus datos personales.
-2. El operador verifica la identidad contra la Registraduría y consulta al centralizador que no haya afiliación previa.
-3. El operador registra la afiliación, genera la cuenta de correo inmutable y sube el documento de identidad firmado.
-4. Una entidad emite un documento firmado dirigido al ciudadano desde su propio operador.
-5. El operador emisor pregunta al centralizador ante qué operador está el destinatario.
-6. Los documentos viajan directamente de operador a operador. El contenido nunca pasa por el centralizador.
-7. El operador destino avisa al ciudadano por correo y SMS.
-8. Ante una petición, el ciudadano autoriza o rechaza documento por documento antes de que el paquete salga.
+1. **El ciudadano se registra** en el operador y entrega sus datos personales.
+2. **El operador verifica la identidad** contra la Registraduría y consulta al centralizador que el ciudadano no esté afiliado a otro operador.
+3. **El operador registra la afiliación** en el centralizador, genera la cuenta de correo inmutable y sube el documento de identidad firmado.
+4. **Una entidad emite un documento firmado** dirigido al ciudadano desde su propio operador.
+5. **El operador emisor pregunta al centralizador** ante qué operador está afiliado el destinatario.
+6. **Los documentos viajan directamente** del operador emisor al operador destino, con sus metadatos y su firma. El contenido nunca pasa por el centralizador.
+7. **El operador destino avisa al ciudadano** por correo y SMS, y el documento aparece en su carpeta.
+8. **Cuando alguien pide documentos**, el ciudadano autoriza o rechaza uno por uno, y solo entonces el paquete sale firmado hacia el solicitante.
 
-### 4.3 Lógica del diagrama
+### 5.3 Lógica del diagrama
 
-- El operador es el núcleo; todo lo demás se conecta por una interfaz.
-- La línea de automatización separa personas de software.
-- La línea de integración separa nuestro sistema de los sistemas ajenos.
-- Cada flecha lleva los datos que viajan, no el verbo de la acción.
-- En rojo, el flujo documental entre operadores: el único que mueve documentos completos y el único sin contrato definido.
+- El **operador es el núcleo**. Todo lo demás está afuera y se conecta por una interfaz.
+- La **línea de automatización** separa a las personas del software. A su izquierda hay gente; a su derecha, sistemas.
+- La **línea de integración** separa nuestro sistema de los sistemas ajenos que no controlamos.
+- Cada flecha lleva **los datos que viajan**, no el verbo de la acción. Así se ve qué información cruza cada frontera.
+- En <b style="color:var(--primary)">azul</b>, el flujo documental entre operadores: es el único que mueve documentos completos, y es el que hoy **no tiene contrato definido**.
 
-**Idea central:** todo lo que va hacia MinTIC son identificadores; todo lo que va hacia otro operador son documentos. Esa asimetría es la decisión de arquitectura que sostiene el resto.
+**Idea central:** Todo lo que va hacia MinTIC son identificadores. Todo lo que va hacia otro operador son documentos. Esa asimetría es la decisión de arquitectura que sostiene el resto.
 
----
+El centralizador responde una sola pregunta: **¿ante qué operador está afiliado esta cédula?** Con esa respuesta, nuestro operador abre una conexión directa con el operador destino y le entrega el documento. Por eso el Estado puede pedir que el centralizador maneje la mínima cantidad de transacciones: no es un bus por donde pasa el tráfico, es una guía telefónica que se consulta una vez y se cachea.
 
-## 5. Casos de uso *(referencia interna, no se entrega)*
+## 6. Casos de uso *(referencia interna, no se entrega)*
 
-Archivo: `diagramas/casos-de-uso.html` — once casos de uso, cada uno citando los RF y RNF que realiza.
+Archivo: `diagramas/casos-de-uso.html`
 
-| Bloque | Casos de uso |
-|---|---|
-| Lo que hace el ciudadano | Afiliarme · Trasladarme · Ver y descargar · Subir temporal · Compartir paquete · Autorizar petición |
-| Lo que hace la entidad | Emitir documento firmado · Pedir documentos a un ciudadano |
-| Lo que el operador hace por debajo | Verificar identidad · Enrutar y entregar · Notificar |
+| Bloque | Caso de uso | Requerimientos que realiza |
+|---|---|---|
+| Lo que hace el ciudadano | Afiliarme a un operador | RF-01.1 → 01.6 · RNF-06 |
+|  | Trasladarme a otro operador | RF-01.7 · RF-01.8 · RNF-20 |
+|  | Ver y descargar mis documentos | RF-02.6 · RF-02.7 · RNF-04 |
+|  | Subir un documento temporal | RF-02.2 · RF-02.9 · RNF-22 |
+|  | Compartir un paquete | RF-04.1 · RF-04.2 · RNF-11 |
+|  | Autorizar o rechazar una petición | RF-04.4 · RF-09.6 · RNF-14 |
+| Lo que hace la entidad | Emitir un documento firmado | RF-03.7 · RF-02.4 · RNF-11 |
+|  | Pedir documentos a un ciudadano | RF-04.3 · RF-07.3 · RNF-17 |
+| Lo que el operador hace por debajo | Verificar identidad | RF-01.2 · RF-01.3 |
+|  | Enrutar y entregar | RF-03.1 · RF-03.2 |
+|  | Notificar | RF-05.1 · RF-05.2 |
 
----
+Once casos de uso. Los seis del ciudadano son la interfaz visible del producto; los dos de la entidad son los que hacen que la carpeta se llene; los tres de abajo son la fontanería que el usuario nunca ve y que concentra toda la dificultad arquitectónica.
 
-## 6. El proyecto en palabras simples
+## 7. El proyecto en palabras simples
 
-Ver la sección 6 del artefacto. Resumen: hoy el ciudadano es el mensajero del Estado; la Carpeta Ciudadana hace que los documentos viajen solos entre entidades y el ciudadano solo dé permiso. Nosotros construimos **uno de los operadores** que custodian esas carpetas. MinTIC no guarda documentos: solo responde «¿ante qué operador está esta cédula?», y con esa respuesta los operadores se hablan directo.
+**¿Qué problema resolvemos?**
 
-Lo difícil no es guardar archivos: es (1) que dos operadores se entiendan sin contrato común, (2) mudar una carpeta sin dejar al ciudadano con dos operadores o ninguno, (3) que la firma valga sin autoridad certificadora, y (4) ser usable para población de baja apropiación tecnológica mientras se exige segundo factor.
+Hoy, cuando el Estado te pide un papel, tú eres el mensajero. Vas a la universidad por el diploma, lo llevas a una notaría para autenticarlo, y de ahí a la entidad que te lo pidió. Cada trámite te cuesta días y plata, y el papel puede perderse o falsificarse.
 
----
+La Carpeta Ciudadana invierte eso: **los documentos van solos de una entidad a otra**, y tú solo das permiso. La frase que abre el caso lo dice completo: *«el ciudadano no debe ser el mensajero del Estado»*.
 
-## 7. Evidencia de la API GovCarpeta
+**¿Qué es exactamente una carpeta?**
 
-**Estado el 2026-09-05: en línea y verificada.** Contrato: **Swagger 2.0** (no OpenAPI 3), `basePath: /`, sin bloque `securityDefinitions`.
-Los hallazgos de abajo salen de llamadas reales de solo lectura, no de leer el repo.
+Una caja fuerte digital, tuya y para toda la vida, donde se guardan los documentos que te conciernen: cédula, diplomas, escrituras, declaraciones de renta. Cada documento viene **firmado digitalmente** por la entidad que lo emitió.
 
-### 7.1 Superficie real de la API (7 endpoints, base `/apis`)
+La firma digital es el equivalente electrónico del sello de la notaría: una operación matemática que solo la entidad emisora puede hacer, y que cualquiera puede comprobar. Si alguien altera una coma del documento, la firma deja de cuadrar. Por eso el diploma que sale de tu carpeta vale sin necesidad de apostilla.
 
-| Método | Path | Body / params | Comportamiento verificado |
-|---|---|---|---|
-| `GET` | `/apis/validateCitizen/{id}` | path `id` (number) | **Confirmado en vivo:** `200` = **ya registrado** con string en prosa `"El ciudadano con id: X se encuentra registrado en el operador: Y "`; **`204` sin cuerpo = libre**. |
-| `POST` | `/apis/registerCitizen` | `{id, name, address, email, operatorId, operatorName}` | `201` creado; `501` si ya existe; `500` error de aplicación. |
-| `DELETE` | `/apis/unregisterCitizen` | `{id, operatorId, operatorName}` en **body** | Documenta **`201` Deleted** (no 200), `204` si no existía, `501` parámetros erróneos. |
-| `PUT` | `/apis/authenticateDocument` | `{idCitizen, UrlDocument, documentTitle}` | Recibe una **URL prefirmada de S3** (así lo muestra el ejemplo del contrato), no el binario. Devuelve `200 ok`. |
-| `POST` | `/apis/registerOperator` | `{name, address, contactMail, participants[]}` | `201` creado. **El contrato se contradice**: `required` exige `nameOperator` y `adress`, campos que **no existen** en `properties` (`name`, `address`). |
-| `PUT` | `/apis/registerTransferEndPoint` | `{idOperator, endPoint, endPointConfirm}` | Sólo `idOperator` y `endPoint` son `required`; `endPointConfirm` es opcional **y no se persiste**. |
-| `GET` | `/apis/getOperators` | — | Devuelve **70 operadores**. Campos reales: `_id`, `operatorName`, `participants`, `transferAPIURL`. Nada más. |
+**¿Por qué hay varios operadores y no uno solo del Estado?**
 
-### 7.2 Dónde la API NO alcanza (hallazgos verificados en vivo)
+Porque el Estado reconoció que no puede pagar ni administrar una plataforma de ese tamaño. Igual que pasó con el RUNT o la planilla de aportes, abre el juego a empresas privadas que ponen su propia infraestructura.
 
-1. **No existe NINGÚN endpoint de documentos.** Ni subir, ni transferir, ni consultar metadatos. El centralizador es **puramente un directorio de identidad**. Todo el flujo documental del caso queda fuera de la API, a cargo de contratos entre operadores que nadie especifica.
-2. **Sólo 16 de los 70 operadores registrados publican `transferAPIURL`.** Los otros 54 son inalcanzables: no hay forma de transferirles un ciudadano ni de entregarles un documento. **El 77 % del directorio es inerte.** El campo no es obligatorio en el contrato y nadie lo verifica.
-3. **`transferAPIURLConfirm` no existe en la respuesta.** No es que venga vacío: `getOperators` **no proyecta el campo en absoluto**, y ninguno de los 70 operadores lo trae. El protocolo de confirmación de transferencia es inobservable desde fuera. *(Corrige la lectura anterior del repo, que asumía proyección con valor vacío.)*
-4. **`validateCitizen` devuelve prosa, no datos.** Verificado: `"El ciudadano con id: 1234567890 se encuentra registrado en el operador: Operador Ciudadano "` — string JSON, con **espacio final**. Para localizar el operador destino hay que parsear la frase con expresiones regulares, y el `operatorName` extraído (con su espacio) es la única clave de join contra `getOperators`, que no garantiza unicidad de nombre.
-5. **Semántica de `validateCitizen`: RESUELTA.** `200` = ocupado, `204` = libre. Confirmado con cinco identificaciones distintas. La ambigüedad del repo queda cerrada; el riesgo de invertir la lógica desaparece.
-6. **`authenticateDocument` recibe una URL, no el documento.** El centralizador no puede firmar un contenido que nunca descarga: como mucho sella una referencia. El no repudio del caso sigue sin soporte real.
-7. **Cero autenticación.** Verificado: `GET /apis/getOperators` responde `200` **sin ninguna credencial** — no hay API key, OAuth ni mTLS, y el contrato Swagger no declara `securityDefinitions`. Cualquiera en internet puede llamar `DELETE /apis/unregisterCitizen` y desafiliar a cualquier ciudadano.
-8. **CORS es una allowlist que se cae, no `'*'`.** Verificado: sin `Origin` → `200`; `Origin: http://localhost:3000` → `200`; `Origin: https://evil.example` → **`500 Internal Server Error`**, no una denegación CORS limpia. El middleware lanza y nadie captura. Un frontend servido desde un origen no listado recibe un error de servidor. *(Corrige la lectura anterior, que daba el CORS por abierto.)*
-9. **El directorio no publica claves públicas.** `getOperators` devuelve nombre, id y participantes. Sin material criptográfico no hay forma de verificar la firma de un operador par: **la confianza federada no es construible con este contrato** (refuerza B-03).
-10. **El contrato de `registerOperator` es inconsistente consigo mismo**: la lista `required` nombra `nameOperator` y `adress`, que no están entre las `properties` declaradas (`name`, `address`). Un cliente generado desde el Swagger falla.
-11. `DELETE` con body: semántica no garantizada por muchos proxies y clientes HTTP.
-12. **Sin idempotencia, sin paginación, sin versionado (`/v1`), sin rate limiting y sin webhooks.** Los 70 operadores llegan en una sola respuesta de 11 KB; descubrir cambios sólo es posible por polling.
-13. `operatorId` es un `ObjectId` de MongoDB: detalle de implementación filtrado al contrato público, sin formato documentado.
-14. **Punto único de fallo.** Un dyno de Heroku con una Mongo Atlas. Estuvo en `503` ese mismo día antes de volver: la caída no fue hipotética. RNF-01 sigue acotado por este servicio.
+Un **operador** es la empresa que te guarda la carpeta. Tú eliges el tuyo, solo puedes tener uno a la vez, y puedes mudarte cuando quieras llevándote todo. Los operadores cobran por servicios adicionales, pero lo básico —tener carpeta, recibir, consultar y compartir— es gratis.
 
----
+**Nosotros vamos a construir uno de esos operadores.** Ese es el alcance del proyecto.
 
-## 8. Bloqueos y preguntas al profesor
+**Si cada operador es independiente, ¿cómo se hablan entre ellos?**
 
-Ordenados por impacto arquitectónico. Todos surgieron al intentar escribir la solución, no al leer.
+Ahí entra MinTIC con el **centralizador**. Piénsalo como un directorio telefónico nacional: lo único que sabe es qué ciudadano está en qué operador. No guarda documentos.
 
-| # | Pregunta | Por qué bloquea | Qué asumimos mientras tanto | Qué cambia en la arquitectura según la respuesta |
-|---|---|---|---|---|
-| **B-01** | ¿Existe (o va a existir) un **contrato común de transferencia entre operadores**, o cada equipo define el suyo? MinTIC solo publica una URL, no un esquema. | Es el corazón del caso (transferencia de ciudadano + envío de documentos "directo, sin pasar por el centralizador") y **es literalmente indefinible hoy**. Sin contrato no hay interoperabilidad. **Dato duro nuevo: sólo 16 de los 70 operadores del directorio publican `transferAPIURL`** — el 77 % es inalcanzable, así que hoy la federación ya no interopera de hecho. | Definimos nuestro propio contrato REST `POST /transfer/citizen` + `POST /documents/inbound` (JSON + URLs prefirmadas), versionado, y publicamos su OpenAPI. Asumimos que **solo interoperaremos con nosotros mismos**. | Si el curso fija un contrato común → adaptadores triviales y saga estándar. Si cada equipo inventa → hace falta un **anti-corruption layer y N adaptadores por operador**, lo que cambia el diseño de todo el borde de integración y el modelo de despliegue. |
-| **B-02** | ¿Cuál es la semántica de `endPointConfirm` y del protocolo de transferencia? ¿Es un 2PC, una saga con compensación, o un simple ACK? Además, verificado en vivo: **`getOperators` no devuelve el campo `transferAPIURLConfirm` en absoluto** y ninguno de los 70 operadores lo trae; en el contrato el campo es opcional, no `required`. | Determina si la transferencia es **atómica o eventualmente consistente**, y por tanto si puede haber ventanas de doble afiliación o de ciudadano sin operador (violando la unicidad que el PDF exige). | Saga en 3 fases: `initTransfer` → destino confirma recepción íntegra → origen llama `unregisterCitizen` → destino llama `registerCitizen`. Carpeta origen en **solo lectura** durante la ventana. Compensación por timeout de 24 h. | Con 2PC real: coordinador de transacciones, bloqueos distribuidos, peor disponibilidad. Con saga: hay que diseñar **compensaciones, idempotencia y reconciliación**, y aceptar estados intermedios visibles al usuario. Son dos arquitecturas distintas. |
-| **B-03** | ¿Quién es la **Autoridad Certificadora** y qué formato de firma se usa (XAdES/PAdES/CAdES/JWS)? `authenticateDocument` recibe una **URL prefirmada**, no el binario: el centralizador no puede firmar lo que nunca descarga. Y **el directorio no publica ninguna clave pública** de los operadores. | Todo el valor del sistema ("autenticidad no discutible", sustituir apostillas) descansa en la firma. Sin PKI, el sistema **no cumple su propósito de negocio** y RNF-15 es indemostrable. | Asumimos PKI simulada: nuestro operador firma con su propia clave (JWS detached sobre el hash SHA-256) y trata `authenticateDocument` como un **sello de tiempo simbólico**, no como firma. | Si MinTIC es la CA raíz → servicio de firma centralizado, nuevo cuello de botella y nueva dependencia en el camino crítico (impacta RNF-01 y RNF-07). Si cada operador firma → hace falta un **modelo de confianza federado** y distribución de claves públicas vía el directorio, que hoy no tiene ese campo. |
-| **B-04** | **Contradicción explícita del PDF:** exige que el Estado analice los metadatos documentales (Notarías, Educación, Registraduría) **y a la vez** que el centralizador "maneje la mínima cantidad de transacciones y almacene la mínima cantidad de información" y que se minimice el dato transferido operador↔centralizador. ¿Cuál gana? | Son objetivos **mutuamente excluyentes**. La respuesta define si construimos un pipeline analítico, si exportamos metadatos por lotes o si no construimos nada. Es la mayor incógnita de alcance del entregable. | Asumimos **exportación batch nocturna de metadatos anonimizados/agregados** a un data lake del Estado, fuera del camino del centralizador transaccional. Lo declaramos como asunción explícita en el entregable. | Analítica federada (el Estado consulta a cada operador) vs. centralizada (los operadores empujan al Estado) son arquitecturas opuestas: la primera obliga a exponer una API analítica en cada operador; la segunda añade un pipeline ETL, gobierno de datos y un problema de privacidad de primer orden. |
-| **B-05** | ¿Qué servicios son **básicos gratuitos** y cuáles **Premium**? El PDF solo da un ejemplo (PQRS de PQCarpeta) y no cierra la lista. | Afecta el alcance del entregable, el modelo de dominio (cuotas, medición, facturación) y decide si hay que diseñar *metering* y *tenancy* Premium. | Básico = registro, carpeta, recepción, descarga, envío a entidades, traslado. Premium = casos PQRS, cuotas ampliadas, API B2B para entidades, retención extendida de no certificados. | Si hay Premium real → aparecen contextos acotados de **medición, tarificación y facturación**, y un cuarto actor externo (pasarela de pagos) que hoy no está en el diagrama de contexto. |
-| **B-06** | ¿Hay que implementar de verdad la **integración con Registraduría** y el correo entrante, o basta con mocks? No existe ninguna API para ninguno de los dos. | RF-02, RF-06 y RF-07 son requisitos explícitos del PDF sin ningún medio de implementación. Cambia el esfuerzo y qué se puede demostrar. | Mock de Registraduría con contrato propio (`GET /identity/{cedula}` → datos + PDF firmado) y buzón SMTP real capturando `@nuestrodominio`. | Si hay que integrar de verdad → aparecen un adaptador de identidad y un subsistema de correo entrante con antivirus, límites de tamaño y anti-spam: dos componentes nuevos de primer nivel. |
-| ~~**B-07**~~ **RESUELTO** | ~~¿GovCarpeta es MinTIC u operador privado?~~ **MinTIC gestiona GovCarpeta.** Prevalece el README sobre el PDF. | — | Confirmado, no asumido. | MinTIC tiene **doble rol**: centralizador de interoperabilidad y operador de carpetas. El diagrama de contexto lo refleja como un actor con dos sombreros, y GovCarpeta sale de «Otros Operadores». Queda vivo el asunto de fondo: si el centralizador también opera carpetas hay **conflicto de interés y asimetría competitiva** frente a los operadores privados, y hay que definir si esa rama operadora puede leer lo que pasa por el directorio. |
-| ~~**B-08**~~ **RESUELTO** | ~~¿Cuál es la semántica de `validateCitizen`?~~ Verificado en vivo: **`200` = ocupado, `204` = libre**. | — | Confirmado, no asumido. | Residual menor: sigue devolviendo prosa con espacio final, así que el anti-corruption layer con parseo se mantiene. Si MinTIC lo pasara a JSON tipado, desaparece. |
-| **B-09** | ¿Hay algún mecanismo de **autenticación entre operadores y hacia el centralizador**? Verificado: `getOperators` responde `200` sin credencial alguna y el Swagger no declara `securityDefinitions`. Cualquiera puede desafiliar a cualquier ciudadano. | Contradice frontalmente el requerimiento de seguridad del PDF ("mecanismo sólido de autenticación", "complejos sistemas de autorización"). No se puede diseñar la seguridad de la federación si su raíz de confianza es abierta. | Diseñamos **mTLS + JWT firmado con la clave del operador** para el tráfico operador↔operador, y aceptamos que el tramo hacia el centralizador queda sin autenticar (riesgo documentado y aceptado). | Si MinTIC emitiera credenciales de operador → aparece un **flujo de onboarding y rotación de claves** y el directorio pasa a ser también un almacén de claves públicas. Si no → hay que documentar el riesgo residual como limitación conocida del sistema. |
-| ~~**B-10**~~ **RESUELTO (con reserva)** | El centralizador ya responde. Queda la pregunta de fondo: ¿hay compromiso de disponibilidad para la sustentación, o instancia alterna? | Estuvo caído ese mismo día antes de volver: un dyno de Heroku sin redundancia. La caída no es hipotética. | Réplica local del repo tras un feature flag, como contingencia. | Si no hay compromiso → caché local del directorio con TTL y modo degradado offline: la unicidad de afiliación pasa de consistencia fuerte a eventual. |
-| **B-11** | ¿"A perpetuidad" convive con el derecho de **supresión** de datos personales (habeas data / Ley 1581)? ¿Un ciudadano puede eliminar su carpeta o un documento? | Perpetuidad + almacenamiento inmutable (WORM) es **técnicamente incompatible** con el borrado. Determina si el almacenamiento puede ser inmutable o debe ser reversible. | Asumimos **inmutabilidad de los certificados** y borrado permitido solo de los no certificados; el retiro del operador conserva los certificados. | Si el borrado es obligatorio → adiós object-lock; hace falta **cripto-borrado por clave** (destruir la clave del envelope), lo que cambia el diseño de KMS y de gestión de claves por documento. |
-| **B-12** | ¿El **alcance del entregable** es solo la documentación (RF/RNF/QoS/contexto) o incluye la implementación del operador? El README lista 4 artefactos, pero el paréntesis dice "cada equipo **implementará** una solución de un Operador". | Cambia por completo la profundidad exigida: un diagrama de contexto no requiere resolver B-01..B-03, una implementación sí. | Asumimos que **este entregable es documental** y que la implementación viene después, pero dejamos las decisiones de integración ya tomadas para no rehacer el diseño. | Si es implementación → los bloqueos B-01, B-02, B-03 y B-06 pasan de ser observaciones a ser **bloqueantes duros de sprint**, y hay que negociar el contrato entre equipos en la primera semana. |
-| **B-13** | ¿La cuenta de correo del ciudadano es un **buzón real** (recibe correo de todo internet) o solo un identificador interno? El PDF dice "todos los documentos que se le envíen a esa dirección aparecerán en la carpeta". | Un buzón real implica MX propios, antivirus, anti-spam, cuotas y una superficie de ataque enorme; un identificador no implica casi nada. Es una diferencia de varios componentes. | Asumimos **buzón real restringido**: solo se aceptan correos de remitentes verificados (entidades y operadores registrados); el resto se rechaza. | Buzón abierto → subsistema de correo completo (MTA, escaneo, cuarentena) y su propio perfil de disponibilidad y seguridad. Identificador interno → desaparece un componente entero del diagrama. |
-| **B-14** | El PDF dice que la entidad no afiliada recibe los documentos "por correo electrónico, firmados". ¿Cómo se garantiza confidencialidad y no repudio **fuera** del sistema, dado RNF-12? | El correo es un canal no confiable; enviar documentos personales por email contradice el requerimiento de confidencialidad del propio PDF. | Asumimos **enlace de descarga prefirmado de vida corta (72 h) + código OTP**, en lugar de adjuntar el documento al correo. | Si deben ir adjuntos → hace falta cifrado S/MIME o contenedor cifrado con clave fuera de banda: un subsistema de distribución de claves adicional. |
-| **B-15** | ¿Cuántos ciudadanos/documentos hay que soportar y con qué presupuesto? El PDF solo dice "un país entero". Todos los números de la Sección 2 son invención nuestra. | Sin cifras, los RNF **no son verificables** y el mapeo a QoS es retórica. Además determina si la arquitectura es monolito modular o microservicios distribuidos. | 50 M de ciudadanos en la federación, 10 % de cuota para nosotros (5 M de carpetas), 30 % de crecimiento anual, ≤ USD 0,15/carpeta/mes. Todo marcado **[ASUNCIÓN]**. | Un orden de magnitud menos → un **monolito modular** con Postgres y almacenamiento de objetos es suficiente y mucho más barato. A la escala asumida → sharding, CQRS y mensajería asíncrona se vuelven obligatorios. |
-| **B-16** *(nuevo)* | ¿Publicar `transferAPIURL` es obligatorio para operar? 54 de 70 operadores registrados no lo tienen, y nadie lo verifica. | Define si el directorio es una lista de operadores **operativos** o un simple registro de equipos del curso. Cambia a quién podemos entregar documentos y qué significa «operador registrado». | Asumimos que sólo los 16 con endpoint son destinos válidos; los demás se tratan como no afiliables. | Si es obligatorio → hace falta validación en el alta y un estado de operador. Si es opcional → el descubrimiento necesita un **health check propio por operador** antes de intentar cualquier entrega, más una política de fallback. |
+Ejemplo real del caso. El Ministerio de Educación quiere mandarle el diploma a Andrés. El MEN trabaja con el operador GovCarpeta, pero Andrés está en Mi Carpeta. Entonces GovCarpeta le pregunta al centralizador «¿dónde está la cédula 1234?», el centralizador contesta «en Mi Carpeta», y **GovCarpeta le manda el diploma directamente a Mi Carpeta**. El documento nunca pasa por MinTIC.
+
+Eso no es un detalle: es una exigencia explícita del caso. El centralizador debe mover la menor cantidad posible de datos y de transacciones.
+
+**¿Cómo se protege la privacidad?**
+
+Con una regla sencilla: **nada sale de tu carpeta sin que tú lo autorices**, documento por documento.
+
+Cuando Andrés pide una visa, el funcionario de la embajada no entra a husmear. Registra una petición —cédula, pasaporte, carta laboral, extractos—, a Andrés le llega un SMS, él entra y decide qué manda y qué no. Si le falta un documento, sube una versión temporal sin firmar y en el mismo paso le pide el definitivo a la entidad que lo expide.
+
+**¿Qué es lo verdaderamente difícil aquí?**
+
+No es guardar archivos. Eso está resuelto hace veinte años. Lo difícil son cuatro cosas:
+
+**Uno, que dos operadores se entiendan.** Si cada equipo inventa su propio formato de intercambio, la federación no existe. Hoy el centralizador solo publica una URL por operador, sin decir qué mandar a esa URL. Y de 70 operadores registrados, 54 ni siquiera publican esa URL.
+
+**Dos, mudarse de operador sin romper nada.** Mover toda una carpeta de una empresa a otra sin que el ciudadano quede un segundo con dos operadores ni con ninguno. Eso es una transacción distribuida, y no hay forma limpia de hacerla.
+
+**Tres, que la firma valga.** Sin una autoridad que emita y respalde los certificados, «documento firmado» es un adorno. Hoy ese servicio del centralizador ni siquiera descarga el documento que dice autenticar.
+
+**Cuatro, ser usable.** El sistema tiene que funcionar para gente que apenas usa un celular, y al mismo tiempo pedir segundo factor para autorizar. Cada control de seguridad que añadimos le resta usabilidad, y el caso pone la usabilidad como prioridad máxima. Ese pulso no se resuelve, se administra.
+
+**¿Y qué vamos a entregar nosotros?**
+
+En esta entrega, cuatro piezas: los requerimientos funcionales, los no funcionales, el mapeo de esos no funcionales contra atributos de calidad con métricas, y el diagrama de contexto.
+
+Nuestro aporte diferencial no son las tablas. Es que **probamos la API del centralizador de verdad** y encontramos que varias cosas que el caso da por hechas no existen. Eso está en la sección 7, y las preguntas que salen de ahí están en la 8.
+
+## 8. Evidencia de la API GovCarpeta
+
+En línea el 05-09-2026 y **verificada en vivo** con llamadas de solo lectura. Contrato Swagger 2.0, sin `securityDefinitions`.
+
+| Método | Path | Comportamiento verificado |
+|---|---|---|
+| `GET` | `/apis/validateCitizen/{id}` | Confirmado en vivo: 200 = ya registrado, con string en prosa y espacio final. 204 sin cuerpo = libre. |
+| `POST` | `/apis/registerCitizen` | 201 creado, 501 si ya existe, 500 error de aplicación. |
+| `DELETE` | `/apis/unregisterCitizen` | Datos en el body. Documenta 201 Deleted —no 200—, 204 si no existía. |
+| `PUT` | `/apis/authenticateDocument` | Recibe una URL prefirmada de S3, no el binario. El centralizador no descarga el documento que dice autenticar. |
+| `POST` | `/apis/registerOperator` | El contrato se contradice: required exige nameOperator y adress, que no existen en properties (name, address). |
+| `PUT` | `/apis/registerTransferEndPoint` | endPointConfirm es opcional y no se persiste. |
+| `GET` | `/apis/getOperators` | Devuelve 70 operadores. Campos reales: _id, operatorName, participants, transferAPIURL. Nada más. |
+
+**Hallazgos verificados contra el servicio real**
+
+01. No existe ningún endpoint de documentos. Ni subir, ni transferir, ni consultar metadatos. El centralizador es puramente un directorio de identidad: todo el flujo documental del caso queda fuera de la API.
+02. Sólo 16 de los 70 operadores publican transferAPIURL. Los otros 54 son inalcanzables: no hay forma de transferirles un ciudadano ni de entregarles un documento. El 77 % del directorio es inerte, el campo no es obligatorio y nadie lo verifica.
+03. transferAPIURLConfirm no existe en la respuesta. No viene vacío: getOperators no proyecta el campo en absoluto y ninguno de los 70 lo trae. El protocolo de confirmación es inobservable desde fuera.
+04. validateCitizen devuelve prosa, no datos. «El ciudadano con id: 1234567890 se encuentra registrado en el operador: Operador Ciudadano » — con espacio final. Hay que parsear la frase, y el nombre extraído es la única clave de join contra un directorio que no garantiza unicidad.
+05. Semántica de validateCitizen: resuelta. 200 = ocupado, 204 = libre, confirmado con cinco identificaciones distintas. La ambigüedad del repositorio queda cerrada.
+06. authenticateDocument recibe una URL, no el documento. El centralizador no puede firmar un contenido que nunca descarga: como mucho sella una referencia. El no repudio del caso sigue sin soporte real.
+07. Cero autenticación. getOperators responde 200 sin ninguna credencial y el Swagger no declara securityDefinitions. Cualquiera en internet puede desafiliar a cualquier ciudadano con un DELETE.
+08. El CORS es una allowlist que se cae, no '*'. Sin Origin → 200; localhost:3000 → 200; un origen desconocido → 500 Internal Server Error, no una denegación limpia. El middleware lanza y nadie captura.
+09. El directorio no publica claves públicas. Sólo nombre, id y participantes. Sin material criptográfico no hay forma de verificar la firma de un operador par: la confianza federada no es construible con este contrato.
+10. Sin idempotencia, sin paginación, sin versionado, sin rate limiting y sin webhooks. Los 70 operadores llegan en una sola respuesta de 11 KB; descubrir cambios sólo es posible por polling.
+11. DELETE con body y operatorId como ObjectId de MongoDB: detalles de implementación filtrados al contrato público.
+12. Punto único de fallo. Un dyno de Heroku con una Mongo Atlas. Estuvo en 503 ese mismo día antes de volver: la caída no fue hipotética.
+
+## 9. Bloqueos y preguntas al profesor
+
+**B-01 — ¿Existe un contrato común de transferencia entre operadores, o cada equipo define el suyo?**
+
+- *Por qué bloquea:* Es el corazón del caso y hoy es literalmente indefinible. Dato nuevo: sólo 16 de los 70 operadores del directorio publican endpoint de transferencia — el 77 % es inalcanzable, así que la federación ya no interopera de hecho.
+- *Asunción provisional:* Contrato REST propio POST /transfer/citizen y POST /documents/inbound, versionado y con OpenAPI publicado. Asumimos que sólo interoperaremos con nosotros mismos.
+- *Qué cambia según la respuesta:* Contrato común → adaptadores triviales y saga estándar. Cada equipo el suyo → anti-corruption layer y N adaptadores: cambia todo el borde de integración y el modelo de despliegue.
+
+**B-16 — ¿Publicar transferAPIURL es obligatorio para operar? 54 de 70 operadores no lo tienen.**
+
+- *Por qué bloquea:* Define si el directorio lista operadores operativos o es sólo un registro de equipos del curso. Cambia a quién podemos entregar documentos y qué significa «operador registrado». Nadie valida el campo en el alta.
+- *Asunción provisional:* Sólo los 16 operadores con endpoint son destinos válidos; el resto se trata como no afiliable y se reporta como error de entrega.
+- *Qué cambia según la respuesta:* Obligatorio → validación en el alta y un estado de operador. Opcional → el descubrimiento necesita health check propio por operador antes de cada entrega, más una política de fallback.
+
+**B-02 — ¿Qué significa endPointConfirm? ¿2PC, saga con compensación o un simple ACK?**
+
+- *Por qué bloquea:* Determina si la transferencia es atómica o eventualmente consistente, y por tanto si puede haber doble afiliación o ciudadano sin operador. Verificado: getOperators no devuelve el campo en absoluto y ninguno de los 70 operadores lo trae.
+- *Asunción provisional:* Saga en tres fases: initTransfer → destino confirma recepción íntegra → origen desafilia → destino registra. Carpeta origen en solo-lectura, compensación por timeout de 24 h.
+- *Qué cambia según la respuesta:* 2PC real → coordinador, bloqueos distribuidos, peor disponibilidad. Saga → compensaciones, idempotencia y reconciliación, con estados intermedios visibles al usuario. Son dos arquitecturas distintas.
+
+**B-03 — ¿Quién es la Autoridad Certificadora y qué formato de firma se usa?**
+
+- *Por qué bloquea:* Todo el valor del sistema —autenticidad no discutible, sustituir apostillas— descansa en la firma. Verificado: authenticateDocument recibe una URL, no el binario, y el directorio no publica ninguna clave pública. La confianza federada no es construible con este contrato.
+- *Asunción provisional:* PKI simulada: firmamos con clave propia (JWS detached sobre SHA-256) y tratamos authenticateDocument como sello de tiempo simbólico, no como firma.
+- *Qué cambia según la respuesta:* MinTIC como CA raíz → servicio de firma centralizado, nuevo cuello de botella en el camino crítico. Firma por operador → modelo de confianza federado y distribución de claves públicas vía un directorio que hoy no tiene ese campo.
+
+**B-04 — Analítica del Estado o centralizador mínimo: ¿cuál gana?**
+
+- *Por qué bloquea:* El PDF exige que el Estado analice los metadatos y que el centralizador almacene y transfiera lo mínimo. Son objetivos mutuamente excluyentes. Es la mayor incógnita de alcance del entregable.
+- *Asunción provisional:* Exportación batch nocturna de metadatos anonimizados a un data lake del Estado, fuera del camino del centralizador transaccional.
+- *Qué cambia según la respuesta:* Analítica federada (el Estado consulta a cada operador) exige una API analítica en cada operador. Centralizada (los operadores empujan) añade ETL, gobierno de datos y un problema de privacidad de primer orden.
+
+**B-05 — ¿Qué servicios son básicos gratuitos y cuáles Premium?**
+
+- *Por qué bloquea:* Afecta el alcance, el modelo de dominio (cuotas, medición, facturación) y decide si hay que diseñar metering y tenancy Premium. El PDF sólo da el ejemplo de PQRS.
+- *Asunción provisional:* Básico: registro, carpeta, recepción, descarga, envío y traslado. Premium: casos PQRS, cuotas ampliadas, API B2B y retención extendida de no certificados.
+- *Qué cambia según la respuesta:* Premium real → contextos acotados de medición, tarificación y facturación, más un cuarto actor externo (pasarela de pagos) que hoy no está en el diagrama.
+
+**B-06 — Registraduría y correo entrante: ¿integración real o mocks?**
+
+- *Por qué bloquea:* RF-02, RF-06 y RF-07 son requisitos explícitos sin ningún medio de implementación. Cambia el esfuerzo y qué se puede demostrar.
+- *Asunción provisional:* Mock de Registraduría con contrato propio y buzón SMTP real capturando nuestro dominio.
+- *Qué cambia según la respuesta:* Integración real → adaptador de identidad y subsistema de correo entrante con antivirus, límites y anti-spam: dos componentes nuevos de primer nivel.
+
+**B-07 · Resuelto — MinTIC gestiona GovCarpeta. Prevalece el README sobre el PDF.**
+
+- *Cómo se cerró:* Confirmado: el Ministerio opera GovCarpeta además de prestar los servicios de interoperabilidad. La lectura del PDF —GovCarpeta como operador privado con convenio del MEN— queda descartada.
+- *Qué cambia en el diagrama:* MinTIC pasa a tener doble rol: centralizador y operador de carpetas. GovCarpeta sale de «Otros Operadores» y se anota dentro del actor MinTIC.
+- *Lo que sigue abierto:* Si el centralizador también opera carpetas hay conflicto de interés y asimetría competitiva frente a los operadores privados. Falta definir si esa rama operadora puede leer lo que pasa por el directorio.
+
+**B-08 · Resuelto — Semántica de validateCitizen: 200 = ocupado, 204 = libre.**
+
+- *Cómo se cerró:* Confirmado en vivo con cinco identificaciones distintas contra el servicio real. Ya no hace falta asumir nada ni arriesgarse a invertir la lógica de afiliación.
+- *Residual:* Sigue devolviendo una frase en español con espacio final en lugar de datos tipados, así que el anti-corruption layer con parseo se mantiene.
+- *Qué haría falta para cerrarlo del todo:* Que MinTIC devolviera JSON con operatorId. Ese día el adaptador de parseo desaparece.
+
+**B-09 — ¿Hay autenticación entre operadores y hacia el centralizador?**
+
+- *Por qué bloquea:* Verificado: responde 200 sin credencial alguna y el Swagger no declara securityDefinitions. El CORS no es abierto: es una allowlist que devuelve 500 ante un origen desconocido en vez de denegar limpiamente.
+- *Asunción provisional:* mTLS más JWT firmado con la clave del operador para el tráfico entre pares; el tramo hacia el centralizador queda sin autenticar, como riesgo documentado.
+- *Qué cambia según la respuesta:* Si MinTIC emitiera credenciales → flujo de onboarding y rotación de claves, y el directorio pasa a ser también almacén de claves públicas.
+
+**B-10 · Resuelto con reserva — El centralizador ya responde. ¿Hay compromiso de disponibilidad para la sustentación?**
+
+- *Cómo se cerró:* La API volvió y toda la evidencia se revalidó contra ella. Pero estuvo caída ese mismo día: un solo dyno de Heroku sin redundancia. La caída no es hipotética.
+- *Asunción provisional:* Réplica local del repositorio del centralizador tras un feature flag, como contingencia para la demostración.
+- *Qué cambia según la respuesta:* Sin compromiso → caché local del directorio con TTL y modo degradado offline: la unicidad de afiliación pasa de consistencia fuerte a eventual.
+
+**B-11 — ¿«A perpetuidad» convive con el derecho de supresión de datos personales?**
+
+- *Por qué bloquea:* Perpetuidad más almacenamiento inmutable es técnicamente incompatible con el borrado. Determina si el almacenamiento puede ser WORM o debe ser reversible.
+- *Asunción provisional:* Inmutabilidad sólo de los certificados; borrado permitido de los no certificados. El retiro del operador conserva los certificados.
+- *Qué cambia según la respuesta:* Borrado obligatorio → adiós object-lock: hace falta cripto-borrado destruyendo la clave del envelope, lo que cambia el diseño de KMS y de claves por documento.
+
+**B-12 — ¿El entregable es sólo documental o incluye implementar el operador?**
+
+- *Por qué bloquea:* El README lista cuatro artefactos documentales pero el paréntesis dice que cada equipo «implementará» una solución. Cambia por completo la profundidad exigida.
+- *Asunción provisional:* Entregable documental, con las decisiones de integración ya tomadas para no rehacer el diseño después.
+- *Qué cambia según la respuesta:* Si hay implementación, B-01, B-02, B-03 y B-06 pasan de observaciones a bloqueantes duros de sprint, y el contrato entre equipos hay que negociarlo la primera semana.
+
+**B-13 — ¿El correo del ciudadano es un buzón real de internet o un identificador interno?**
+
+- *Por qué bloquea:* Un buzón real implica MX propios, antivirus, anti-spam, cuotas y una superficie de ataque enorme. Un identificador no implica casi nada. Son varios componentes de diferencia.
+- *Asunción provisional:* Buzón real restringido: sólo se aceptan correos de remitentes verificados —entidades y operadores registrados—; el resto se rechaza.
+- *Qué cambia según la respuesta:* Buzón abierto → subsistema de correo completo (MTA, escaneo, cuarentena) con su propio perfil de disponibilidad y seguridad. Identificador → desaparece un componente entero.
+
+**B-14 — Enviar documentos por email a entidades no afiliadas contradice la confidencialidad. ¿Cómo se resuelve?**
+
+- *Por qué bloquea:* El correo es un canal no confiable; adjuntar documentos personales contradice RNF-12, que sale del propio PDF.
+- *Asunción provisional:* Enlace de descarga prefirmado de vida corta (72 h) más código OTP, en lugar de adjuntar el documento.
+- *Qué cambia según la respuesta:* Si deben ir adjuntos → cifrado S/MIME o contenedor cifrado con clave fuera de banda: un subsistema de distribución de claves adicional.
+
+**B-15 — ¿Cuántos ciudadanos y documentos hay que soportar, y con qué presupuesto?**
+
+- *Por qué bloquea:* El PDF sólo dice «un país entero». Sin cifras los RNF no son verificables y el mapeo a QoS es retórica. Además determina si la arquitectura es monolito modular o distribuida.
+- *Asunción provisional:* 50 M de ciudadanos en la federación, 10 % de cuota para nosotros, 30 % de crecimiento anual, ≤ USD 0,15 por carpeta al mes. Todo marcado como asunción.
+- *Qué cambia según la respuesta:* Un orden de magnitud menos → monolito modular con Postgres y object storage, mucho más barato. A la escala asumida → sharding, CQRS y mensajería asíncrona se vuelven obligatorios.
+

@@ -1,0 +1,227 @@
+{
+  "restricciones": {
+    "titulo": "4.1 Restricciones de diseño",
+    "intro": "Lo que acota las opciones del diseño antes de empezar a diseñar. Cada restricción cita de dónde sale: el caso de estudio, un factor de la metodología <i>Twelve-Factor App</i> o un pilar de arquitectura nativa de la nube vistos en clase.",
+    "filas": [
+      {
+        "id": "RD-01",
+        "nombre": "Configuración fuera del artefacto",
+        "descripcion": "El sistema debe leer toda su configuración del entorno de ejecución, sin puertos, credenciales ni direcciones de otros operadores escritos en el código.",
+        "fuente": "Twelve-Factor III · Config",
+        "origen": "asuncion"
+      },
+      {
+        "id": "RD-02",
+        "nombre": "Procesos sin estado",
+        "descripcion": "El sistema debe ejecutarse como procesos sin estado, de modo que cualquier instancia pueda atender cualquier petición sin sesiones pegajosas.",
+        "fuente": "Twelve-Factor VI · Processes",
+        "origen": "asuncion"
+      },
+      {
+        "id": "RD-03",
+        "nombre": "Escalado horizontal",
+        "descripcion": "El sistema debe crecer añadiendo instancias y no ampliando la memoria o la CPU de las existentes.",
+        "fuente": "Twelve-Factor VIII · Concurrency",
+        "origen": "asuncion"
+      },
+      {
+        "id": "RD-04",
+        "nombre": "Infraestructura inmutable",
+        "descripcion": "El sistema no debe parchear un entorno de ejecución en caliente: un cambio se aplica reemplazando la instancia por una construida de nuevo.",
+        "fuente": "Cloud native · Immutable infrastructure",
+        "origen": "asuncion"
+      },
+      {
+        "id": "RD-05",
+        "nombre": "Servicios de respaldo enchufables",
+        "descripcion": "El sistema debe tratar la base de datos, el almacén de objetos y la mensajería como recursos adjuntos, intercambiables cambiando configuración y sin tocar el código.",
+        "fuente": "Twelve-Factor IV · Backing services",
+        "origen": "asuncion"
+      },
+      {
+        "id": "RD-06",
+        "nombre": "Empaquetado en contenedores",
+        "descripcion": "El sistema debe distribuirse como imágenes de contenedor versionadas, de forma que desarrollo, pruebas y producción ejecuten el mismo artefacto.",
+        "fuente": "Cloud native · Containers · Twelve-Factor X",
+        "origen": "asuncion"
+      },
+      {
+        "id": "RD-07",
+        "nombre": "Separación de construcción y ejecución",
+        "descripcion": "El sistema debe construirse una vez y desplegarse muchas, sin que la etapa de ejecución pueda alterar el artefacto construido.",
+        "fuente": "Twelve-Factor V · Build, release, run",
+        "origen": "asuncion"
+      },
+      {
+        "id": "RD-08",
+        "nombre": "Diseño API-first",
+        "descripcion": "El sistema debe definir y publicar el contrato de sus interfaces antes de implementar la funcionalidad que las sirve, empezando por la interfaz federada entre operadores.",
+        "fuente": "Cloud native · API-first design",
+        "origen": "asuncion"
+      },
+      {
+        "id": "RD-09",
+        "nombre": "Registros como flujo de eventos",
+        "descripcion": "El sistema no debe escribir ni rotar ficheros de registro: emite eventos a la salida estándar y el entorno de ejecución los recoge.",
+        "fuente": "Twelve-Factor XI · Logs",
+        "origen": "asuncion"
+      },
+      {
+        "id": "RD-10",
+        "nombre": "Tareas de administración separadas",
+        "descripcion": "El sistema debe ejecutar las migraciones de datos y las cargas masivas como procesos puntuales aparte, con la misma versión y configuración que el servicio.",
+        "fuente": "Twelve-Factor XII · Admin processes",
+        "origen": "asuncion"
+      },
+      {
+        "id": "RD-11",
+        "nombre": "Sin base de datos compartida",
+        "descripcion": "El sistema no debe integrar dos servicios a través de un esquema de datos común: la integración ocurre por interfaz publicada o por mensajería.",
+        "fuente": "Microservicios · Persistencia políglota",
+        "origen": "asuncion"
+      },
+      {
+        "id": "RD-12",
+        "nombre": "Descomposición por capacidad de negocio",
+        "descripcion": "El sistema debe partirse en cortes verticales de negocio — afiliación, documento, entrega, autorización — y no en capas técnicas de presentación, lógica y datos.",
+        "fuente": "Microservicios · Capacidades de negocio",
+        "origen": "asuncion"
+      },
+      {
+        "id": "RD-13",
+        "nombre": "Observabilidad desde el primer despliegue",
+        "descripcion": "El sistema debe emitir métricas, trazas distribuidas y eventos desde su primera versión desplegada, y no añadirlos cuando aparezca el primer incidente.",
+        "fuente": "Cloud native · Observability",
+        "origen": "asuncion"
+      },
+      {
+        "id": "RD-14",
+        "nombre": "Centralizador externo no modificable",
+        "descripcion": "El sistema debe adaptarse al centralizador de MinTIC tal como está: no podemos cambiar su contrato, su disponibilidad ni su modelo de datos.",
+        "fuente": "Caso de estudio",
+        "origen": "caso"
+      },
+      {
+        "id": "RD-15",
+        "nombre": "Contrato GovCarpeta congelado",
+        "descripcion": "El sistema debe consumir la API GovCarpeta tal como se verificó: Swagger 2.0, sin definiciones de seguridad y sin versionado en la ruta.",
+        "fuente": "Evidencia de la API · sección 08",
+        "origen": "caso"
+      }
+    ]
+  },
+  "inversos": {
+    "titulo": "4.2 Requerimientos inversos",
+    "intro": "Lo que el sistema <b>no</b> debe hacer. El template del curso los pide aparte (§3.6) porque un límite explícito evita que alguien lo cruce creyendo que mejora el producto.",
+    "filas": [
+      {
+        "id": "RI-01",
+        "nombre": "Sin contenido por el centralizador",
+        "descripcion": "El sistema no debe hacer pasar el contenido de ningún documento por el centralizador de MinTIC; solo consulta y actualiza el directorio de afiliación.",
+        "origen": "caso"
+      },
+      {
+        "id": "RI-02",
+        "nombre": "Sin garantías de tiempo real",
+        "descripcion": "El sistema no debe prometer entrega en tiempo real entre operadores, porque MinTIC descartó explícitamente ese requisito.",
+        "origen": "caso"
+      },
+      {
+        "id": "RI-03",
+        "nombre": "Sin doble afiliación",
+        "descripcion": "El sistema no debe permitir que un ciudadano quede afiliado a dos operadores a la vez, ni siquiera de forma transitoria durante un traslado.",
+        "origen": "caso"
+      },
+      {
+        "id": "RI-04",
+        "nombre": "Sin cambio de cuenta de correo",
+        "descripcion": "El sistema no debe permitir modificar la cuenta de correo institucional después del primer registro del ciudadano.",
+        "origen": "caso"
+      },
+      {
+        "id": "RI-05",
+        "nombre": "Sin cuota para certificados",
+        "descripcion": "El sistema no debe limitar la cantidad ni el tamaño de los documentos certificados; la cuota aplica únicamente a los no certificados.",
+        "origen": "caso"
+      },
+      {
+        "id": "RI-06",
+        "nombre": "Sin lectura por el operador",
+        "descripcion": "El operador no debe poder leer el contenido de un documento del ciudadano sin una autorización registrada y auditable del titular.",
+        "origen": "asuncion"
+      },
+      {
+        "id": "RI-07",
+        "nombre": "Sin cobro por servicios básicos",
+        "descripcion": "El operador no debe cobrar por las funciones que el caso define como servicios básicos; el cobro se limita a los servicios Premium.",
+        "origen": "caso"
+      },
+      {
+        "id": "RI-08",
+        "nombre": "Sin entrega no autorizada",
+        "descripcion": "El sistema no debe entregar un documento a un tercero sin autorización explícita del ciudadano titular para esa petición concreta.",
+        "origen": "caso"
+      }
+    ]
+  },
+  "granularidad": {
+    "titulo": "4.3 Drivers de granularidad",
+    "intro": "Los nueve dominios funcionales pasados por los desintegradores de granularidad de la clase: alcance y función, volatilidad del código, escalabilidad y rendimiento, tolerancia a fallos y extensibilidad. Todavía no es una descomposición en servicios — es la evidencia que justificará esa decisión en la siguiente entrega.",
+    "filas": [
+      {
+        "dominio": "RF-01 · Afiliación",
+        "driver": "Tolerancia a fallos",
+        "veredicto": "Aislar",
+        "razon": "Es el único dominio que exige consistencia fuerte contra el centralizador. Mezclarlo con el resto arrastraría la carpeta entera a la disponibilidad de MinTIC."
+      },
+      {
+        "dominio": "RF-02 · Gestión documental",
+        "driver": "Escalabilidad y rendimiento",
+        "veredicto": "Partir en dos",
+        "razon": "El índice de la carpeta se consulta miles de veces por cada escritura de contenido. Índice y almacenamiento tienen perfiles de carga opuestos y deben escalar por separado."
+      },
+      {
+        "dominio": "RF-03 · Interoperabilidad",
+        "driver": "Tolerancia a fallos",
+        "veredicto": "Aislar",
+        "razon": "Habla con 70 operadores ajenos de fiabilidad desconocida. Un fallo en cascada aquí no puede tumbar la consulta de la carpeta propia."
+      },
+      {
+        "dominio": "RF-04 · Autorizaciones",
+        "driver": "Alcance y función",
+        "veredicto": "Aislar",
+        "razon": "Cohesión muy alta alrededor de una sola idea — el consentimiento — y es el punto que toda operación de entrega tiene que consultar."
+      },
+      {
+        "dominio": "RF-05 · Notificaciones",
+        "driver": "Escalabilidad y extensibilidad",
+        "veredicto": "Mantener unido",
+        "razon": "Correo y SMS son dos modos del mismo propósito: avisar. Es el ejemplo de la clase — hay cohesión, así que un solo servicio hace tres cosas."
+      },
+      {
+        "dominio": "RF-06 · Centralizador",
+        "driver": "No aplica",
+        "veredicto": "Fuera del alcance",
+        "razon": "Es sistema externo. Aquí solo se diseña el adaptador con capa anticorrupción que lo consume."
+      },
+      {
+        "dominio": "RF-07 · Premium",
+        "driver": "Volatilidad del código",
+        "veredicto": "Aislar",
+        "razon": "Es la parte que más cambia, porque la manda el mercado y no la norma. Encerrarla evita volver a probar el núcleo con cada cambio comercial."
+      },
+      {
+        "dominio": "RF-08 · Analítica",
+        "driver": "Escalabilidad y rendimiento",
+        "veredicto": "Aislar",
+        "razon": "Consultas largas sobre metadatos de millones de carpetas. Compartir motor con lo transaccional pondría en riesgo el p95 de la carpeta."
+      },
+      {
+        "dominio": "RF-09 · Seguridad y auditoría",
+        "driver": "Alcance y función",
+        "veredicto": "Partir en dos",
+        "razon": "Identidad y bitácora no tienen nada en común: una está en el camino crítico de cada petición, la otra solo escribe. No hay cohesión que las mantenga juntas."
+      }
+    ]
+  }
+}

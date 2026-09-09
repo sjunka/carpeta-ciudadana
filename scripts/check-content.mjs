@@ -31,6 +31,7 @@ const rnf = leer('requerimientos-no-funcionales.json')
 const qos = leer('mapeo-qos.json')
 const bloqueos = leer('bloqueos.json')
 const contexto = leer('contexto.json')
+const restr = leer('restricciones.json')
 
 const PRIORIDADES = new Set(['Alta', 'Media', 'Baja'])
 const ORIGENES = new Set(['asuncion', 'caso'])
@@ -80,6 +81,56 @@ for (const fila of qos.filas) {
   if (!fila.friccion) fallo(`Mapeo QoS "${fila.rnf}": falta el punto de fricción.`)
 }
 
+// --- 4b. Restricciones de diseño, requerimientos inversos y granularidad ---
+// Los drivers de granularidad son los cinco desintegradores del material del curso.
+const DRIVERS = new Set([
+  'Alcance y función',
+  'Volatilidad del código',
+  'Escalabilidad y rendimiento',
+  'Tolerancia a fallos',
+  'Extensibilidad',
+  'Escalabilidad y extensibilidad',
+  'No aplica',
+])
+const VEREDICTOS = new Set(['Aislar', 'Partir en dos', 'Mantener unido', 'Fuera del alcance'])
+
+const idsRestr = new Set()
+for (const [bloque, patron] of [
+  [restr.restricciones, /^RD-\d{2}$/],
+  [restr.inversos, /^RI-\d{2}$/],
+]) {
+  if (!bloque.titulo || !bloque.intro) fallo('restricciones.json: un bloque no tiene título o intro.')
+  for (const r of bloque.filas) {
+    if (idsRestr.has(r.id)) fallo(`${r.id}: identificador duplicado.`)
+    idsRestr.add(r.id)
+    if (!patron.test(r.id)) fallo(`${r.id}: el id debe seguir ${patron}.`)
+    if (!ORIGENES.has(r.origen)) fallo(`${r.id}: origen "${r.origen}" debe ser "asuncion" o "caso".`)
+    if (!r.nombre || r.nombre.length > 60) fallo(`${r.id}: el nombre debe ser corto y estar presente.`)
+    if (!r.descripcion?.endsWith('.')) fallo(`${r.id}: la descripción debe terminar en punto.`)
+    if (!/^El (sistema|operador) (no )?debe/.test(r.descripcion))
+      fallo(`${r.id}: la descripción debe empezar por «El sistema/operador (no) debe» (regla 2 de REGLAS.md).`)
+  }
+}
+// Un requerimiento inverso es una prohibición: sin el "no", no es inverso.
+for (const r of restr.inversos.filas) {
+  if (!/^El (sistema|operador) no debe/.test(r.descripcion))
+    fallo(`${r.id}: un requerimiento inverso tiene que decir qué NO se debe hacer.`)
+}
+// Una restricción de diseño sin origen citable no es defendible ante el profesor.
+for (const r of restr.restricciones.filas) {
+  if (!r.fuente) fallo(`${r.id}: falta la fuente (factor, pilar cloud native o caso de estudio).`)
+}
+const dominiosRF = new Set(rf.dominios.map((d) => d.id))
+for (const g of restr.granularidad.filas) {
+  const dom = g.dominio.split(' ')[0]
+  if (!dominiosRF.has(dom)) fallo(`Granularidad "${g.dominio}": ${dom} no es un dominio funcional.`)
+  if (!DRIVERS.has(g.driver)) fallo(`Granularidad ${dom}: driver "${g.driver}" no es uno del material del curso.`)
+  if (!VEREDICTOS.has(g.veredicto)) fallo(`Granularidad ${dom}: veredicto "${g.veredicto}" desconocido.`)
+  if (!g.razon) fallo(`Granularidad ${dom}: falta la justificación.`)
+}
+if (restr.granularidad.filas.length !== rf.dominios.length)
+  fallo(`Granularidad: hay ${restr.granularidad.filas.length} filas para ${rf.dominios.length} dominios funcionales.`)
+
 // --- 5. Bloqueos ---
 const vistos = new Set()
 for (const b of bloqueos.bloqueos) {
@@ -91,7 +142,7 @@ for (const b of bloqueos.bloqueos) {
 }
 
 // --- 6. Secciones: meta debe cuadrar con lo que App.jsx sabe montar ---
-const MONTABLES = ['rf', 'rnf', 'qos', 'ctx', 'cu', 'simple', 'api', 'bloqueos']
+const MONTABLES = ['rf', 'rnf', 'qos', 'restr', 'ctx', 'cu', 'simple', 'api', 'bloqueos']
 for (const s of meta.secciones) {
   if (!MONTABLES.includes(s.id)) fallo(`Sección "${s.id}" no tiene componente en App.jsx.`)
   if (!s.num || !s.nav || !s.titulo) fallo(`Sección "${s.id}": falta num, nav o titulo.`)
@@ -104,6 +155,7 @@ const abiertos = bloqueos.bloqueos.filter((b) => b.estado !== 'resuelto').length
 const esperado = {
   totalRF: `${totalRF} en ${rf.dominios.length} dominios`,
   totalRNF: String(rnf.requerimientos.length),
+  restricciones: `${restr.restricciones.filas.length} RD · ${restr.inversos.filas.length} RI`,
   bloqueos: `${abiertos} de ${bloqueos.bloqueos.length}`,
 }
 for (const d of meta.datos) {
@@ -115,4 +167,8 @@ if (errores.length) {
   console.error(`\n✗ ${errores.length} problema(s) de contenido:\n` + errores.map((e) => '  · ' + e).join('\n') + '\n')
   process.exit(1)
 }
-console.log(`✓ Contenido válido — ${totalRF} RF · ${rnf.requerimientos.length} RNF · ${qos.filas.length} filas QoS · ${bloqueos.bloqueos.length} bloqueos`)
+console.log(
+  `✓ Contenido válido — ${totalRF} RF · ${rnf.requerimientos.length} RNF · ` +
+    `${restr.restricciones.filas.length} RD · ${restr.inversos.filas.length} RI · ` +
+    `${qos.filas.length} filas QoS · ${bloqueos.bloqueos.length} bloqueos`,
+)

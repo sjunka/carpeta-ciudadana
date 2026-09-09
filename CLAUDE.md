@@ -15,7 +15,7 @@ el formato de los requerimientos, la gramática de los diagramas y la paleta.
 |---|---|---|
 | Sitio en GitHub Pages | `git push` a `main` | No, es salida |
 | Espejo en Artifact | `npm run artifact`, republicar sobre la misma URL | **Nunca** |
-| `docs/entrega-1.md` | A mano, hoy desactualizado | Pendiente de generar |
+| `docs/entrega-1.md` y `../assignment1/simulacion-borrador.md` | `npm run md` | **Nunca**, son salida |
 
 El espejo es de solo lectura por decisión: dos sitios editables se desincronizan.
 
@@ -41,6 +41,8 @@ npm run dev       # revisa en el navegador
 - La prioridad es Alta, Media o Baja.
 - Toda referencia a un bloqueo apunta a un bloqueo que existe.
 - Todo RNF citado en el mapeo QoS existe.
+- Cada restricción de diseño cita su fuente y cada requerimiento inverso dice qué NO se hace.
+- El análisis de granularidad cubre los nueve dominios y usa solo los cinco drivers de la clase.
 - Los contadores de la portada cuadran con los datos reales.
 - Cada par texto/fondo cumple WCAG AA en los dos temas, incluidos los diagramas, y los dos
   bloques del tema oscuro (por preferencia del sistema y por atributo) no se han desincronizado.
@@ -68,5 +70,6 @@ scripts/       validadores de contenido y de contraste
 2. Crea `src/sections/SeccionX.jsx`.
 3. Regístrala en el mapa `SECCIONES` de `App.jsx`.
 4. Añade su id a `MONTABLES` en `scripts/check-content.mjs`.
+5. Añade su bloque a `scripts/build-md.mjs` para que salga también en el documento.
 
 El validador falla si te saltas el paso 3 o el 4.

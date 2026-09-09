@@ -7,7 +7,8 @@
   "datos": [
     { "titulo": "Entrega", "valor": "12 sep 2026, 7:00 p. m." },
     { "titulo": "Funcionales", "valor": "65 en 9 dominios", "auto": "totalRF" },
-    { "titulo": "No funcionales", "valor": "28", "auto": "totalRNF" },
+    { "titulo": "No funcionales", "valor": "30", "auto": "totalRNF" },
+    { "titulo": "Restricciones", "valor": "15 RD · 8 RI", "auto": "restricciones" },
     { "titulo": "Bloqueos abiertos", "valor": "13 de 16", "tono": "alerta", "auto": "bloqueos" },
     { "titulo": "Centralizador", "valor": "En línea · verificado", "tono": "ok" }
   ],
@@ -18,16 +19,18 @@
       "intro": "El caso solo da criterios cualitativos: disponibilidad prácticamente total, latencia lo más baja posible, usabilidad como máxima prioridad. Todo número marcado como asunción lo pusimos nosotros y hay que validarlo." },
     { "id": "qos",      "num": "03", "nav": "Mapeo QoS",          "titulo": "Mapeo de requerimientos no funcionales vs QoS",
       "intro": "Cada atributo de calidad con su métrica, su umbral y la táctica que lo sostiene. La última columna es el precio que pagamos por esa táctica: es lo que hay que poder defender." },
-    { "id": "ctx",      "num": "04", "nav": "Contexto",           "titulo": "Diagrama de contexto",
+    { "id": "restr",    "num": "04", "nav": "Restricciones",      "titulo": "Restricciones de arquitectura",
+      "intro": "Lo que acota el diseño antes de diseñar: las restricciones que impone la plataforma, los límites que el sistema no debe cruzar y el tamaño que deberían tener las piezas. Sale del template del curso (§3.6 y §3.7) y del material de arquitectura nativa de la nube." },
+    { "id": "ctx",      "num": "05", "nav": "Contexto",           "titulo": "Diagrama de contexto",
       "intro": "Sigue el modelo de <i>system context artifact</i>: el sistema en construcción al centro, las personas a un lado, los sistemas al otro, y en cada flecha los datos que viajan." },
-    { "id": "cu",       "num": "05", "nav": "Casos de uso",       "titulo": "Casos de uso",
+    { "id": "cu",       "num": "06", "nav": "Casos de uso",       "titulo": "Casos de uso",
       "intro": "Referencia interna: no la piden en la entrega. Sirve para comprobar que ningún requerimiento se quedó sin dueño y que ningún caso de uso inventa requerimientos que el caso no sostiene." },
-    { "id": "simple",   "num": "06", "nav": "En palabras simples","titulo": "El proyecto en palabras simples",
+    { "id": "simple",   "num": "07", "nav": "En palabras simples","titulo": "El proyecto en palabras simples",
       "intro": "Sin jerga. Si algo de aquí no se entiende a la primera, está mal escrito y hay que arreglarlo." },
-    { "id": "api",      "num": "07", "nav": "Evidencia API",      "titulo": "Evidencia de la API GovCarpeta",
+    { "id": "api",      "num": "08", "nav": "Evidencia API",      "titulo": "Evidencia de la API GovCarpeta",
       "intro": "En línea el 05-09-2026 y <b>verificada en vivo</b> con llamadas de solo lectura. Contrato Swagger 2.0, sin <code>securityDefinitions</code>." },
-    { "id": "bloqueos", "num": "08", "nav": "Bloqueos",           "titulo": "Bloqueos y preguntas al profesor",
+    { "id": "bloqueos", "num": "09", "nav": "Bloqueos",           "titulo": "Bloqueos y preguntas al profesor",
       "intro": "Ordenados por impacto arquitectónico. Tres cerrados; los tres primeros siguen impidiendo avanzar." }
   ],
-  "pie": "Fuentes: enunciado del assignment; <i>Caso de estudio — Carpeta Ciudadana, Sistemas Distribuidos</i> (texto completo); API GovCarpeta, <b>verificada en vivo el 5 de septiembre de 2026</b> mediante llamadas de solo lectura a <code>getOperators</code>, <code>validateCitizen</code> y a las cabeceras CORS, más el contrato Swagger 2.0 servido por el propio host. No se ejecutó ninguna escritura. El diagrama de contexto sigue el modelo de <i>system context artifact</i> presentado en clase."
+  "pie": "Fuentes: enunciado del assignment; <i>Caso de estudio — Carpeta Ciudadana, Sistemas Distribuidos</i> (texto completo); API GovCarpeta, <b>verificada en vivo el 5 de septiembre de 2026</b> mediante llamadas de solo lectura a <code>getOperators</code>, <code>validateCitizen</code> y a las cabeceras CORS, más el contrato Swagger 2.0 servido por el propio host. No se ejecutó ninguna escritura. El diagrama de contexto sigue el modelo de <i>system context artifact</i> presentado en clase. La sección 04 se apoya en el material del curso: <i>Arquitectura de Software Moderna — Módulo I</i> (arquitectura nativa de la nube, <i>Twelve-Factor App</i> y drivers de granularidad de microservicios) y el <i>Software Requirements Specification Template</i> basado en ANSI/IEEE Std. 830-1984, §3.6 y §3.7."
 }

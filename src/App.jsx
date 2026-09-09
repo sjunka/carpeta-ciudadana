@@ -7,6 +7,7 @@ import useActiveSection from './hooks/useActiveSection.js'
 import SeccionFuncionales from './sections/SeccionFuncionales.jsx'
 import SeccionNoFuncionales from './sections/SeccionNoFuncionales.jsx'
 import SeccionQos from './sections/SeccionQos.jsx'
+import SeccionRestricciones from './sections/SeccionRestricciones.jsx'
 import SeccionContexto from './sections/SeccionContexto.jsx'
 import SeccionCasosDeUso from './sections/SeccionCasosDeUso.jsx'
 import SeccionSimple from './sections/SeccionSimple.jsx'
@@ -20,6 +21,7 @@ const SECCIONES = {
   rf: SeccionFuncionales,
   rnf: SeccionNoFuncionales,
   qos: SeccionQos,
+  restr: SeccionRestricciones,
   ctx: SeccionContexto,
   cu: SeccionCasosDeUso,
   simple: SeccionSimple,

@@ -1,6 +1,6 @@
 # Reglas del entregable — Carpeta Ciudadana
 
-Este archivo manda. Se lee **antes** de tocar `simulacion-borrador.md` o el artefacto.
+Este archivo manda. Se lee **antes** de tocar `src/content/*.json`, el sitio o el documento generado.
 Si una instrucción del usuario contradice una regla de aquí, gana el usuario y la regla se actualiza en el mismo turno.
 
 ---
@@ -16,11 +16,16 @@ Secciones fijas, en este orden y con esta numeración:
 | 1 | Requerimientos Funcionales | Tabla por dominio |
 | 2 | Requerimientos No Funcionales | Tabla única |
 | 3 | Mapeo RNF vs QoS | Tabla única |
-| 4 | Diagrama de Contexto | Actores, flujo, diagrama, lógica |
-| 5 | Casos de Uso | Referencia interna, no se entrega |
-| 6 | El proyecto en palabras simples | Prosa |
-| 7 | Evidencia de la API | Tabla + hallazgos |
-| 8 | Bloqueos y preguntas | Fichas |
+| 4 | Restricciones de Arquitectura | Tres tablas: diseño, inversos, granularidad |
+| 5 | Diagrama de Contexto | Actores, flujo, diagrama, lógica |
+| 6 | Casos de Uso | Referencia interna, no se entrega |
+| 7 | El proyecto en palabras simples | Prosa |
+| 8 | Evidencia de la API | Tabla + hallazgos |
+| 9 | Bloqueos y preguntas | Fichas |
+
+La sección 4 existe porque el *template* del curso la pide: §3.6 «Inverse Requirements» y
+§3.7 «Design Constraints». Se añadió el 8 de septiembre de 2026, tras revisar el material del
+profesor, con permiso explícito del usuario.
 
 **Comportamiento fijo de las tablas.** La cabecera de cada tabla queda fija bajo la navegación
 mientras se recorren sus filas, y se suelta al terminar esa tabla. Se consigue con `position:sticky`
@@ -54,6 +59,30 @@ Formato copiado del material de referencia del curso. Es el que el profesor est�
 | ID | Requerimiento No Funcional | Atributo de QoS | Métrica o indicador | Objetivo / umbral |
 |---|---|---|---|---|
 
+**Restricción de diseño** — cuatro columnas. La cuarta es lo que la hace defendible:
+sin fuente citable no entra.
+
+| ID | Restricción | Descripción | Origen |
+|---|---|---|---|
+| RD-02 | Procesos sin estado | El sistema debe ejecutarse como procesos sin estado, de modo que cualquier instancia pueda atender cualquier petición. | Twelve-Factor VI · Processes |
+
+**Requerimiento inverso** — tres columnas. La descripción **siempre** dice qué *no* se hace.
+
+| ID | Límite | El sistema no debe… |
+|---|---|---|
+| RI-01 | Sin contenido por el centralizador | El sistema no debe hacer pasar el contenido de ningún documento por el centralizador de MinTIC. |
+
+**Granularidad** — cuatro columnas, una fila por dominio funcional, sin excepciones.
+
+| Dominio | Driver dominante | Veredicto | Por qué |
+|---|---|---|---|
+
+La barrera de calidad de un requerimiento es la del *template* del curso (ANSI/IEEE Std. 830).
+Antes de dar uno por bueno tiene que ser: **correcto, trazable** en los dos sentidos,
+**inequívoco, verificable, priorizado, completo, consistente** e **identificable de forma única**.
+De esas ocho, la que más se incumple es *verificable*: si nadie puede escribir la prueba que lo
+declara cumplido, el requerimiento está mal redactado y se reescribe.
+
 Reglas de redacción:
 
 - **Una frase por requerimiento.** Si necesitas dos, son dos requerimientos.
@@ -71,6 +100,8 @@ Reglas de redacción:
 
 - Funcionales jerárquicos por dominio: `RF-01.1`, `RF-01.2`, … donde `RF-01` es el dominio.
 - No funcionales planos: `RNF-01`, `RNF-02`, …
+- Restricciones de diseño: `RD-01`, …
+- Requerimientos inversos: `RI-01`, …
 - Casos de uso: `CU-01`, y cada uno cita los RF y RNF que realiza.
 - Bloqueos: `B-01`, …
 - **Los identificadores nunca se reciclan.** Si un requerimiento muere, su ID muere con él.
@@ -91,7 +122,41 @@ Un requerimiento sin marca es un requerimiento confirmado. No se marca nada «po
 
 ---
 
-## 5. Cómo se hace un diagrama
+## 5. De dónde sale el vocabulario técnico
+
+No inventamos categorías. Cuando hace falta nombrar un atributo, una restricción o un criterio
+de tamaño, se usa el término del material del curso, tal cual el profesor lo dice.
+
+**Restricciones de diseño.** Cada `RD` cita una de estas tres fuentes, y solo estas tres:
+
+| Fuente | Cuándo se usa |
+|---|---|
+| `Twelve-Factor <N> · <Nombre>` | La restricción sale de uno de los doce factores. Se escribe el número romano y el nombre en inglés, como en la lámina. |
+| `Cloud native · <Pilar>` | Sale de los siete pilares: Microservices, Containers, DevOps, API-first design, Immutable infrastructure, Auto-scaling, Observability. |
+| `Caso de estudio` / `Evidencia de la API` | Sale del enunciado o de algo que verificamos nosotros. |
+
+**Granularidad.** El veredicto de cada dominio se justifica con uno de los cinco desintegradores
+de la clase, y con ninguno más: *alcance y función* (cohesión), *volatilidad del código*,
+*escalabilidad y rendimiento*, *tolerancia a fallos*, *extensibilidad*.
+
+Dos reglas heredadas del ejemplo del servicio de notificaciones:
+
+- **Cohesión antes que tamaño.** Que un servicio haga tres cosas no lo condena: si las tres son
+  el mismo propósito, se queda unido. Partir por partir es el error que la clase señala.
+- **La prueba del nombre.** Si un servicio es difícil de nombrar porque hace cosas sin relación,
+  se parte. Y al partir, se comprueba que lo que sobra tenga cohesión propia.
+
+La sección 4 del entregable es **pre-análisis, no diseño**: dice qué tamaño deberían tener las
+piezas y por qué, sin decidir todavía la descomposición. El *template* del curso avisa de que la
+especificación de requerimientos no es el documento de diseño, y esa frontera se respeta.
+
+**El validador es parte de la regla.** `scripts/check-content.mjs` comprueba que cada `RD` tenga
+fuente, que cada `RI` diga qué *no* se debe hacer, y que el driver de granularidad esté en el
+conjunto cerrado de arriba. Si una regla de aquí cambia, el validador cambia en el mismo commit.
+
+---
+
+## 6. Cómo se hace un diagrama
 
 **Modelo de referencia: el *system context artifact* de la lámina del profesor (IBM).** Se copia su gramática:
 
@@ -114,7 +179,7 @@ Reglas técnicas, heredadas del skill `diagram-design`:
 
 ---
 
-## 6. Cómo se explica algo
+## 7. Cómo se explica algo
 
 Para las secciones de prosa (4, 6 y los pies de diagrama):
 
@@ -129,18 +194,22 @@ Para las secciones de prosa (4, 6 y los pies de diagrama):
 
 ---
 
-## 7. Qué no se hace nunca
+## 8. Qué no se hace nunca
 
 - Inventar un número sin marcarlo como asunción.
 - Copiar texto del documento de un compañero. Se toma la idea y se reescribe con estas reglas.
 - Añadir un requerimiento que el caso no sostiene, para rellenar.
 - Tocar la paleta, la tipografía o el layout del artefacto.
 - Publicar un diagrama sin pasar las dos verificaciones.
-- Dejar el artefacto y `simulacion-borrador.md` desincronizados.
+- **Editar a mano `docs/entrega-1.md` o `assignment1/simulacion-borrador.md`.** Los dos son
+  salida de `npm run md`, igual que `dist/`. Se cambia el JSON y se vuelven a generar; así el
+  sitio y el documento no pueden desincronizarse.
+- Añadir una restricción de diseño sin citar su factor, su pilar o el caso.
+- Partir un servicio en el análisis de granularidad sin nombrar el driver que lo justifica.
 
 ---
 
-## 8. Sistema de diseño — Notion
+## 9. Sistema de diseño — Notion
 
 Los tokens viven en `src/styles/tokens.css`. `docs/DESIGN.md` es el sistema de diseño del
 **producto** Carpeta Ciudadana: manda en color, contraste, iconografía y tema, y de ahí salen

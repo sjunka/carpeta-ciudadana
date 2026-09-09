@@ -11,13 +11,18 @@ bloqueos abiertos con el enunciado.
 | Sección | Contenido |
 |---|---|
 | 1 · Funcionales | 65 requerimientos en 9 dominios, con prioridad |
-| 2 · No funcionales | 28 atributos de calidad con criterio de aceptación |
+| 2 · No funcionales | 30 atributos de calidad con criterio de aceptación |
 | 3 · Mapeo QoS | Métrica, umbral, táctica y el precio de cada táctica |
-| 4 · Contexto | Actores, flujo y diagrama *system context artifact* |
-| 5 · Casos de uso | Once casos, cada uno citando los requerimientos que realiza |
-| 6 · En palabras simples | El proyecto explicado sin jerga |
-| 7 · Evidencia API | La API de GovCarpeta probada en vivo |
-| 8 · Bloqueos | 16 preguntas abiertas, 3 ya cerradas |
+| 4 · Restricciones | 15 restricciones de diseño, 8 requerimientos inversos y el análisis de granularidad |
+| 5 · Contexto | Actores, flujo y diagrama *system context artifact* |
+| 6 · Casos de uso | Once casos, cada uno citando los requerimientos que realiza |
+| 7 · En palabras simples | El proyecto explicado sin jerga |
+| 8 · Evidencia API | La API de GovCarpeta probada en vivo |
+| 9 · Bloqueos | 16 preguntas abiertas, 3 ya cerradas |
+
+La sección 4 sale del material del curso: el *template* de especificación basado en
+ANSI/IEEE Std. 830 (§3.6 y §3.7) y el módulo de arquitectura nativa de la nube
+—*Twelve-Factor App*, pilares cloud native y drivers de granularidad de microservicios.
 
 ## Empezar
 
@@ -42,6 +47,17 @@ lo ejecuta primero, así que un error de contenido no puede llegar al sitio.
 ## Publicación
 
 Cada push a `main` construye y publica en GitHub Pages mediante `.github/workflows/deploy.yml`.
+
+### Documento en markdown
+
+`docs/entrega-1.md` y `../assignment1/simulacion-borrador.md` se **generan** desde el mismo JSON:
+
+```sh
+npm run md
+```
+
+`npm run build` lo ejecuta, así que el documento nunca se queda atrás del sitio. Ninguno de
+los dos se edita a mano.
 
 ### Espejo para compartir
 

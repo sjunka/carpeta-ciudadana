@@ -195,6 +195,20 @@
       "requerimiento": "El coste marginal debe sostener un modelo con servicios básicos gratuitos.",
       "criterio": "≤ USD 0,15 por carpeta activa al mes.",
       "origen": "asuncion"
+    },
+    {
+      "id": "RNF-29",
+      "atributo": "Desplegabilidad",
+      "requerimiento": "Un cambio debe poder llegar a producción sin interrumpir el servicio ni coordinar despliegues entre equipos.",
+      "criterio": "Despliegue independiente por servicio; cero minutos de indisponibilidad planificada; reversión en ≤ 10 min.",
+      "origen": "asuncion"
+    },
+    {
+      "id": "RNF-30",
+      "atributo": "Elasticidad",
+      "requerimiento": "La capacidad debe seguir a la demanda de forma automática, sin intervención humana ni sobreaprovisionamiento permanente.",
+      "criterio": "Tiempo medio hasta la puesta en marcha de una instancia ≤ 60 s; utilización sostenida entre 50 % y 70 %.",
+      "origen": "asuncion"
     }
   ]
 }

@@ -105,6 +105,14 @@
       "friccion": "Un esquema flexible dificulta las consultas analíticas fuertemente tipadas."
     },
     {
+      "rnf": "RNF-29, 30",
+      "atributo": "Agilidad operativa",
+      "metrica": "Tiempo de entrega de un cambio · MTTS",
+      "objetivo": "Despliegue sin corte · arranque ≤ 60 s",
+      "tactica": "Contenedores inmutables con despliegue progresivo, procesos sin estado y autoescalado por métrica de carga.",
+      "friccion": "Arrancar rápido obliga a no cargar datos al inicio, y eso traslada latencia a la primera petición de cada instancia."
+    },
+    {
       "rnf": "RNF-27",
       "atributo": "Portabilidad",
       "metrica": "Dependencias propietarias",
