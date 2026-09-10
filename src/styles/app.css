@@ -60,6 +60,7 @@ a:hover { text-decoration: underline }
 }
 .meta dt { font-size: 12px; font-weight: 600; line-height: 1.33; letter-spacing: 0.125px; color: rgba(255, 255, 255, 0.62) }
 .meta dd { margin: var(--s-xxs) 0 0; font-size: 16px; font-weight: 600; color: var(--on-primary) }
+.meta dd span { display: block; line-height: 1.4 }
 .meta dd.alert { color: var(--accent-pink) }
 .meta dd.ok { color: var(--accent-green) }
 
