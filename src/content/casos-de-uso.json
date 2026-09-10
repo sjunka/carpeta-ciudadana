@@ -6,11 +6,11 @@
       "casos": [
         {
           "nombre": "Afiliarme a un operador",
-          "req": "RF-01.1 → 01.6 · RNF-06"
+          "req": "RF-01.1 · RF-01.5 · RF-01.6 · RNF-06"
         },
         {
           "nombre": "Trasladarme a otro operador",
-          "req": "RF-01.7 · RF-01.8 · RNF-20"
+          "req": "RF-01.7 · RF-01.8 · RNF-22"
         },
         {
           "nombre": "Ver y descargar mis documentos",
@@ -18,7 +18,7 @@
         },
         {
           "nombre": "Subir un documento temporal",
-          "req": "RF-02.2 · RF-02.9 · RNF-22"
+          "req": "RF-02.2 · RF-02.9 · RNF-24"
         },
         {
           "nombre": "Compartir un paquete",

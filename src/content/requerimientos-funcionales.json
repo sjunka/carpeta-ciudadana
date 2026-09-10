@@ -1,86 +1,6 @@
 {
   "dominios": [
     {
-      "id": "RF-01",
-      "nombre": "Registro, afiliación y traslado",
-      "intro": "Alta el ciclo de vida de la afiliación: quién entra, quién sale y cómo se muda.",
-      "requerimientos": [
-        {
-          "id": "RF-01.1",
-          "nombre": "Registro de ciudadano",
-          "descripcion": "El operador debe permitir la inscripción de un ciudadano capturando documento, nombres, correo de contacto y teléfono móvil.",
-          "prioridad": "Alta"
-        },
-        {
-          "id": "RF-01.2",
-          "nombre": "Verificación de identidad",
-          "descripcion": "El operador debe validar la identidad del ciudadano contra la Registraduría Nacional antes de activar la carpeta.",
-          "prioridad": "Alta",
-          "marca": {
-            "tipo": "asuncion",
-            "nota": "No existe API de Registraduría; se asume un adaptador propio."
-          }
-        },
-        {
-          "id": "RF-01.3",
-          "nombre": "Validación de afiliación única",
-          "descripcion": "El operador debe consultar al centralizador que el ciudadano no esté afiliado a otro operador antes de completar el registro.",
-          "prioridad": "Alta"
-        },
-        {
-          "id": "RF-01.4",
-          "nombre": "Notificación de afiliación",
-          "descripcion": "El operador debe informar al centralizador que el ciudadano es ahora cliente suyo.",
-          "prioridad": "Alta"
-        },
-        {
-          "id": "RF-01.5",
-          "nombre": "Asignación de cuenta de correo",
-          "descripcion": "El sistema debe generar una cuenta de correo institucional única e inmutable de por vida, que sobrevive al traslado de operador.",
-          "prioridad": "Alta",
-          "marca": {
-            "tipo": "asuncion",
-            "nota": "El caso fija el ejemplo pero no la regla de derivación ni el manejo de colisiones."
-          }
-        },
-        {
-          "id": "RF-01.6",
-          "nombre": "Carga del documento de identidad",
-          "descripcion": "El operador debe subir a la carpeta el documento de identidad firmado por la Registraduría al completar el registro.",
-          "prioridad": "Alta"
-        },
-        {
-          "id": "RF-01.7",
-          "nombre": "Solicitud de traslado",
-          "descripcion": "El ciudadano debe poder solicitar el traslado de su carpeta hacia otro operador autorizado.",
-          "prioridad": "Alta"
-        },
-        {
-          "id": "RF-01.8",
-          "nombre": "Ejecución del traslado",
-          "descripcion": "El operador origen debe transferir la totalidad de documentos y metadatos al destino y desafiliar al ciudadano solo tras confirmación.",
-          "prioridad": "Alta",
-          "marca": {
-            "tipo": "bloqueo",
-            "ref": "B-01",
-            "nota": "El protocolo de transferencia no está especificado por MinTIC."
-          }
-        },
-        {
-          "id": "RF-01.9",
-          "nombre": "Registro de entidades y empresas",
-          "descripcion": "El operador debe permitir el registro de entidades y empresas, dotándolas de una carpeta institucional con las mismas capacidades.",
-          "prioridad": "Alta"
-        },
-        {
-          "id": "RF-01.10",
-          "nombre": "Cancelación de afiliación",
-          "descripcion": "El operador debe permitir dar de baja a un ciudadano o entidad, notificando al centralizador y preservando la custodia de los certificados.",
-          "prioridad": "Media"
-        }
-      ]
-    },
-    {
       "id": "RF-02",
       "nombre": "Gestión documental",
       "intro": "El corazón del producto: qué se guarda, con qué metadatos y por cuánto tiempo.",
@@ -90,27 +10,6 @@
           "nombre": "Almacenamiento a perpetuidad",
           "descripcion": "El sistema debe conservar de forma indefinida todos los documentos certificados, sin límite de tamaño ni de cantidad.",
           "prioridad": "Alta"
-        },
-        {
-          "id": "RF-02.2",
-          "nombre": "Carga de documentos temporales",
-          "descripcion": "El ciudadano debe poder subir documentos no certificados, sujetos a una cuota por usuario.",
-          "prioridad": "Alta",
-          "marca": {
-            "tipo": "asuncion",
-            "nota": "El caso dice «limitada», sin cifra."
-          }
-        },
-        {
-          "id": "RF-02.3",
-          "nombre": "Registro de metadatos",
-          "descripcion": "Todo documento debe almacenarse con los metadatos que permiten clasificarlo, identificarlo, decir qué entidad lo avala y qué fechas tiene.",
-          "prioridad": "Alta",
-          "marca": {
-            "tipo": "bloqueo",
-            "ref": "B-01",
-            "nota": "No hay esquema de metadatos común definido por MinTIC."
-          }
         },
         {
           "id": "RF-02.4",
@@ -130,15 +29,26 @@
           }
         },
         {
-          "id": "RF-02.6",
-          "nombre": "Consulta y navegación",
-          "descripcion": "El ciudadano debe poder listar, buscar y filtrar sus documentos por tipo, entidad emisora, fecha y estado de certificación.",
+          "id": "RF-02.3",
+          "nombre": "Registro de metadatos",
+          "descripcion": "Todo documento debe almacenarse con los metadatos que permiten clasificarlo, identificarlo, decir qué entidad lo avala y qué fechas tiene.",
+          "prioridad": "Alta",
+          "marca": {
+            "tipo": "bloqueo",
+            "ref": "B-01",
+            "nota": "No hay esquema de metadatos común definido por MinTIC."
+          }
+        },
+        {
+          "id": "RF-02.11",
+          "nombre": "Bitácora del documento",
+          "descripcion": "El sistema debe registrar en una bitácora inalterable toda operación sobre cada documento: cargue, consulta, descarga, compartición y transferencia.",
           "prioridad": "Alta"
         },
         {
-          "id": "RF-02.7",
-          "nombre": "Descarga e impresión",
-          "descripcion": "El ciudadano debe poder descargar e imprimir cualquier documento conservando la evidencia de firma.",
+          "id": "RF-02.6",
+          "nombre": "Consulta y navegación",
+          "descripcion": "El ciudadano debe poder listar, buscar y filtrar sus documentos por tipo, entidad emisora, fecha y estado de certificación.",
           "prioridad": "Alta"
         },
         {
@@ -150,6 +60,22 @@
             "tipo": "bloqueo",
             "ref": "B-13",
             "nota": "Falta definir si es un buzón real de internet o un identificador."
+          }
+        },
+        {
+          "id": "RF-02.7",
+          "nombre": "Descarga e impresión",
+          "descripcion": "El ciudadano debe poder descargar e imprimir cualquier documento conservando la evidencia de firma.",
+          "prioridad": "Alta"
+        },
+        {
+          "id": "RF-02.2",
+          "nombre": "Carga de documentos temporales",
+          "descripcion": "El ciudadano debe poder subir documentos no certificados, sujetos a una cuota por usuario.",
+          "prioridad": "Alta",
+          "marca": {
+            "tipo": "asuncion",
+            "nota": "El caso dice «limitada», sin cifra."
           }
         },
         {
@@ -168,12 +94,6 @@
             "ref": "B-11",
             "nota": "Perpetuidad y derecho de supresión no están conciliados."
           }
-        },
-        {
-          "id": "RF-02.11",
-          "nombre": "Bitácora del documento",
-          "descripcion": "El sistema debe registrar en una bitácora inalterable toda operación sobre cada documento: cargue, consulta, descarga, compartición y transferencia.",
-          "prioridad": "Alta"
         }
       ]
     },
@@ -206,32 +126,9 @@
           }
         },
         {
-          "id": "RF-03.4",
-          "nombre": "Entrega alterna por correo",
-          "descripcion": "El operador debe entregar los documentos por correo electrónico, firmados, cuando el destinatario no esté afiliado a ningún operador.",
-          "prioridad": "Alta",
-          "marca": {
-            "tipo": "bloqueo",
-            "ref": "B-14",
-            "nota": "El correo plano contradice el requisito de confidencialidad."
-          }
-        },
-        {
           "id": "RF-03.5",
           "nombre": "Confirmación y reintento",
           "descripcion": "Toda transferencia debe generar acuse de recibo, reintentarse ante fallas y ser idempotente.",
-          "prioridad": "Alta"
-        },
-        {
-          "id": "RF-03.6",
-          "nombre": "Solicitud de documentos a entidades",
-          "descripcion": "El ciudadano debe poder radicar solicitudes de expedición ante entidades y consultar el estado de cada una.",
-          "prioridad": "Alta"
-        },
-        {
-          "id": "RF-03.7",
-          "nombre": "Emisión por parte de la entidad",
-          "descripcion": "Una entidad afiliada debe poder cargar documentos firmados dirigidos a un ciudadano, disparando la resolución de operador y la entrega.",
           "prioridad": "Alta"
         },
         {
@@ -244,6 +141,109 @@
             "ref": "B-01",
             "nota": "Hoy solo 16 de 70 operadores publican endpoint de transferencia."
           }
+        },
+        {
+          "id": "RF-03.7",
+          "nombre": "Emisión por parte de la entidad",
+          "descripcion": "Una entidad afiliada debe poder cargar documentos firmados dirigidos a un ciudadano, disparando la resolución de operador y la entrega.",
+          "prioridad": "Alta"
+        },
+        {
+          "id": "RF-03.6",
+          "nombre": "Solicitud de documentos a entidades",
+          "descripcion": "El ciudadano debe poder radicar solicitudes de expedición ante entidades y consultar el estado de cada una.",
+          "prioridad": "Alta"
+        },
+        {
+          "id": "RF-03.4",
+          "nombre": "Entrega alterna por correo",
+          "descripcion": "El operador debe entregar los documentos por correo electrónico, firmados, cuando el destinatario no esté afiliado a ningún operador.",
+          "prioridad": "Alta",
+          "marca": {
+            "tipo": "bloqueo",
+            "ref": "B-14",
+            "nota": "El correo plano contradice el requisito de confidencialidad."
+          }
+        }
+      ]
+    },
+    {
+      "id": "RF-01",
+      "nombre": "Registro, afiliación y traslado",
+      "intro": "Alta el ciclo de vida de la afiliación: quién entra, quién sale y cómo se muda.",
+      "requerimientos": [
+        {
+          "id": "RF-01.1",
+          "nombre": "Registro de ciudadano",
+          "descripcion": "El operador debe permitir la inscripción de un ciudadano capturando documento, nombres, correo de contacto y teléfono móvil.",
+          "prioridad": "Alta"
+        },
+        {
+          "id": "RF-01.3",
+          "nombre": "Validación de afiliación única",
+          "descripcion": "El operador debe consultar al centralizador que el ciudadano no esté afiliado a otro operador antes de completar el registro.",
+          "prioridad": "Alta"
+        },
+        {
+          "id": "RF-01.2",
+          "nombre": "Verificación de identidad",
+          "descripcion": "El operador debe validar la identidad del ciudadano contra la Registraduría Nacional antes de activar la carpeta.",
+          "prioridad": "Alta",
+          "marca": {
+            "tipo": "asuncion",
+            "nota": "No existe API de Registraduría; se asume un adaptador propio."
+          }
+        },
+        {
+          "id": "RF-01.4",
+          "nombre": "Notificación de afiliación",
+          "descripcion": "El operador debe informar al centralizador que el ciudadano es ahora cliente suyo.",
+          "prioridad": "Alta"
+        },
+        {
+          "id": "RF-01.8",
+          "nombre": "Ejecución del traslado",
+          "descripcion": "El operador origen debe transferir la totalidad de documentos y metadatos al destino y desafiliar al ciudadano solo tras confirmación.",
+          "prioridad": "Alta",
+          "marca": {
+            "tipo": "bloqueo",
+            "ref": "B-01",
+            "nota": "El protocolo de transferencia no está especificado por MinTIC."
+          }
+        },
+        {
+          "id": "RF-01.7",
+          "nombre": "Solicitud de traslado",
+          "descripcion": "El ciudadano debe poder solicitar el traslado de su carpeta hacia otro operador autorizado.",
+          "prioridad": "Alta"
+        },
+        {
+          "id": "RF-01.5",
+          "nombre": "Asignación de cuenta de correo",
+          "descripcion": "El sistema debe generar una cuenta de correo institucional única e inmutable de por vida, que sobrevive al traslado de operador.",
+          "prioridad": "Alta",
+          "marca": {
+            "tipo": "asuncion",
+            "nota": "El caso fija el ejemplo pero no la regla de derivación ni el manejo de colisiones."
+          }
+        },
+        {
+          "id": "RF-01.6",
+          "nombre": "Carga del documento de identidad",
+          "descripcion": "El operador debe subir a la carpeta el documento de identidad firmado por la Registraduría al completar el registro.",
+          "prioridad": "Alta"
+        },
+        {
+          "id": "RF-01.9",
+          "nombre": "Registro de entidades y empresas",
+          "descripcion": "El operador debe permitir el registro de entidades y empresas, dotándolas de una carpeta institucional con las mismas capacidades.",
+          "prioridad": "Alta"
+        },
+        {
+          "id": "RF-01.10",
+          "nombre": "Cancelación de afiliación",
+          "descripcion": "El operador debe permitir dar de baja a un ciudadano o entidad, notificando al centralizador y preservando la custodia de los certificados.",
+          "prioridad": "Media"
         }
       ]
     },
@@ -253,9 +253,9 @@
       "intro": "El consentimiento del ciudadano como puerta de todo movimiento de documentos.",
       "requerimientos": [
         {
-          "id": "RF-04.1",
-          "nombre": "Armado de paquetes",
-          "descripcion": "El ciudadano debe poder seleccionar varios documentos y agruparlos en un paquete para enviarlo a una entidad o empresa.",
+          "id": "RF-04.4",
+          "nombre": "Autorización explícita",
+          "descripcion": "Ningún documento puede compartirse sin autorización expresa del titular; el sistema debe capturar la decisión de aprobar, aprobar en parte o rechazar.",
           "prioridad": "Alta"
         },
         {
@@ -265,15 +265,15 @@
           "prioridad": "Alta"
         },
         {
-          "id": "RF-04.3",
-          "nombre": "Petición de documentos",
-          "descripcion": "Una entidad debe poder registrar, desde su propio operador, una petición dirigida a un ciudadano indicando qué documentos requiere y con qué finalidad.",
+          "id": "RF-04.1",
+          "nombre": "Armado de paquetes",
+          "descripcion": "El ciudadano debe poder seleccionar varios documentos y agruparlos en un paquete para enviarlo a una entidad o empresa.",
           "prioridad": "Alta"
         },
         {
-          "id": "RF-04.4",
-          "nombre": "Autorización explícita",
-          "descripcion": "Ningún documento puede compartirse sin autorización expresa del titular; el sistema debe capturar la decisión de aprobar, aprobar en parte o rechazar.",
+          "id": "RF-04.3",
+          "nombre": "Petición de documentos",
+          "descripcion": "Una entidad debe poder registrar, desde su propio operador, una petición dirigida a un ciudadano indicando qué documentos requiere y con qué finalidad.",
           "prioridad": "Alta"
         },
         {
@@ -287,16 +287,129 @@
           }
         },
         {
-          "id": "RF-04.6",
-          "nombre": "Seguimiento de solicitudes",
-          "descripcion": "El sistema debe permitir a solicitante y ciudadano consultar el estado de cada petición: pendiente, autorizada, rechazada o entregada.",
-          "prioridad": "Media"
-        },
-        {
           "id": "RF-04.7",
           "nombre": "Compleción con faltantes",
           "descripcion": "El ciudadano debe poder cargar una versión temporal del documento que le falta y radicar en el mismo flujo la solicitud del definitivo.",
           "prioridad": "Alta"
+        },
+        {
+          "id": "RF-04.6",
+          "nombre": "Seguimiento de solicitudes",
+          "descripcion": "El sistema debe permitir a solicitante y ciudadano consultar el estado de cada petición: pendiente, autorizada, rechazada o entregada.",
+          "prioridad": "Media"
+        }
+      ]
+    },
+    {
+      "id": "RF-09",
+      "nombre": "Seguridad, identidad y auditoría",
+      "intro": "Lo que impide que el sistema se convierta en una fuga de datos nacional.",
+      "requerimientos": [
+        {
+          "id": "RF-09.2",
+          "nombre": "Autorización por roles y atributos",
+          "descripcion": "El sistema debe impedir que personas no autorizadas vean o modifiquen documentos ajenos, distinguiendo titular, delegado, entidad solicitante y administrador.",
+          "prioridad": "Alta"
+        },
+        {
+          "id": "RF-09.1",
+          "nombre": "Autenticación de usuarios",
+          "descripcion": "El sistema debe autenticar a ciudadanos, funcionarios y sistemas con un mecanismo sólido, con segundo factor para operaciones sensibles.",
+          "prioridad": "Alta"
+        },
+        {
+          "id": "RF-09.3",
+          "nombre": "Autenticación entre sistemas",
+          "descripcion": "Las llamadas entre operadores y con el centralizador deben autenticarse mutuamente mediante certificados o credenciales emitidas por MinTIC.",
+          "prioridad": "Alta",
+          "marca": {
+            "tipo": "bloqueo",
+            "ref": "B-09",
+            "nota": "Hoy el centralizador no exige credencial alguna."
+          }
+        },
+        {
+          "id": "RF-09.4",
+          "nombre": "Registro de auditoría",
+          "descripcion": "Toda operación de acceso, autorización y transferencia debe quedar registrada con usuario, fecha, origen y resultado, en un log no alterable.",
+          "prioridad": "Alta"
+        },
+        {
+          "id": "RF-09.6",
+          "nombre": "Gestión del consentimiento",
+          "descripcion": "El sistema debe registrar y conservar la evidencia del consentimiento otorgado por el ciudadano para cada compartición.",
+          "prioridad": "Alta"
+        },
+        {
+          "id": "RF-09.5",
+          "nombre": "Consulta de accesos",
+          "descripcion": "El ciudadano debe poder consultar quién accedió a sus documentos y bajo qué autorización.",
+          "prioridad": "Media"
+        }
+      ]
+    },
+    {
+      "id": "RF-06",
+      "nombre": "Servicios del centralizador",
+      "intro": "Lo que MinTIC presta, y el límite explícito de lo que no debe hacer.",
+      "requerimientos": [
+        {
+          "id": "RF-06.1",
+          "nombre": "Directorio ciudadano–operador",
+          "descripcion": "El centralizador debe mantener la asociación entre el identificador del ciudadano y su operador, y nada más que eso.",
+          "prioridad": "Alta"
+        },
+        {
+          "id": "RF-06.4",
+          "nombre": "Consulta de afiliación",
+          "descripcion": "El centralizador debe devolver el operador al que pertenece un ciudadano, para habilitar el enrutamiento.",
+          "prioridad": "Alta"
+        },
+        {
+          "id": "RF-06.2",
+          "nombre": "Registro de ciudadano",
+          "descripcion": "El centralizador debe exponer una operación para registrar a un ciudadano, rechazándola si ya existe afiliación vigente con otro operador.",
+          "prioridad": "Alta"
+        },
+        {
+          "id": "RF-06.3",
+          "nombre": "Desregistro de ciudadano",
+          "descripcion": "El centralizador debe exponer una operación para eliminar la afiliación y habilitar el traslado.",
+          "prioridad": "Alta"
+        },
+        {
+          "id": "RF-06.8",
+          "nombre": "No custodia de documentos",
+          "descripcion": "El centralizador no debe almacenar documentos ni metadatos de negocio; su información se limita al enrutamiento y la validación.",
+          "prioridad": "Alta"
+        },
+        {
+          "id": "RF-06.5",
+          "nombre": "Directorio de operadores",
+          "descripcion": "El centralizador debe publicar el listado de operadores autorizados con las direcciones de sus servicios de interoperabilidad.",
+          "prioridad": "Alta",
+          "marca": {
+            "tipo": "bloqueo",
+            "ref": "B-16",
+            "nota": "54 de 70 operadores no publican endpoint y nadie lo valida."
+          }
+        },
+        {
+          "id": "RF-06.6",
+          "nombre": "Autenticación de documentos",
+          "descripcion": "El centralizador debe ofrecer un servicio para registrar y verificar la autenticidad de un documento.",
+          "prioridad": "Alta",
+          "marca": {
+            "tipo": "bloqueo",
+            "ref": "B-03",
+            "nota": "Hoy recibe una URL y nunca descarga el documento."
+          }
+        },
+        {
+          "id": "RF-06.7",
+          "nombre": "Control de operadores",
+          "descripcion": "El centralizador debe permitir dar de alta, suspender y dar de baja operadores, verificando las condiciones técnicas exigidas.",
+          "prioridad": "Media"
         }
       ]
     },
@@ -332,117 +445,16 @@
       ]
     },
     {
-      "id": "RF-06",
-      "nombre": "Servicios del centralizador",
-      "intro": "Lo que MinTIC presta, y el límite explícito de lo que no debe hacer.",
-      "requerimientos": [
-        {
-          "id": "RF-06.1",
-          "nombre": "Directorio ciudadano–operador",
-          "descripcion": "El centralizador debe mantener la asociación entre el identificador del ciudadano y su operador, y nada más que eso.",
-          "prioridad": "Alta"
-        },
-        {
-          "id": "RF-06.2",
-          "nombre": "Registro de ciudadano",
-          "descripcion": "El centralizador debe exponer una operación para registrar a un ciudadano, rechazándola si ya existe afiliación vigente con otro operador.",
-          "prioridad": "Alta"
-        },
-        {
-          "id": "RF-06.3",
-          "nombre": "Desregistro de ciudadano",
-          "descripcion": "El centralizador debe exponer una operación para eliminar la afiliación y habilitar el traslado.",
-          "prioridad": "Alta"
-        },
-        {
-          "id": "RF-06.4",
-          "nombre": "Consulta de afiliación",
-          "descripcion": "El centralizador debe devolver el operador al que pertenece un ciudadano, para habilitar el enrutamiento.",
-          "prioridad": "Alta"
-        },
-        {
-          "id": "RF-06.5",
-          "nombre": "Directorio de operadores",
-          "descripcion": "El centralizador debe publicar el listado de operadores autorizados con las direcciones de sus servicios de interoperabilidad.",
-          "prioridad": "Alta",
-          "marca": {
-            "tipo": "bloqueo",
-            "ref": "B-16",
-            "nota": "54 de 70 operadores no publican endpoint y nadie lo valida."
-          }
-        },
-        {
-          "id": "RF-06.6",
-          "nombre": "Autenticación de documentos",
-          "descripcion": "El centralizador debe ofrecer un servicio para registrar y verificar la autenticidad de un documento.",
-          "prioridad": "Alta",
-          "marca": {
-            "tipo": "bloqueo",
-            "ref": "B-03",
-            "nota": "Hoy recibe una URL y nunca descarga el documento."
-          }
-        },
-        {
-          "id": "RF-06.7",
-          "nombre": "Control de operadores",
-          "descripcion": "El centralizador debe permitir dar de alta, suspender y dar de baja operadores, verificando las condiciones técnicas exigidas.",
-          "prioridad": "Media"
-        },
-        {
-          "id": "RF-06.8",
-          "nombre": "No custodia de documentos",
-          "descripcion": "El centralizador no debe almacenar documentos ni metadatos de negocio; su información se limita al enrutamiento y la validación.",
-          "prioridad": "Alta"
-        }
-      ]
-    },
-    {
-      "id": "RF-07",
-      "nombre": "Servicios Premium",
-      "intro": "La parte del modelo de negocio que financia lo gratuito.",
-      "requerimientos": [
-        {
-          "id": "RF-07.1",
-          "nombre": "Catálogo Premium",
-          "descripcion": "El operador debe poder definir un catálogo de servicios Premium y permitir su contratación.",
-          "prioridad": "Media",
-          "marca": {
-            "tipo": "bloqueo",
-            "ref": "B-05",
-            "nota": "No está cerrado qué es básico y qué es Premium."
-          }
-        },
-        {
-          "id": "RF-07.2",
-          "nombre": "Casos de soporte PQRS",
-          "descripcion": "El operador debe permitir a una empresa cliente armar casos de soporte y asociarles documentos.",
-          "prioridad": "Media"
-        },
-        {
-          "id": "RF-07.3",
-          "nombre": "Solicitud desde un caso",
-          "descripcion": "Desde un caso PQRS la empresa debe poder pedir documentos a sus clientes sin importar su operador.",
-          "prioridad": "Media"
-        },
-        {
-          "id": "RF-07.4",
-          "nombre": "API para empresas",
-          "descripcion": "El operador debe exponer una API que permita a las empresas integrar sus sistemas de trámite con la carpeta.",
-          "prioridad": "Media"
-        },
-        {
-          "id": "RF-07.5",
-          "nombre": "Medición y facturación",
-          "descripcion": "El sistema debe medir el consumo Premium y facturarlo, garantizando que los servicios básicos sigan siendo gratuitos.",
-          "prioridad": "Media"
-        }
-      ]
-    },
-    {
       "id": "RF-08",
       "nombre": "Analítica para el Estado",
       "intro": "Lo que el Estado quiere saber, sin tocar el contenido de los documentos.",
       "requerimientos": [
+        {
+          "id": "RF-08.2",
+          "nombre": "Anonimización",
+          "descripcion": "El sistema debe disociar de la identidad del ciudadano todo dato entregado para análisis, salvo autorización legal expresa.",
+          "prioridad": "Alta"
+        },
         {
           "id": "RF-08.1",
           "nombre": "Consolidación de metadatos",
@@ -453,12 +465,6 @@
             "ref": "B-04",
             "nota": "Choca con el mandato de mínima información en el centralizador."
           }
-        },
-        {
-          "id": "RF-08.2",
-          "nombre": "Anonimización",
-          "descripcion": "El sistema debe disociar de la identidad del ciudadano todo dato entregado para análisis, salvo autorización legal expresa.",
-          "prioridad": "Alta"
         },
         {
           "id": "RF-08.3",
@@ -487,50 +493,44 @@
       ]
     },
     {
-      "id": "RF-09",
-      "nombre": "Seguridad, identidad y auditoría",
-      "intro": "Lo que impide que el sistema se convierta en una fuga de datos nacional.",
+      "id": "RF-07",
+      "nombre": "Servicios Premium",
+      "intro": "La parte del modelo de negocio que financia lo gratuito.",
       "requerimientos": [
         {
-          "id": "RF-09.1",
-          "nombre": "Autenticación de usuarios",
-          "descripcion": "El sistema debe autenticar a ciudadanos, funcionarios y sistemas con un mecanismo sólido, con segundo factor para operaciones sensibles.",
-          "prioridad": "Alta"
-        },
-        {
-          "id": "RF-09.2",
-          "nombre": "Autorización por roles y atributos",
-          "descripcion": "El sistema debe impedir que personas no autorizadas vean o modifiquen documentos ajenos, distinguiendo titular, delegado, entidad solicitante y administrador.",
-          "prioridad": "Alta"
-        },
-        {
-          "id": "RF-09.3",
-          "nombre": "Autenticación entre sistemas",
-          "descripcion": "Las llamadas entre operadores y con el centralizador deben autenticarse mutuamente mediante certificados o credenciales emitidas por MinTIC.",
-          "prioridad": "Alta",
+          "id": "RF-07.1",
+          "nombre": "Catálogo Premium",
+          "descripcion": "El operador debe poder definir un catálogo de servicios Premium y permitir su contratación.",
+          "prioridad": "Media",
           "marca": {
             "tipo": "bloqueo",
-            "ref": "B-09",
-            "nota": "Hoy el centralizador no exige credencial alguna."
+            "ref": "B-05",
+            "nota": "No está cerrado qué es básico y qué es Premium."
           }
         },
         {
-          "id": "RF-09.4",
-          "nombre": "Registro de auditoría",
-          "descripcion": "Toda operación de acceso, autorización y transferencia debe quedar registrada con usuario, fecha, origen y resultado, en un log no alterable.",
-          "prioridad": "Alta"
-        },
-        {
-          "id": "RF-09.5",
-          "nombre": "Consulta de accesos",
-          "descripcion": "El ciudadano debe poder consultar quién accedió a sus documentos y bajo qué autorización.",
+          "id": "RF-07.4",
+          "nombre": "API para empresas",
+          "descripcion": "El operador debe exponer una API que permita a las empresas integrar sus sistemas de trámite con la carpeta.",
           "prioridad": "Media"
         },
         {
-          "id": "RF-09.6",
-          "nombre": "Gestión del consentimiento",
-          "descripcion": "El sistema debe registrar y conservar la evidencia del consentimiento otorgado por el ciudadano para cada compartición.",
-          "prioridad": "Alta"
+          "id": "RF-07.5",
+          "nombre": "Medición y facturación",
+          "descripcion": "El sistema debe medir el consumo Premium y facturarlo, garantizando que los servicios básicos sigan siendo gratuitos.",
+          "prioridad": "Media"
+        },
+        {
+          "id": "RF-07.2",
+          "nombre": "Casos de soporte PQRS",
+          "descripcion": "El operador debe permitir a una empresa cliente armar casos de soporte y asociarles documentos.",
+          "prioridad": "Media"
+        },
+        {
+          "id": "RF-07.3",
+          "nombre": "Solicitud desde un caso",
+          "descripcion": "Desde un caso PQRS la empresa debe poder pedir documentos a sus clientes sin importar su operador.",
+          "prioridad": "Media"
         }
       ]
     }

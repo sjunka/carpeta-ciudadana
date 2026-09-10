@@ -10,23 +10,6 @@
 
 ## 1. Requerimientos funcionales
 
-### RF-01 · Registro, afiliación y traslado
-
-Alta el ciclo de vida de la afiliación: quién entra, quién sale y cómo se muda.
-
-| ID | Requerimiento | Descripción | Prioridad |
-|---|---|---|---|
-| RF-01.1 | Registro de ciudadano | El operador debe permitir la inscripción de un ciudadano capturando documento, nombres, correo de contacto y teléfono móvil. | Alta |
-| RF-01.2 | Verificación de identidad | El operador debe validar la identidad del ciudadano contra la Registraduría Nacional antes de activar la carpeta. **[ASUNCIÓN]** *No existe API de Registraduría; se asume un adaptador propio.* | Alta |
-| RF-01.3 | Validación de afiliación única | El operador debe consultar al centralizador que el ciudadano no esté afiliado a otro operador antes de completar el registro. | Alta |
-| RF-01.4 | Notificación de afiliación | El operador debe informar al centralizador que el ciudadano es ahora cliente suyo. | Alta |
-| RF-01.5 | Asignación de cuenta de correo | El sistema debe generar una cuenta de correo institucional única e inmutable de por vida, que sobrevive al traslado de operador. **[ASUNCIÓN]** *El caso fija el ejemplo pero no la regla de derivación ni el manejo de colisiones.* | Alta |
-| RF-01.6 | Carga del documento de identidad | El operador debe subir a la carpeta el documento de identidad firmado por la Registraduría al completar el registro. | Alta |
-| RF-01.7 | Solicitud de traslado | El ciudadano debe poder solicitar el traslado de su carpeta hacia otro operador autorizado. | Alta |
-| RF-01.8 | Ejecución del traslado | El operador origen debe transferir la totalidad de documentos y metadatos al destino y desafiliar al ciudadano solo tras confirmación. **[BLOQUEO]** *B-01 · El protocolo de transferencia no está especificado por MinTIC.* | Alta |
-| RF-01.9 | Registro de entidades y empresas | El operador debe permitir el registro de entidades y empresas, dotándolas de una carpeta institucional con las mismas capacidades. | Alta |
-| RF-01.10 | Cancelación de afiliación | El operador debe permitir dar de baja a un ciudadano o entidad, notificando al centralizador y preservando la custodia de los certificados. | Media |
-
 ### RF-02 · Gestión documental
 
 El corazón del producto: qué se guarda, con qué metadatos y por cuánto tiempo.
@@ -34,16 +17,16 @@ El corazón del producto: qué se guarda, con qué metadatos y por cuánto tiemp
 | ID | Requerimiento | Descripción | Prioridad |
 |---|---|---|---|
 | RF-02.1 | Almacenamiento a perpetuidad | El sistema debe conservar de forma indefinida todos los documentos certificados, sin límite de tamaño ni de cantidad. | Alta |
-| RF-02.2 | Carga de documentos temporales | El ciudadano debe poder subir documentos no certificados, sujetos a una cuota por usuario. **[ASUNCIÓN]** *El caso dice «limitada», sin cifra.* | Alta |
-| RF-02.3 | Registro de metadatos | Todo documento debe almacenarse con los metadatos que permiten clasificarlo, identificarlo, decir qué entidad lo avala y qué fechas tiene. **[BLOQUEO]** *B-01 · No hay esquema de metadatos común definido por MinTIC.* | Alta |
 | RF-02.4 | Conservación de la firma | Los documentos emitidos por entidades deben conservarse con su firma digital intacta, de modo que su autenticidad no pueda discutirse. | Alta |
 | RF-02.5 | Verificación de autenticidad | El sistema debe permitir validar en cualquier momento la firma y la integridad de un documento certificado. **[BLOQUEO]** *B-03 · No hay PKI ni autoridad certificadora definida.* | Alta |
+| RF-02.3 | Registro de metadatos | Todo documento debe almacenarse con los metadatos que permiten clasificarlo, identificarlo, decir qué entidad lo avala y qué fechas tiene. **[BLOQUEO]** *B-01 · No hay esquema de metadatos común definido por MinTIC.* | Alta |
+| RF-02.11 | Bitácora del documento | El sistema debe registrar en una bitácora inalterable toda operación sobre cada documento: cargue, consulta, descarga, compartición y transferencia. | Alta |
 | RF-02.6 | Consulta y navegación | El ciudadano debe poder listar, buscar y filtrar sus documentos por tipo, entidad emisora, fecha y estado de certificación. | Alta |
-| RF-02.7 | Descarga e impresión | El ciudadano debe poder descargar e imprimir cualquier documento conservando la evidencia de firma. | Alta |
 | RF-02.8 | Recepción por correo | Todo documento enviado a la cuenta institucional del ciudadano debe ingresar automáticamente a su carpeta. **[BLOQUEO]** *B-13 · Falta definir si es un buzón real de internet o un identificador.* | Alta |
+| RF-02.7 | Descarga e impresión | El ciudadano debe poder descargar e imprimir cualquier documento conservando la evidencia de firma. | Alta |
+| RF-02.2 | Carga de documentos temporales | El ciudadano debe poder subir documentos no certificados, sujetos a una cuota por usuario. **[ASUNCIÓN]** *El caso dice «limitada», sin cifra.* | Alta |
 | RF-02.9 | Sustitución de temporal | El sistema debe permitir relacionar la versión firmada con el temporal que sustituye, conservando la trazabilidad de ambos. | Media |
 | RF-02.10 | Eliminación controlada | El ciudadano debe poder eliminar documentos no certificados; los certificados solo se retiran según la política de retención. **[BLOQUEO]** *B-11 · Perpetuidad y derecho de supresión no están conciliados.* | Media |
-| RF-02.11 | Bitácora del documento | El sistema debe registrar en una bitácora inalterable toda operación sobre cada documento: cargue, consulta, descarga, compartición y transferencia. | Alta |
 
 ### RF-03 · Interoperabilidad entre operadores
 
@@ -54,11 +37,28 @@ Lo que convierte a un operador aislado en parte de una federación.
 | RF-03.1 | Localización del operador destino | El operador debe consultar al centralizador ante qué operador está afiliado el destinatario antes de enviarle documentos. | Alta |
 | RF-03.2 | Transferencia directa | El operador debe transferir los documentos y sus metadatos directamente al operador destino, sin que el contenido pase por el centralizador. | Alta |
 | RF-03.3 | Recepción de documentos externos | El operador debe exponer una interfaz para que otros operadores le entreguen documentos, validando firma y metadatos antes de aceptarlos. **[BLOQUEO]** *B-01 · No existe contrato MinTIC para esta interfaz.* | Alta |
-| RF-03.4 | Entrega alterna por correo | El operador debe entregar los documentos por correo electrónico, firmados, cuando el destinatario no esté afiliado a ningún operador. **[BLOQUEO]** *B-14 · El correo plano contradice el requisito de confidencialidad.* | Alta |
 | RF-03.5 | Confirmación y reintento | Toda transferencia debe generar acuse de recibo, reintentarse ante fallas y ser idempotente. | Alta |
-| RF-03.6 | Solicitud de documentos a entidades | El ciudadano debe poder radicar solicitudes de expedición ante entidades y consultar el estado de cada una. | Alta |
-| RF-03.7 | Emisión por parte de la entidad | Una entidad afiliada debe poder cargar documentos firmados dirigidos a un ciudadano, disparando la resolución de operador y la entrega. | Alta |
 | RF-03.8 | Contrato común de intercambio | El operador debe implementar el contrato de servicios definido por MinTIC, idéntico para todos, para garantizar la interoperabilidad. **[BLOQUEO]** *B-01 · Hoy solo 16 de 70 operadores publican endpoint de transferencia.* | Alta |
+| RF-03.7 | Emisión por parte de la entidad | Una entidad afiliada debe poder cargar documentos firmados dirigidos a un ciudadano, disparando la resolución de operador y la entrega. | Alta |
+| RF-03.6 | Solicitud de documentos a entidades | El ciudadano debe poder radicar solicitudes de expedición ante entidades y consultar el estado de cada una. | Alta |
+| RF-03.4 | Entrega alterna por correo | El operador debe entregar los documentos por correo electrónico, firmados, cuando el destinatario no esté afiliado a ningún operador. **[BLOQUEO]** *B-14 · El correo plano contradice el requisito de confidencialidad.* | Alta |
+
+### RF-01 · Registro, afiliación y traslado
+
+Alta el ciclo de vida de la afiliación: quién entra, quién sale y cómo se muda.
+
+| ID | Requerimiento | Descripción | Prioridad |
+|---|---|---|---|
+| RF-01.1 | Registro de ciudadano | El operador debe permitir la inscripción de un ciudadano capturando documento, nombres, correo de contacto y teléfono móvil. | Alta |
+| RF-01.3 | Validación de afiliación única | El operador debe consultar al centralizador que el ciudadano no esté afiliado a otro operador antes de completar el registro. | Alta |
+| RF-01.2 | Verificación de identidad | El operador debe validar la identidad del ciudadano contra la Registraduría Nacional antes de activar la carpeta. **[ASUNCIÓN]** *No existe API de Registraduría; se asume un adaptador propio.* | Alta |
+| RF-01.4 | Notificación de afiliación | El operador debe informar al centralizador que el ciudadano es ahora cliente suyo. | Alta |
+| RF-01.8 | Ejecución del traslado | El operador origen debe transferir la totalidad de documentos y metadatos al destino y desafiliar al ciudadano solo tras confirmación. **[BLOQUEO]** *B-01 · El protocolo de transferencia no está especificado por MinTIC.* | Alta |
+| RF-01.7 | Solicitud de traslado | El ciudadano debe poder solicitar el traslado de su carpeta hacia otro operador autorizado. | Alta |
+| RF-01.5 | Asignación de cuenta de correo | El sistema debe generar una cuenta de correo institucional única e inmutable de por vida, que sobrevive al traslado de operador. **[ASUNCIÓN]** *El caso fija el ejemplo pero no la regla de derivación ni el manejo de colisiones.* | Alta |
+| RF-01.6 | Carga del documento de identidad | El operador debe subir a la carpeta el documento de identidad firmado por la Registraduría al completar el registro. | Alta |
+| RF-01.9 | Registro de entidades y empresas | El operador debe permitir el registro de entidades y empresas, dotándolas de una carpeta institucional con las mismas capacidades. | Alta |
+| RF-01.10 | Cancelación de afiliación | El operador debe permitir dar de baja a un ciudadano o entidad, notificando al centralizador y preservando la custodia de los certificados. | Media |
 
 ### RF-04 · Compartición, solicitudes y autorizaciones
 
@@ -66,13 +66,41 @@ El consentimiento del ciudadano como puerta de todo movimiento de documentos.
 
 | ID | Requerimiento | Descripción | Prioridad |
 |---|---|---|---|
-| RF-04.1 | Armado de paquetes | El ciudadano debe poder seleccionar varios documentos y agruparlos en un paquete para enviarlo a una entidad o empresa. | Alta |
-| RF-04.2 | Envío de paquetes | El paquete debe entregarse a la carpeta institucional del destinatario si está afiliado, o por correo si no lo está. En ambos casos va firmado. | Alta |
-| RF-04.3 | Petición de documentos | Una entidad debe poder registrar, desde su propio operador, una petición dirigida a un ciudadano indicando qué documentos requiere y con qué finalidad. | Alta |
 | RF-04.4 | Autorización explícita | Ningún documento puede compartirse sin autorización expresa del titular; el sistema debe capturar la decisión de aprobar, aprobar en parte o rechazar. | Alta |
+| RF-04.2 | Envío de paquetes | El paquete debe entregarse a la carpeta institucional del destinatario si está afiliado, o por correo si no lo está. En ambos casos va firmado. | Alta |
+| RF-04.1 | Armado de paquetes | El ciudadano debe poder seleccionar varios documentos y agruparlos en un paquete para enviarlo a una entidad o empresa. | Alta |
+| RF-04.3 | Petición de documentos | Una entidad debe poder registrar, desde su propio operador, una petición dirigida a un ciudadano indicando qué documentos requiere y con qué finalidad. | Alta |
 | RF-04.5 | Vigencia y revocación | Las autorizaciones deben poder tener vigencia limitada y ser revocables por el ciudadano en cualquier momento. **[ASUNCIÓN]** *El caso no menciona vigencia; la añadimos por el requisito de confidencialidad.* | Media |
-| RF-04.6 | Seguimiento de solicitudes | El sistema debe permitir a solicitante y ciudadano consultar el estado de cada petición: pendiente, autorizada, rechazada o entregada. | Media |
 | RF-04.7 | Compleción con faltantes | El ciudadano debe poder cargar una versión temporal del documento que le falta y radicar en el mismo flujo la solicitud del definitivo. | Alta |
+| RF-04.6 | Seguimiento de solicitudes | El sistema debe permitir a solicitante y ciudadano consultar el estado de cada petición: pendiente, autorizada, rechazada o entregada. | Media |
+
+### RF-09 · Seguridad, identidad y auditoría
+
+Lo que impide que el sistema se convierta en una fuga de datos nacional.
+
+| ID | Requerimiento | Descripción | Prioridad |
+|---|---|---|---|
+| RF-09.2 | Autorización por roles y atributos | El sistema debe impedir que personas no autorizadas vean o modifiquen documentos ajenos, distinguiendo titular, delegado, entidad solicitante y administrador. | Alta |
+| RF-09.1 | Autenticación de usuarios | El sistema debe autenticar a ciudadanos, funcionarios y sistemas con un mecanismo sólido, con segundo factor para operaciones sensibles. | Alta |
+| RF-09.3 | Autenticación entre sistemas | Las llamadas entre operadores y con el centralizador deben autenticarse mutuamente mediante certificados o credenciales emitidas por MinTIC. **[BLOQUEO]** *B-09 · Hoy el centralizador no exige credencial alguna.* | Alta |
+| RF-09.4 | Registro de auditoría | Toda operación de acceso, autorización y transferencia debe quedar registrada con usuario, fecha, origen y resultado, en un log no alterable. | Alta |
+| RF-09.6 | Gestión del consentimiento | El sistema debe registrar y conservar la evidencia del consentimiento otorgado por el ciudadano para cada compartición. | Alta |
+| RF-09.5 | Consulta de accesos | El ciudadano debe poder consultar quién accedió a sus documentos y bajo qué autorización. | Media |
+
+### RF-06 · Servicios del centralizador
+
+Lo que MinTIC presta, y el límite explícito de lo que no debe hacer.
+
+| ID | Requerimiento | Descripción | Prioridad |
+|---|---|---|---|
+| RF-06.1 | Directorio ciudadano–operador | El centralizador debe mantener la asociación entre el identificador del ciudadano y su operador, y nada más que eso. | Alta |
+| RF-06.4 | Consulta de afiliación | El centralizador debe devolver el operador al que pertenece un ciudadano, para habilitar el enrutamiento. | Alta |
+| RF-06.2 | Registro de ciudadano | El centralizador debe exponer una operación para registrar a un ciudadano, rechazándola si ya existe afiliación vigente con otro operador. | Alta |
+| RF-06.3 | Desregistro de ciudadano | El centralizador debe exponer una operación para eliminar la afiliación y habilitar el traslado. | Alta |
+| RF-06.8 | No custodia de documentos | El centralizador no debe almacenar documentos ni metadatos de negocio; su información se limita al enrutamiento y la validación. | Alta |
+| RF-06.5 | Directorio de operadores | El centralizador debe publicar el listado de operadores autorizados con las direcciones de sus servicios de interoperabilidad. **[BLOQUEO]** *B-16 · 54 de 70 operadores no publican endpoint y nadie lo valida.* | Alta |
+| RF-06.6 | Autenticación de documentos | El centralizador debe ofrecer un servicio para registrar y verificar la autenticidad de un documento. **[BLOQUEO]** *B-03 · Hoy recibe una URL y nunca descarga el documento.* | Alta |
+| RF-06.7 | Control de operadores | El centralizador debe permitir dar de alta, suspender y dar de baja operadores, verificando las condiciones técnicas exigidas. | Media |
 
 ### RF-05 · Notificaciones
 
@@ -85,20 +113,18 @@ El canal por el que el ciudadano se entera de que algo pasó.
 | RF-05.3 | Centro de notificaciones | El sistema debe presentar el historial de notificaciones y las alertas pendientes de atención. | Media |
 | RF-05.4 | Preferencias de canal | El ciudadano debe poder configurar por qué canales desea ser notificado. | Baja |
 
-### RF-06 · Servicios del centralizador
+### RF-08 · Analítica para el Estado
 
-Lo que MinTIC presta, y el límite explícito de lo que no debe hacer.
+Lo que el Estado quiere saber, sin tocar el contenido de los documentos.
 
 | ID | Requerimiento | Descripción | Prioridad |
 |---|---|---|---|
-| RF-06.1 | Directorio ciudadano–operador | El centralizador debe mantener la asociación entre el identificador del ciudadano y su operador, y nada más que eso. | Alta |
-| RF-06.2 | Registro de ciudadano | El centralizador debe exponer una operación para registrar a un ciudadano, rechazándola si ya existe afiliación vigente con otro operador. | Alta |
-| RF-06.3 | Desregistro de ciudadano | El centralizador debe exponer una operación para eliminar la afiliación y habilitar el traslado. | Alta |
-| RF-06.4 | Consulta de afiliación | El centralizador debe devolver el operador al que pertenece un ciudadano, para habilitar el enrutamiento. | Alta |
-| RF-06.5 | Directorio de operadores | El centralizador debe publicar el listado de operadores autorizados con las direcciones de sus servicios de interoperabilidad. **[BLOQUEO]** *B-16 · 54 de 70 operadores no publican endpoint y nadie lo valida.* | Alta |
-| RF-06.6 | Autenticación de documentos | El centralizador debe ofrecer un servicio para registrar y verificar la autenticidad de un documento. **[BLOQUEO]** *B-03 · Hoy recibe una URL y nunca descarga el documento.* | Alta |
-| RF-06.7 | Control de operadores | El centralizador debe permitir dar de alta, suspender y dar de baja operadores, verificando las condiciones técnicas exigidas. | Media |
-| RF-06.8 | No custodia de documentos | El centralizador no debe almacenar documentos ni metadatos de negocio; su información se limita al enrutamiento y la validación. | Alta |
+| RF-08.2 | Anonimización | El sistema debe disociar de la identidad del ciudadano todo dato entregado para análisis, salvo autorización legal expresa. | Alta |
+| RF-08.1 | Consolidación de metadatos | El sistema debe consolidar periódicamente los metadatos de los documentos, nunca su contenido, en un repositorio analítico. **[BLOQUEO]** *B-04 · Choca con el mandato de mínima información en el centralizador.* | Media |
+| RF-08.3 | Contexto Notarías | El sistema debe permitir responder preguntas sobre actividad notarial: volúmenes, tipos de acto y distribución geográfica y temporal. | Media |
+| RF-08.4 | Contexto Educación | El sistema debe permitir responder preguntas sobre títulos y actas de grado emitidos: institución, programa, nivel y año. | Media |
+| RF-08.5 | Contexto Registraduría | El sistema debe permitir responder preguntas sobre documentos de identidad y cobertura de registro de la población. | Media |
+| RF-08.6 | Tableros y reportes | El sistema debe ofrecer tableros para el consumo de los resultados por MinTIC y las entidades autorizadas. | Baja |
 
 ### RF-07 · Servicios Premium
 
@@ -107,91 +133,65 @@ La parte del modelo de negocio que financia lo gratuito.
 | ID | Requerimiento | Descripción | Prioridad |
 |---|---|---|---|
 | RF-07.1 | Catálogo Premium | El operador debe poder definir un catálogo de servicios Premium y permitir su contratación. **[BLOQUEO]** *B-05 · No está cerrado qué es básico y qué es Premium.* | Media |
-| RF-07.2 | Casos de soporte PQRS | El operador debe permitir a una empresa cliente armar casos de soporte y asociarles documentos. | Media |
-| RF-07.3 | Solicitud desde un caso | Desde un caso PQRS la empresa debe poder pedir documentos a sus clientes sin importar su operador. | Media |
 | RF-07.4 | API para empresas | El operador debe exponer una API que permita a las empresas integrar sus sistemas de trámite con la carpeta. | Media |
 | RF-07.5 | Medición y facturación | El sistema debe medir el consumo Premium y facturarlo, garantizando que los servicios básicos sigan siendo gratuitos. | Media |
-
-### RF-08 · Analítica para el Estado
-
-Lo que el Estado quiere saber, sin tocar el contenido de los documentos.
-
-| ID | Requerimiento | Descripción | Prioridad |
-|---|---|---|---|
-| RF-08.1 | Consolidación de metadatos | El sistema debe consolidar periódicamente los metadatos de los documentos, nunca su contenido, en un repositorio analítico. **[BLOQUEO]** *B-04 · Choca con el mandato de mínima información en el centralizador.* | Media |
-| RF-08.2 | Anonimización | El sistema debe disociar de la identidad del ciudadano todo dato entregado para análisis, salvo autorización legal expresa. | Alta |
-| RF-08.3 | Contexto Notarías | El sistema debe permitir responder preguntas sobre actividad notarial: volúmenes, tipos de acto y distribución geográfica y temporal. | Media |
-| RF-08.4 | Contexto Educación | El sistema debe permitir responder preguntas sobre títulos y actas de grado emitidos: institución, programa, nivel y año. | Media |
-| RF-08.5 | Contexto Registraduría | El sistema debe permitir responder preguntas sobre documentos de identidad y cobertura de registro de la población. | Media |
-| RF-08.6 | Tableros y reportes | El sistema debe ofrecer tableros para el consumo de los resultados por MinTIC y las entidades autorizadas. | Baja |
-
-### RF-09 · Seguridad, identidad y auditoría
-
-Lo que impide que el sistema se convierta en una fuga de datos nacional.
-
-| ID | Requerimiento | Descripción | Prioridad |
-|---|---|---|---|
-| RF-09.1 | Autenticación de usuarios | El sistema debe autenticar a ciudadanos, funcionarios y sistemas con un mecanismo sólido, con segundo factor para operaciones sensibles. | Alta |
-| RF-09.2 | Autorización por roles y atributos | El sistema debe impedir que personas no autorizadas vean o modifiquen documentos ajenos, distinguiendo titular, delegado, entidad solicitante y administrador. | Alta |
-| RF-09.3 | Autenticación entre sistemas | Las llamadas entre operadores y con el centralizador deben autenticarse mutuamente mediante certificados o credenciales emitidas por MinTIC. **[BLOQUEO]** *B-09 · Hoy el centralizador no exige credencial alguna.* | Alta |
-| RF-09.4 | Registro de auditoría | Toda operación de acceso, autorización y transferencia debe quedar registrada con usuario, fecha, origen y resultado, en un log no alterable. | Alta |
-| RF-09.5 | Consulta de accesos | El ciudadano debe poder consultar quién accedió a sus documentos y bajo qué autorización. | Media |
-| RF-09.6 | Gestión del consentimiento | El sistema debe registrar y conservar la evidencia del consentimiento otorgado por el ciudadano para cada compartición. | Alta |
+| RF-07.2 | Casos de soporte PQRS | El operador debe permitir a una empresa cliente armar casos de soporte y asociarles documentos. | Media |
+| RF-07.3 | Solicitud desde un caso | Desde un caso PQRS la empresa debe poder pedir documentos a sus clientes sin importar su operador. | Media |
 
 ## 2. Requerimientos no funcionales
 
 | ID | Atributo de calidad | Requerimiento | Criterio de aceptación |
 |---|---|---|---|
-| RNF-01 | Disponibilidad | La consulta y descarga de documentos certificados no puede depender de un único centro de datos. **[ASUNCIÓN]** | ≥ 99,95 % mensual para lectura; ≥ 99,5 % para escritura, con degradación a modo encolado. |
-| RNF-02 | Durabilidad | Los documentos certificados deben conservarse sin pérdida ni corrupción. **[ASUNCIÓN]** | ≥ 3 réplicas en zonas independientes; verificación periódica por hash; pérdida objetivo cero. |
+| RNF-10 | Confidencialidad | Los documentos deben ser confidenciales en tránsito y en reposo, incluso frente al personal del operador. **[Del caso]** | TLS 1.3 en todo canal; cifrado AES-256 en reposo con gestión de llaves segregada y auditada. |
+| RNF-13 | No repudio | Debe ser imposible discutir la autenticidad de un certificado o negar haberlo autorizado. **[Del caso]** | Firma con sellado de tiempo verificable; verificación en cada recepción; evidencia conservada. |
 | RNF-03 | Retención | Los documentos certificados se conservan a perpetuidad, sin límite de tamaño. **[Del caso]** | Mínimo 100 años contractuales. Los no certificados caducan según cuota. |
-| RNF-04 | Rendimiento | Las operaciones interactivas deben responder de forma fluida en carga normal y en pico. **[ASUNCIÓN]** | p95 ≤ 2 s en consulta y navegación; p95 ≤ 5 s al cargar un documento de hasta 10 MB. |
-| RNF-05 | Latencia de mensajería | El sistema no es de tiempo real, pero la latencia entre operadores debe ser tan baja como sea posible. **[ASUNCIÓN]** | p95 de entrega entre operadores ≤ 30 s; aviso al ciudadano ≤ 2 min desde la recepción. |
+| RNF-02 | Durabilidad | Los documentos certificados deben conservarse sin pérdida ni corrupción. **[ASUNCIÓN]** | ≥ 3 réplicas en zonas independientes; verificación periódica por hash; pérdida objetivo cero. |
+| RNF-01 | Disponibilidad | La consulta y descarga de documentos certificados no puede depender de un único centro de datos. **[ASUNCIÓN]** | ≥ 99,95 % mensual para lectura; ≥ 99,5 % para escritura, con degradación a modo encolado. |
+| RNF-16 | Usabilidad | Todos los ciudadanos, incluidos los de baja apropiación tecnológica, deben poder usar el sistema. **[ASUNCIÓN]** | Tasa de éxito ≥ 90 % con usuarios de baja alfabetización digital; ≤ 5 pasos para autorizar; SUS ≥ 80. |
+| RNF-19 | Interoperabilidad | Los operadores deben integrarse entre sí mediante contratos estándar versionados que no rompan integraciones. **[ASUNCIÓN]** | API documentada, versionada y retrocompatible; esquema común de metadatos; formatos de firma estandarizados. |
+| RNF-20 | Carga mínima del centralizador | El centralizador debe manejar la mínima cantidad de transacciones y almacenar la mínima información. **[Del caso]** | ≤ 4 transacciones por ciclo de vida de afiliación y 0 bytes de contenido documental. |
 | RNF-06 | Consistencia | Se admite consistencia eventual en documentos y avisos, pero la afiliación debe ser fuertemente consistente. **[ASUNCIÓN]** | Cero casos de doble afiliación; convergencia del estado documental ≤ 5 min. |
 | RNF-07 | Tolerancia a fallos | La caída de un operador no debe producir pérdida de mensajes ni impedir la operación del resto. **[ASUNCIÓN]** | Entregas encoladas con reintento exponencial; operaciones idempotentes; cola de mensajes muertos. |
 | RNF-08 | Escalabilidad | El sistema debe soportar la población del país, con carpeta desde el registro y volumen creciente. **[ASUNCIÓN]** | Escalado horizontal hasta 50 M de carpetas; crecimiento ≥ 30 % anual sin degradar el p95. |
-| RNF-09 | Capacidad | El operador debe absorber los picos de campañas públicas sin rediseño. **[ASUNCIÓN]** | 2.000 peticiones/s en horario laboral; 5.000 en pico de convocatoria. |
-| RNF-10 | Confidencialidad | Los documentos deben ser confidenciales en tránsito y en reposo, incluso frente al personal del operador. **[Del caso]** | TLS 1.3 en todo canal; cifrado AES-256 en reposo con gestión de llaves segregada y auditada. |
+| RNF-04 | Rendimiento | Las operaciones interactivas deben responder de forma fluida en carga normal y en pico. **[ASUNCIÓN]** | p95 ≤ 2 s en consulta y navegación; p95 ≤ 5 s al cargar un documento de hasta 10 MB. |
 | RNF-11 | Autenticación | Debe existir un mecanismo sólido de autenticación para ciudadanos, funcionarios y sistemas. **[ASUNCIÓN]** | Segundo factor obligatorio para autorizar comparticiones; bloqueo tras intentos fallidos; sesiones con expiración. |
 | RNF-12 | Autorización | El modelo debe ser expresivo para impedir accesos indebidos en escenarios de delegación. **[ASUNCIÓN]** | Cero accesos fuera de política en pruebas de penetración; toda decisión de autorización registrada. |
-| RNF-13 | No repudio | Debe ser imposible discutir la autenticidad de un certificado o negar haberlo autorizado. **[Del caso]** | Firma con sellado de tiempo verificable; verificación en cada recepción; evidencia conservada. |
 | RNF-14 | Trazabilidad | Toda operación relevante debe quedar registrada de forma inalterable. **[ASUNCIÓN]** | Log append-only, retención ≥ 10 años, consultable en ≤ 5 s y exportable ante requerimiento de autoridad. |
 | RNF-15 | Privacidad y cumplimiento | El tratamiento de datos personales debe cumplir la normativa colombiana. **[Del caso]** | Cumplimiento verificable de la Ley 1581 de 2012; registro de consentimientos; minimización de datos. |
-| RNF-16 | Usabilidad | Todos los ciudadanos, incluidos los de baja apropiación tecnológica, deben poder usar el sistema. **[ASUNCIÓN]** | Tasa de éxito ≥ 90 % con usuarios de baja alfabetización digital; ≤ 5 pasos para autorizar; SUS ≥ 80. |
-| RNF-17 | Accesibilidad | Las interfaces deben servir a personas con discapacidad y a dispositivos de gama baja. **[ASUNCIÓN]** | WCAG 2.1 nivel AA; diseño responsive; funcionamiento en navegadores con dos versiones de antigüedad. |
-| RNF-18 | Canales alternos | El sistema debe apoyarse en canales de baja fricción para llegar a población con acceso limitado. **[Del caso]** | Correo y SMS disponibles para el 100 % de los ciudadanos registrados. |
-| RNF-19 | Interoperabilidad | Los operadores deben integrarse entre sí mediante contratos estándar versionados que no rompan integraciones. **[ASUNCIÓN]** | API documentada, versionada y retrocompatible; esquema común de metadatos; formatos de firma estandarizados. |
-| RNF-20 | Carga mínima del centralizador | El centralizador debe manejar la mínima cantidad de transacciones y almacenar la mínima información. **[Del caso]** | ≤ 4 transacciones por ciclo de vida de afiliación y 0 bytes de contenido documental. |
-| RNF-21 | Minimización de datos | Debe minimizarse el volumen transferido entre operadores y centralizador. **[ASUNCIÓN]** | ≤ 2 KB por transacción; caché local del directorio con TTL; consultas por lotes. |
 | RNF-22 | Portabilidad | Un ciudadano debe trasladarse de operador sin pérdida de información ni de identidad digital. **[ASUNCIÓN]** | Traslado completo ≤ 24 h; cuenta de correo conservada; verificación de integridad al finalizar. |
+| RNF-09 | Capacidad | El operador debe absorber los picos de campañas públicas sin rediseño. **[ASUNCIÓN]** | 2.000 peticiones/s en horario laboral; 5.000 en pico de convocatoria. |
+| RNF-05 | Latencia de mensajería | El sistema no es de tiempo real, pero la latencia entre operadores debe ser tan baja como sea posible. **[ASUNCIÓN]** | p95 de entrega entre operadores ≤ 30 s; aviso al ciudadano ≤ 2 min desde la recepción. |
 | RNF-23 | Recuperabilidad | Debe existir un plan probado de continuidad ante la pérdida de una región o de un proveedor. **[ASUNCIÓN]** | RPO ≤ 5 min y RTO ≤ 30 min para el índice; pruebas de recuperación semestrales con evidencia. |
-| RNF-24 | Cuotas de almacenamiento | El almacenamiento de documentos no certificados debe estar limitado por usuario. **[ASUNCIÓN]** | Máximo 20 documentos y 200 MB por ciudadano; aviso al 80 % y bloqueo al 100 %, solo para no certificados. |
 | RNF-25 | Observabilidad | El sistema debe permitir detectar y diagnosticar fallos de integración entre operadores de forma oportuna. **[ASUNCIÓN]** | Métricas, trazas distribuidas y alertas sobre latencia y tasa de error de las transferencias. |
-| RNF-26 | Modificabilidad | La arquitectura debe admitir nuevos tipos documentales sin rediseño. **[ASUNCIÓN]** | Nuevo tipo configurable con cero cambios en el núcleo; despliegues sin interrupción. |
-| RNF-27 | Libertad tecnológica | No hay restricción sobre tecnologías ni sobre la ubicación del almacenamiento, incluida la nube fuera del país. **[Del caso]** | Arquitectura agnóstica de proveedor, sin dependencias que impidan cambiar de nube. |
-| RNF-28 | Coste | El coste marginal debe sostener un modelo con servicios básicos gratuitos. **[ASUNCIÓN]** | ≤ USD 0,15 por carpeta activa al mes. |
 | RNF-29 | Desplegabilidad | Un cambio debe poder llegar a producción sin interrumpir el servicio ni coordinar despliegues entre equipos. **[ASUNCIÓN]** | Despliegue independiente por servicio; cero minutos de indisponibilidad planificada; reversión en ≤ 10 min. |
 | RNF-30 | Elasticidad | La capacidad debe seguir a la demanda de forma automática, sin intervención humana ni sobreaprovisionamiento permanente. **[ASUNCIÓN]** | Tiempo medio hasta la puesta en marcha de una instancia ≤ 60 s; utilización sostenida entre 50 % y 70 %. |
+| RNF-26 | Modificabilidad | La arquitectura debe admitir nuevos tipos documentales sin rediseño. **[ASUNCIÓN]** | Nuevo tipo configurable con cero cambios en el núcleo; despliegues sin interrupción. |
+| RNF-17 | Accesibilidad | Las interfaces deben servir a personas con discapacidad y a dispositivos de gama baja. **[ASUNCIÓN]** | WCAG 2.1 nivel AA; diseño responsive; funcionamiento en navegadores con dos versiones de antigüedad. |
+| RNF-18 | Canales alternos | El sistema debe apoyarse en canales de baja fricción para llegar a población con acceso limitado. **[Del caso]** | Correo y SMS disponibles para el 100 % de los ciudadanos registrados. |
+| RNF-21 | Minimización de datos | Debe minimizarse el volumen transferido entre operadores y centralizador. **[ASUNCIÓN]** | ≤ 2 KB por transacción; caché local del directorio con TTL; consultas por lotes. |
+| RNF-24 | Cuotas de almacenamiento | El almacenamiento de documentos no certificados debe estar limitado por usuario. **[ASUNCIÓN]** | Máximo 20 documentos y 200 MB por ciudadano; aviso al 80 % y bloqueo al 100 %, solo para no certificados. |
+| RNF-27 | Libertad tecnológica | No hay restricción sobre tecnologías ni sobre la ubicación del almacenamiento, incluida la nube fuera del país. **[Del caso]** | Arquitectura agnóstica de proveedor, sin dependencias que impidan cambiar de nube. |
+| RNF-28 | Coste | El coste marginal debe sostener un modelo con servicios básicos gratuitos. **[ASUNCIÓN]** | ≤ USD 0,15 por carpeta activa al mes. |
 
 ## 3. Mapeo de requerimientos no funcionales vs QoS
 
 | RNF | Atributo de QoS | Métrica o indicador | Objetivo / umbral | Táctica arquitectónica | Punto de fricción |
 |---|---|---|---|---|---|
-| RNF-01, 02, 03 | Disponibilidad | Uptime mensual, MTTR | ≥ 99,95 % lectura · MTTR ≤ 30 min | Redundancia activa multizona, circuit breaker hacia operadores externos, degradación a solo lectura. | El techo real lo pone el centralizador de MinTIC, que no controlamos y que estuvo caído el 5 de septiembre. |
-| RNF-04, 05 | Rendimiento | p95 y p99 de latencia | p95 ≤ 2 s en consulta · p95 ≤ 30 s entre operadores | CQRS con vista materializada del índice de carpeta, CDN para descargas, URL prefirmadas. | Consistencia eventual: un documento recién llegado puede tardar en verse. Aceptable porque el caso descarta el tiempo real. |
-| RNF-06, 07 | Fiabilidad | Casos de doble afiliación · tasa de entrega | Cero dobles afiliaciones · entrega eventual 100 % | Afiliación con consistencia fuerte contra el centralizador; documentos por mensajería asíncrona con outbox e idempotencia. | La asincronía hace más difícil dar respuesta clara al ciudadano. Choca de frente con RNF-16. |
-| RNF-08, 09 | Escalabilidad | Carpetas soportadas · peticiones/s | 50 M de carpetas · 5.000 pet./s en pico | Servicios sin estado con autoescalado, partición por identificación del ciudadano, almacenamiento desacoplado del cómputo. | Particionar por cédula complica las consultas analíticas transversales que pide RF-08. |
 | RNF-10, 11, 12 | Seguridad | % cifrado · accesos fuera de política | 100 % cifrado · cero accesos indebidos | Cifrado por sobre con gestión de llaves, autorización por atributos con alcance por documento, URL prefirmadas de vida corta. | El segundo factor obligatorio es el mayor enemigo de la usabilidad en población de baja apropiación tecnológica. |
 | RNF-13 | No repudio | % de documentos con firma verificable | 100 % | Firma sobre el documento con sellado de tiempo y verificación en la frontera de entrada. | Sin autoridad certificadora definida, «firmado» es decorativo. Es el bloqueo B-03. |
-| RNF-14, 15 | Auditoría y cumplimiento | Eventos auditados/s · hallazgos de auditoría | Consulta ≤ 5 s · cero hallazgos críticos | Log append-only en almacenamiento inmutable separado, clasificación y minimización de datos. | El volumen de auditoría puede superar al documental. Y la perpetuidad choca con el derecho de supresión. |
+| RNF-01, 02, 03 | Disponibilidad | Uptime mensual, MTTR | ≥ 99,95 % lectura · MTTR ≤ 30 min | Redundancia activa multizona, circuit breaker hacia operadores externos, degradación a solo lectura. | El techo real lo pone el centralizador de MinTIC, que no controlamos y que estuvo caído el 5 de septiembre. |
 | RNF-16, 17, 18 | Usabilidad | Tasa de éxito de tarea · SUS · WCAG | ≥ 90 % · SUS ≥ 80 · nivel AA | Asistentes paso a paso, valores por defecto seguros, canal SMS, lenguaje claro y deshacer. | Cada control de seguridad que añadimos resta un punto de usabilidad. El caso pone la usabilidad como máxima prioridad. |
 | RNF-19, 22 | Interoperabilidad | % de transferencias automáticas | 100 % hacia operadores del directorio | Capa anticorrupción por operador, contrato versionado, saga de transferencia con confirmación. | Hoy imposible: solo 16 de 70 operadores publican endpoint. Es el bloqueo B-01. |
 | RNF-20, 21 | Eficiencia del centralizador | Transacciones y bytes hacia el centro | ≤ 4 transacciones · ≤ 2 KB | El centralizador como directorio, no como bus: solo índices y punteros, entrega entre pares, caché local con TTL. | Menos tráfico al centro es menos observabilidad para el Estado, que la necesita para RF-08. |
+| RNF-06, 07 | Fiabilidad | Casos de doble afiliación · tasa de entrega | Cero dobles afiliaciones · entrega eventual 100 % | Afiliación con consistencia fuerte contra el centralizador; documentos por mensajería asíncrona con outbox e idempotencia. | La asincronía hace más difícil dar respuesta clara al ciudadano. Choca de frente con RNF-16. |
+| RNF-08, 09 | Escalabilidad | Carpetas soportadas · peticiones/s | 50 M de carpetas · 5.000 pet./s en pico | Servicios sin estado con autoescalado, partición por identificación del ciudadano, almacenamiento desacoplado del cómputo. | Particionar por cédula complica las consultas analíticas transversales que pide RF-08. |
+| RNF-04, 05 | Rendimiento | p95 y p99 de latencia | p95 ≤ 2 s en consulta · p95 ≤ 30 s entre operadores | CQRS con vista materializada del índice de carpeta, CDN para descargas, URL prefirmadas. | Consistencia eventual: un documento recién llegado puede tardar en verse. Aceptable porque el caso descarta el tiempo real. |
+| RNF-14, 15 | Auditoría y cumplimiento | Eventos auditados/s · hallazgos de auditoría | Consulta ≤ 5 s · cero hallazgos críticos | Log append-only en almacenamiento inmutable separado, clasificación y minimización de datos. | El volumen de auditoría puede superar al documental. Y la perpetuidad choca con el derecho de supresión. |
 | RNF-23 | Recuperabilidad | RPO · RTO | RPO ≤ 5 min · RTO ≤ 30 min | Copias continuas con recuperación a un punto en el tiempo, réplicas entre regiones, ensayos semestrales. | Un RTO de 30 minutos es incompatible con recuperar petabytes. Solo aplica al índice, no al contenido. |
-| RNF-24, 28 | Coste | USD por carpeta activa al mes | ≤ USD 0,15 | Almacenamiento por niveles, deduplicación y compresión, con cuota para los no certificados. | El nivel de archivo frío rompe la disponibilidad: recuperar tarda horas. «A perpetuidad y siempre disponible» es caro por definición. |
 | RNF-25, 26 | Mantenibilidad | Cambios por tipo documental · MTTD | Cero cambios en el núcleo · detección ≤ 5 min | Esquemas de metadatos declarativos y versionados, métricas y trazas distribuidas por transferencia. | Un esquema flexible dificulta las consultas analíticas fuertemente tipadas. |
 | RNF-29, 30 | Agilidad operativa | Tiempo de entrega de un cambio · MTTS | Despliegue sin corte · arranque ≤ 60 s | Contenedores inmutables con despliegue progresivo, procesos sin estado y autoescalado por métrica de carga. | Arrancar rápido obliga a no cargar datos al inicio, y eso traslada latencia a la primera petición de cada instancia. |
 | RNF-27 | Portabilidad | Dependencias propietarias | Cero bloqueos de proveedor | Abstracción del almacenamiento de objetos y de la mensajería tras interfaces propias. | Ser agnóstico cuesta: se renuncia a servicios gestionados que serían más baratos y rápidos. |
+| RNF-24, 28 | Coste | USD por carpeta activa al mes | ≤ USD 0,15 | Almacenamiento por niveles, deduplicación y compresión, con cuota para los no certificados. | El nivel de archivo frío rompe la disponibilidad: recuperar tarda horas. «A perpetuidad y siempre disponible» es caro por definición. |
 
 ## 4. Restricciones de arquitectura
 
@@ -203,21 +203,21 @@ Lo que acota las opciones del diseño antes de empezar a diseñar. Cada restricc
 
 | ID | Restricción | Descripción | Origen |
 |---|---|---|---|
-| RD-01 | Configuración fuera del artefacto | El sistema debe leer toda su configuración del entorno de ejecución, sin puertos, credenciales ni direcciones de otros operadores escritos en el código. **[ASUNCIÓN]** | Twelve-Factor III · Config |
-| RD-02 | Procesos sin estado | El sistema debe ejecutarse como procesos sin estado, de modo que cualquier instancia pueda atender cualquier petición sin sesiones pegajosas. **[ASUNCIÓN]** | Twelve-Factor VI · Processes |
-| RD-03 | Escalado horizontal | El sistema debe crecer añadiendo instancias y no ampliando la memoria o la CPU de las existentes. **[ASUNCIÓN]** | Twelve-Factor VIII · Concurrency |
-| RD-04 | Infraestructura inmutable | El sistema no debe parchear un entorno de ejecución en caliente: un cambio se aplica reemplazando la instancia por una construida de nuevo. **[ASUNCIÓN]** | Cloud native · Immutable infrastructure |
-| RD-05 | Servicios de respaldo enchufables | El sistema debe tratar la base de datos, el almacén de objetos y la mensajería como recursos adjuntos, intercambiables cambiando configuración y sin tocar el código. **[ASUNCIÓN]** | Twelve-Factor IV · Backing services |
-| RD-06 | Empaquetado en contenedores | El sistema debe distribuirse como imágenes de contenedor versionadas, de forma que desarrollo, pruebas y producción ejecuten el mismo artefacto. **[ASUNCIÓN]** | Cloud native · Containers · Twelve-Factor X |
-| RD-07 | Separación de construcción y ejecución | El sistema debe construirse una vez y desplegarse muchas, sin que la etapa de ejecución pueda alterar el artefacto construido. **[ASUNCIÓN]** | Twelve-Factor V · Build, release, run |
-| RD-08 | Diseño API-first | El sistema debe definir y publicar el contrato de sus interfaces antes de implementar la funcionalidad que las sirve, empezando por la interfaz federada entre operadores. **[ASUNCIÓN]** | Cloud native · API-first design |
-| RD-09 | Registros como flujo de eventos | El sistema no debe escribir ni rotar ficheros de registro: emite eventos a la salida estándar y el entorno de ejecución los recoge. **[ASUNCIÓN]** | Twelve-Factor XI · Logs |
-| RD-10 | Tareas de administración separadas | El sistema debe ejecutar las migraciones de datos y las cargas masivas como procesos puntuales aparte, con la misma versión y configuración que el servicio. **[ASUNCIÓN]** | Twelve-Factor XII · Admin processes |
-| RD-11 | Sin base de datos compartida | El sistema no debe integrar dos servicios a través de un esquema de datos común: la integración ocurre por interfaz publicada o por mensajería. **[ASUNCIÓN]** | Microservicios · Persistencia políglota |
-| RD-12 | Descomposición por capacidad de negocio | El sistema debe partirse en cortes verticales de negocio — afiliación, documento, entrega, autorización — y no en capas técnicas de presentación, lógica y datos. **[ASUNCIÓN]** | Microservicios · Capacidades de negocio |
-| RD-13 | Observabilidad desde el primer despliegue | El sistema debe emitir métricas, trazas distribuidas y eventos desde su primera versión desplegada, y no añadirlos cuando aparezca el primer incidente. **[ASUNCIÓN]** | Cloud native · Observability |
 | RD-14 | Centralizador externo no modificable | El sistema debe adaptarse al centralizador de MinTIC tal como está: no podemos cambiar su contrato, su disponibilidad ni su modelo de datos. **[Del caso]** | Caso de estudio |
 | RD-15 | Contrato GovCarpeta congelado | El sistema debe consumir la API GovCarpeta tal como se verificó: Swagger 2.0, sin definiciones de seguridad y sin versionado en la ruta. **[Del caso]** | Evidencia de la API · sección 08 |
+| RD-12 | Descomposición por capacidad de negocio | El sistema debe partirse en cortes verticales de negocio — afiliación, documento, entrega, autorización — y no en capas técnicas de presentación, lógica y datos. **[ASUNCIÓN]** | Microservicios · Capacidades de negocio |
+| RD-11 | Sin base de datos compartida | El sistema no debe integrar dos servicios a través de un esquema de datos común: la integración ocurre por interfaz publicada o por mensajería. **[ASUNCIÓN]** | Microservicios · Persistencia políglota |
+| RD-08 | Diseño API-first | El sistema debe definir y publicar el contrato de sus interfaces antes de implementar la funcionalidad que las sirve, empezando por la interfaz federada entre operadores. **[ASUNCIÓN]** | Cloud native · API-first design |
+| RD-02 | Procesos sin estado | El sistema debe ejecutarse como procesos sin estado, de modo que cualquier instancia pueda atender cualquier petición sin sesiones pegajosas. **[ASUNCIÓN]** | Twelve-Factor VI · Processes |
+| RD-03 | Escalado horizontal | El sistema debe crecer añadiendo instancias y no ampliando la memoria o la CPU de las existentes. **[ASUNCIÓN]** | Twelve-Factor VIII · Concurrency |
+| RD-06 | Empaquetado en contenedores | El sistema debe distribuirse como imágenes de contenedor versionadas, de forma que desarrollo, pruebas y producción ejecuten el mismo artefacto. **[ASUNCIÓN]** | Cloud native · Containers · Twelve-Factor X |
+| RD-04 | Infraestructura inmutable | El sistema no debe parchear un entorno de ejecución en caliente: un cambio se aplica reemplazando la instancia por una construida de nuevo. **[ASUNCIÓN]** | Cloud native · Immutable infrastructure |
+| RD-13 | Observabilidad desde el primer despliegue | El sistema debe emitir métricas, trazas distribuidas y eventos desde su primera versión desplegada, y no añadirlos cuando aparezca el primer incidente. **[ASUNCIÓN]** | Cloud native · Observability |
+| RD-05 | Servicios de respaldo enchufables | El sistema debe tratar la base de datos, el almacén de objetos y la mensajería como recursos adjuntos, intercambiables cambiando configuración y sin tocar el código. **[ASUNCIÓN]** | Twelve-Factor IV · Backing services |
+| RD-01 | Configuración fuera del artefacto | El sistema debe leer toda su configuración del entorno de ejecución, sin puertos, credenciales ni direcciones de otros operadores escritos en el código. **[ASUNCIÓN]** | Twelve-Factor III · Config |
+| RD-07 | Separación de construcción y ejecución | El sistema debe construirse una vez y desplegarse muchas, sin que la etapa de ejecución pueda alterar el artefacto construido. **[ASUNCIÓN]** | Twelve-Factor V · Build, release, run |
+| RD-09 | Registros como flujo de eventos | El sistema no debe escribir ni rotar ficheros de registro: emite eventos a la salida estándar y el entorno de ejecución los recoge. **[ASUNCIÓN]** | Twelve-Factor XI · Logs |
+| RD-10 | Tareas de administración separadas | El sistema debe ejecutar las migraciones de datos y las cargas masivas como procesos puntuales aparte, con la misma versión y configuración que el servicio. **[ASUNCIÓN]** | Twelve-Factor XII · Admin processes |
 
 ### 4.2 Requerimientos inversos
 
@@ -226,13 +226,13 @@ Lo que el sistema **no** debe hacer. El template del curso los pide aparte (§3.
 | ID | Límite | El sistema no debe… |
 |---|---|---|
 | RI-01 | Sin contenido por el centralizador | El sistema no debe hacer pasar el contenido de ningún documento por el centralizador de MinTIC; solo consulta y actualiza el directorio de afiliación. **[Del caso]** |
-| RI-02 | Sin garantías de tiempo real | El sistema no debe prometer entrega en tiempo real entre operadores, porque MinTIC descartó explícitamente ese requisito. **[Del caso]** |
 | RI-03 | Sin doble afiliación | El sistema no debe permitir que un ciudadano quede afiliado a dos operadores a la vez, ni siquiera de forma transitoria durante un traslado. **[Del caso]** |
-| RI-04 | Sin cambio de cuenta de correo | El sistema no debe permitir modificar la cuenta de correo institucional después del primer registro del ciudadano. **[Del caso]** |
-| RI-05 | Sin cuota para certificados | El sistema no debe limitar la cantidad ni el tamaño de los documentos certificados; la cuota aplica únicamente a los no certificados. **[Del caso]** |
-| RI-06 | Sin lectura por el operador | El operador no debe poder leer el contenido de un documento del ciudadano sin una autorización registrada y auditable del titular. **[ASUNCIÓN]** |
-| RI-07 | Sin cobro por servicios básicos | El operador no debe cobrar por las funciones que el caso define como servicios básicos; el cobro se limita a los servicios Premium. **[Del caso]** |
 | RI-08 | Sin entrega no autorizada | El sistema no debe entregar un documento a un tercero sin autorización explícita del ciudadano titular para esa petición concreta. **[Del caso]** |
+| RI-06 | Sin lectura por el operador | El operador no debe poder leer el contenido de un documento del ciudadano sin una autorización registrada y auditable del titular. **[ASUNCIÓN]** |
+| RI-05 | Sin cuota para certificados | El sistema no debe limitar la cantidad ni el tamaño de los documentos certificados; la cuota aplica únicamente a los no certificados. **[Del caso]** |
+| RI-02 | Sin garantías de tiempo real | El sistema no debe prometer entrega en tiempo real entre operadores, porque MinTIC descartó explícitamente ese requisito. **[Del caso]** |
+| RI-04 | Sin cambio de cuenta de correo | El sistema no debe permitir modificar la cuenta de correo institucional después del primer registro del ciudadano. **[Del caso]** |
+| RI-07 | Sin cobro por servicios básicos | El operador no debe cobrar por las funciones que el caso define como servicios básicos; el cobro se limita a los servicios Premium. **[Del caso]** |
 
 ### 4.3 Drivers de granularidad
 
@@ -240,15 +240,15 @@ Los nueve dominios funcionales pasados por los desintegradores de granularidad d
 
 | Dominio | Driver dominante | Veredicto | Por qué |
 |---|---|---|---|
-| RF-01 · Afiliación | Tolerancia a fallos | Aislar | Es el único dominio que exige consistencia fuerte contra el centralizador. Mezclarlo con el resto arrastraría la carpeta entera a la disponibilidad de MinTIC. |
 | RF-02 · Gestión documental | Escalabilidad y rendimiento | Partir en dos | El índice de la carpeta se consulta miles de veces por cada escritura de contenido. Índice y almacenamiento tienen perfiles de carga opuestos y deben escalar por separado. |
 | RF-03 · Interoperabilidad | Tolerancia a fallos | Aislar | Habla con 70 operadores ajenos de fiabilidad desconocida. Un fallo en cascada aquí no puede tumbar la consulta de la carpeta propia. |
+| RF-01 · Afiliación | Tolerancia a fallos | Aislar | Es el único dominio que exige consistencia fuerte contra el centralizador. Mezclarlo con el resto arrastraría la carpeta entera a la disponibilidad de MinTIC. |
 | RF-04 · Autorizaciones | Alcance y función | Aislar | Cohesión muy alta alrededor de una sola idea — el consentimiento — y es el punto que toda operación de entrega tiene que consultar. |
-| RF-05 · Notificaciones | Escalabilidad y extensibilidad | Mantener unido | Correo y SMS son dos modos del mismo propósito: avisar. Es el ejemplo de la clase — hay cohesión, así que un solo servicio hace tres cosas. |
-| RF-06 · Centralizador | No aplica | Fuera del alcance | Es sistema externo. Aquí solo se diseña el adaptador con capa anticorrupción que lo consume. |
-| RF-07 · Premium | Volatilidad del código | Aislar | Es la parte que más cambia, porque la manda el mercado y no la norma. Encerrarla evita volver a probar el núcleo con cada cambio comercial. |
-| RF-08 · Analítica | Escalabilidad y rendimiento | Aislar | Consultas largas sobre metadatos de millones de carpetas. Compartir motor con lo transaccional pondría en riesgo el p95 de la carpeta. |
 | RF-09 · Seguridad y auditoría | Alcance y función | Partir en dos | Identidad y bitácora no tienen nada en común: una está en el camino crítico de cada petición, la otra solo escribe. No hay cohesión que las mantenga juntas. |
+| RF-06 · Centralizador | No aplica | Fuera del alcance | Es sistema externo. Aquí solo se diseña el adaptador con capa anticorrupción que lo consume. |
+| RF-05 · Notificaciones | Escalabilidad y extensibilidad | Mantener unido | Correo y SMS son dos modos del mismo propósito: avisar. Es el ejemplo de la clase — hay cohesión, así que un solo servicio hace tres cosas. |
+| RF-08 · Analítica | Escalabilidad y rendimiento | Aislar | Consultas largas sobre metadatos de millones de carpetas. Compartir motor con lo transaccional pondría en riesgo el p95 de la carpeta. |
+| RF-07 · Premium | Volatilidad del código | Aislar | Es la parte que más cambia, porque la manda el mercado y no la norma. Encerrarla evita volver a probar el núcleo con cada cambio comercial. |
 
 ## 5. Diagrama de contexto
 
@@ -297,10 +297,10 @@ Archivo: `diagramas/casos-de-uso.html`
 
 | Bloque | Caso de uso | Requerimientos que realiza |
 |---|---|---|
-| Lo que hace el ciudadano | Afiliarme a un operador | RF-01.1 → 01.6 · RNF-06 |
-|  | Trasladarme a otro operador | RF-01.7 · RF-01.8 · RNF-20 |
+| Lo que hace el ciudadano | Afiliarme a un operador | RF-01.1 · RF-01.5 · RF-01.6 · RNF-06 |
+|  | Trasladarme a otro operador | RF-01.7 · RF-01.8 · RNF-22 |
 |  | Ver y descargar mis documentos | RF-02.6 · RF-02.7 · RNF-04 |
-|  | Subir un documento temporal | RF-02.2 · RF-02.9 · RNF-22 |
+|  | Subir un documento temporal | RF-02.2 · RF-02.9 · RNF-24 |
 |  | Compartir un paquete | RF-04.1 · RF-04.2 · RNF-11 |
 |  | Autorizar o rechazar una petición | RF-04.4 · RF-09.6 · RNF-14 |
 | Lo que hace la entidad | Emitir un documento firmado | RF-03.7 · RF-02.4 · RNF-11 |

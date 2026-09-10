@@ -1,18 +1,18 @@
 {
   "requerimientos": [
     {
-      "id": "RNF-01",
-      "atributo": "Disponibilidad",
-      "requerimiento": "La consulta y descarga de documentos certificados no puede depender de un único centro de datos.",
-      "criterio": "≥ 99,95 % mensual para lectura; ≥ 99,5 % para escritura, con degradación a modo encolado.",
-      "origen": "asuncion"
+      "id": "RNF-10",
+      "atributo": "Confidencialidad",
+      "requerimiento": "Los documentos deben ser confidenciales en tránsito y en reposo, incluso frente al personal del operador.",
+      "criterio": "TLS 1.3 en todo canal; cifrado AES-256 en reposo con gestión de llaves segregada y auditada.",
+      "origen": "caso"
     },
     {
-      "id": "RNF-02",
-      "atributo": "Durabilidad",
-      "requerimiento": "Los documentos certificados deben conservarse sin pérdida ni corrupción.",
-      "criterio": "≥ 3 réplicas en zonas independientes; verificación periódica por hash; pérdida objetivo cero.",
-      "origen": "asuncion"
+      "id": "RNF-13",
+      "atributo": "No repudio",
+      "requerimiento": "Debe ser imposible discutir la autenticidad de un certificado o negar haberlo autorizado.",
+      "criterio": "Firma con sellado de tiempo verificable; verificación en cada recepción; evidencia conservada.",
+      "origen": "caso"
     },
     {
       "id": "RNF-03",
@@ -22,18 +22,39 @@
       "origen": "caso"
     },
     {
-      "id": "RNF-04",
-      "atributo": "Rendimiento",
-      "requerimiento": "Las operaciones interactivas deben responder de forma fluida en carga normal y en pico.",
-      "criterio": "p95 ≤ 2 s en consulta y navegación; p95 ≤ 5 s al cargar un documento de hasta 10 MB.",
+      "id": "RNF-02",
+      "atributo": "Durabilidad",
+      "requerimiento": "Los documentos certificados deben conservarse sin pérdida ni corrupción.",
+      "criterio": "≥ 3 réplicas en zonas independientes; verificación periódica por hash; pérdida objetivo cero.",
       "origen": "asuncion"
     },
     {
-      "id": "RNF-05",
-      "atributo": "Latencia de mensajería",
-      "requerimiento": "El sistema no es de tiempo real, pero la latencia entre operadores debe ser tan baja como sea posible.",
-      "criterio": "p95 de entrega entre operadores ≤ 30 s; aviso al ciudadano ≤ 2 min desde la recepción.",
+      "id": "RNF-01",
+      "atributo": "Disponibilidad",
+      "requerimiento": "La consulta y descarga de documentos certificados no puede depender de un único centro de datos.",
+      "criterio": "≥ 99,95 % mensual para lectura; ≥ 99,5 % para escritura, con degradación a modo encolado.",
       "origen": "asuncion"
+    },
+    {
+      "id": "RNF-16",
+      "atributo": "Usabilidad",
+      "requerimiento": "Todos los ciudadanos, incluidos los de baja apropiación tecnológica, deben poder usar el sistema.",
+      "criterio": "Tasa de éxito ≥ 90 % con usuarios de baja alfabetización digital; ≤ 5 pasos para autorizar; SUS ≥ 80.",
+      "origen": "asuncion"
+    },
+    {
+      "id": "RNF-19",
+      "atributo": "Interoperabilidad",
+      "requerimiento": "Los operadores deben integrarse entre sí mediante contratos estándar versionados que no rompan integraciones.",
+      "criterio": "API documentada, versionada y retrocompatible; esquema común de metadatos; formatos de firma estandarizados.",
+      "origen": "asuncion"
+    },
+    {
+      "id": "RNF-20",
+      "atributo": "Carga mínima del centralizador",
+      "requerimiento": "El centralizador debe manejar la mínima cantidad de transacciones y almacenar la mínima información.",
+      "criterio": "≤ 4 transacciones por ciclo de vida de afiliación y 0 bytes de contenido documental.",
+      "origen": "caso"
     },
     {
       "id": "RNF-06",
@@ -57,18 +78,11 @@
       "origen": "asuncion"
     },
     {
-      "id": "RNF-09",
-      "atributo": "Capacidad",
-      "requerimiento": "El operador debe absorber los picos de campañas públicas sin rediseño.",
-      "criterio": "2.000 peticiones/s en horario laboral; 5.000 en pico de convocatoria.",
+      "id": "RNF-04",
+      "atributo": "Rendimiento",
+      "requerimiento": "Las operaciones interactivas deben responder de forma fluida en carga normal y en pico.",
+      "criterio": "p95 ≤ 2 s en consulta y navegación; p95 ≤ 5 s al cargar un documento de hasta 10 MB.",
       "origen": "asuncion"
-    },
-    {
-      "id": "RNF-10",
-      "atributo": "Confidencialidad",
-      "requerimiento": "Los documentos deben ser confidenciales en tránsito y en reposo, incluso frente al personal del operador.",
-      "criterio": "TLS 1.3 en todo canal; cifrado AES-256 en reposo con gestión de llaves segregada y auditada.",
-      "origen": "caso"
     },
     {
       "id": "RNF-11",
@@ -85,13 +99,6 @@
       "origen": "asuncion"
     },
     {
-      "id": "RNF-13",
-      "atributo": "No repudio",
-      "requerimiento": "Debe ser imposible discutir la autenticidad de un certificado o negar haberlo autorizado.",
-      "criterio": "Firma con sellado de tiempo verificable; verificación en cada recepción; evidencia conservada.",
-      "origen": "caso"
-    },
-    {
       "id": "RNF-14",
       "atributo": "Trazabilidad",
       "requerimiento": "Toda operación relevante debe quedar registrada de forma inalterable.",
@@ -106,10 +113,59 @@
       "origen": "caso"
     },
     {
-      "id": "RNF-16",
-      "atributo": "Usabilidad",
-      "requerimiento": "Todos los ciudadanos, incluidos los de baja apropiación tecnológica, deben poder usar el sistema.",
-      "criterio": "Tasa de éxito ≥ 90 % con usuarios de baja alfabetización digital; ≤ 5 pasos para autorizar; SUS ≥ 80.",
+      "id": "RNF-22",
+      "atributo": "Portabilidad",
+      "requerimiento": "Un ciudadano debe trasladarse de operador sin pérdida de información ni de identidad digital.",
+      "criterio": "Traslado completo ≤ 24 h; cuenta de correo conservada; verificación de integridad al finalizar.",
+      "origen": "asuncion"
+    },
+    {
+      "id": "RNF-09",
+      "atributo": "Capacidad",
+      "requerimiento": "El operador debe absorber los picos de campañas públicas sin rediseño.",
+      "criterio": "2.000 peticiones/s en horario laboral; 5.000 en pico de convocatoria.",
+      "origen": "asuncion"
+    },
+    {
+      "id": "RNF-05",
+      "atributo": "Latencia de mensajería",
+      "requerimiento": "El sistema no es de tiempo real, pero la latencia entre operadores debe ser tan baja como sea posible.",
+      "criterio": "p95 de entrega entre operadores ≤ 30 s; aviso al ciudadano ≤ 2 min desde la recepción.",
+      "origen": "asuncion"
+    },
+    {
+      "id": "RNF-23",
+      "atributo": "Recuperabilidad",
+      "requerimiento": "Debe existir un plan probado de continuidad ante la pérdida de una región o de un proveedor.",
+      "criterio": "RPO ≤ 5 min y RTO ≤ 30 min para el índice; pruebas de recuperación semestrales con evidencia.",
+      "origen": "asuncion"
+    },
+    {
+      "id": "RNF-25",
+      "atributo": "Observabilidad",
+      "requerimiento": "El sistema debe permitir detectar y diagnosticar fallos de integración entre operadores de forma oportuna.",
+      "criterio": "Métricas, trazas distribuidas y alertas sobre latencia y tasa de error de las transferencias.",
+      "origen": "asuncion"
+    },
+    {
+      "id": "RNF-29",
+      "atributo": "Desplegabilidad",
+      "requerimiento": "Un cambio debe poder llegar a producción sin interrumpir el servicio ni coordinar despliegues entre equipos.",
+      "criterio": "Despliegue independiente por servicio; cero minutos de indisponibilidad planificada; reversión en ≤ 10 min.",
+      "origen": "asuncion"
+    },
+    {
+      "id": "RNF-30",
+      "atributo": "Elasticidad",
+      "requerimiento": "La capacidad debe seguir a la demanda de forma automática, sin intervención humana ni sobreaprovisionamiento permanente.",
+      "criterio": "Tiempo medio hasta la puesta en marcha de una instancia ≤ 60 s; utilización sostenida entre 50 % y 70 %.",
+      "origen": "asuncion"
+    },
+    {
+      "id": "RNF-26",
+      "atributo": "Modificabilidad",
+      "requerimiento": "La arquitectura debe admitir nuevos tipos documentales sin rediseño.",
+      "criterio": "Nuevo tipo configurable con cero cambios en el núcleo; despliegues sin interrupción.",
       "origen": "asuncion"
     },
     {
@@ -127,20 +183,6 @@
       "origen": "caso"
     },
     {
-      "id": "RNF-19",
-      "atributo": "Interoperabilidad",
-      "requerimiento": "Los operadores deben integrarse entre sí mediante contratos estándar versionados que no rompan integraciones.",
-      "criterio": "API documentada, versionada y retrocompatible; esquema común de metadatos; formatos de firma estandarizados.",
-      "origen": "asuncion"
-    },
-    {
-      "id": "RNF-20",
-      "atributo": "Carga mínima del centralizador",
-      "requerimiento": "El centralizador debe manejar la mínima cantidad de transacciones y almacenar la mínima información.",
-      "criterio": "≤ 4 transacciones por ciclo de vida de afiliación y 0 bytes de contenido documental.",
-      "origen": "caso"
-    },
-    {
       "id": "RNF-21",
       "atributo": "Minimización de datos",
       "requerimiento": "Debe minimizarse el volumen transferido entre operadores y centralizador.",
@@ -148,38 +190,10 @@
       "origen": "asuncion"
     },
     {
-      "id": "RNF-22",
-      "atributo": "Portabilidad",
-      "requerimiento": "Un ciudadano debe trasladarse de operador sin pérdida de información ni de identidad digital.",
-      "criterio": "Traslado completo ≤ 24 h; cuenta de correo conservada; verificación de integridad al finalizar.",
-      "origen": "asuncion"
-    },
-    {
-      "id": "RNF-23",
-      "atributo": "Recuperabilidad",
-      "requerimiento": "Debe existir un plan probado de continuidad ante la pérdida de una región o de un proveedor.",
-      "criterio": "RPO ≤ 5 min y RTO ≤ 30 min para el índice; pruebas de recuperación semestrales con evidencia.",
-      "origen": "asuncion"
-    },
-    {
       "id": "RNF-24",
       "atributo": "Cuotas de almacenamiento",
       "requerimiento": "El almacenamiento de documentos no certificados debe estar limitado por usuario.",
       "criterio": "Máximo 20 documentos y 200 MB por ciudadano; aviso al 80 % y bloqueo al 100 %, solo para no certificados.",
-      "origen": "asuncion"
-    },
-    {
-      "id": "RNF-25",
-      "atributo": "Observabilidad",
-      "requerimiento": "El sistema debe permitir detectar y diagnosticar fallos de integración entre operadores de forma oportuna.",
-      "criterio": "Métricas, trazas distribuidas y alertas sobre latencia y tasa de error de las transferencias.",
-      "origen": "asuncion"
-    },
-    {
-      "id": "RNF-26",
-      "atributo": "Modificabilidad",
-      "requerimiento": "La arquitectura debe admitir nuevos tipos documentales sin rediseño.",
-      "criterio": "Nuevo tipo configurable con cero cambios en el núcleo; despliegues sin interrupción.",
       "origen": "asuncion"
     },
     {
@@ -194,20 +208,6 @@
       "atributo": "Coste",
       "requerimiento": "El coste marginal debe sostener un modelo con servicios básicos gratuitos.",
       "criterio": "≤ USD 0,15 por carpeta activa al mes.",
-      "origen": "asuncion"
-    },
-    {
-      "id": "RNF-29",
-      "atributo": "Desplegabilidad",
-      "requerimiento": "Un cambio debe poder llegar a producción sin interrumpir el servicio ni coordinar despliegues entre equipos.",
-      "criterio": "Despliegue independiente por servicio; cero minutos de indisponibilidad planificada; reversión en ≤ 10 min.",
-      "origen": "asuncion"
-    },
-    {
-      "id": "RNF-30",
-      "atributo": "Elasticidad",
-      "requerimiento": "La capacidad debe seguir a la demanda de forma automática, sin intervención humana ni sobreaprovisionamiento permanente.",
-      "criterio": "Tiempo medio hasta la puesta en marcha de una instancia ≤ 60 s; utilización sostenida entre 50 % y 70 %.",
       "origen": "asuncion"
     }
   ]

@@ -36,11 +36,11 @@ export default function UseCaseDiagram() {
     {/* USE CASES: ciudadano */}
     <ellipse className="st1 bg" cx="448" cy="168" rx="136" ry="30"/><ellipse className="st1 uc" cx="448" cy="168" rx="136" ry="30"/>
     <text x="448" y="164" className="st1 ucn">Afiliarme a un operador</text>
-    <text x="448" y="180" className="st1 uct">RF-01.1 → 01.6 · RNF-06</text>
+    <text x="448" y="180" className="st1 uct">RF-01.1 · 01.5 · 01.6 · RNF-06</text>
     
     <ellipse className="st1 bg" cx="752" cy="168" rx="136" ry="30"/><ellipse className="st1 uc" cx="752" cy="168" rx="136" ry="30"/>
     <text x="752" y="164" className="st1 ucn">Trasladarme a otro operador</text>
-    <text x="752" y="180" className="st1 uct">RF-01.7 · RF-01.8 · RNF-20</text>
+    <text x="752" y="180" className="st1 uct">RF-01.7 · RF-01.8 · RNF-22</text>
     
     <ellipse className="st1 bg" cx="448" cy="240" rx="136" ry="30"/><ellipse className="st1 uc" cx="448" cy="240" rx="136" ry="30"/>
     <text x="448" y="236" className="st1 ucn">Ver y descargar mis documentos</text>
@@ -48,7 +48,7 @@ export default function UseCaseDiagram() {
     
     <ellipse className="st1 bg" cx="752" cy="240" rx="136" ry="30"/><ellipse className="st1 uc" cx="752" cy="240" rx="136" ry="30"/>
     <text x="752" y="236" className="st1 ucn">Subir un documento temporal</text>
-    <text x="752" y="252" className="st1 uct">RF-02.2 · RF-02.9 · RNF-22</text>
+    <text x="752" y="252" className="st1 uct">RF-02.2 · RF-02.9 · RNF-24</text>
     
     <ellipse className="st1 bg" cx="448" cy="312" rx="136" ry="30"/><ellipse className="st1 uc" cx="448" cy="312" rx="136" ry="30"/>
     <text x="448" y="308" className="st1 ucn">Compartir un paquete</text>
