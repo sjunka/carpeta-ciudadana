@@ -9,15 +9,14 @@ el formato de los requerimientos, la gramática de los diagramas y la paleta.
 
 ## Única fuente de verdad
 
-`src/content/*.json`. De ahí salen tanto el sitio como el espejo.
+`src/content/*.json`. De ahí sale todo lo demás.
 
 | Destino | Cómo se genera | ¿Se edita? |
 |---|---|---|
 | Sitio en GitHub Pages | `git push` a `main` | No, es salida |
-| Espejo en Artifact | `npm run artifact`, republicar sobre la misma URL | **Nunca** |
-| `docs/entrega-1.md` y `../assignment1/simulacion-borrador.md` | `npm run md` | **Nunca**, son salida |
-
-El espejo es de solo lectura por decisión: dos sitios editables se desincronizan.
+| `docs/srs-assignment1.md` y `../assignment1/srs-assignment1.md` | `npm run md` | **Nunca**, son salida |
+| Diagramas HTML y PNG de `../assignment1/diagramas/` | `npm run md` | **Nunca**, son salida |
+| `public/srs-carpeta-ciudadana.pdf` | `npm run pdf`, y se commitea | **Nunca**, es salida |
 
 ## Cómo se cambia el contenido
 
