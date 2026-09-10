@@ -56,6 +56,7 @@ const PARES = [
   ['texto tenue (.note, prioridad baja)', 'ink-faint-text', 'canvas-soft', 4.5],
   ['texto tenue sobre tarjeta', 'ink-faint-text', 'surface', 4.5],
   ['enlace y número de sección', 'primary-text', 'canvas-soft', 4.5],
+  ['navegación · enlace activo y hover', 'primary-text', 'canvas', 4.5],
   ['enlace sobre tarjeta', 'primary-text', 'surface', 4.5],
   ['texto sobre relleno de acento', 'on-accent', 'primary', 4.5],
   ['portada', 'on-primary', 'secondary', 3],
