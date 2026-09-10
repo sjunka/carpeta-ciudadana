@@ -15,7 +15,9 @@ export default function Masthead({ meta }) {
           {meta.datos.map((d) => (
             <div key={d.titulo}>
               <dt>{d.titulo}</dt>
-              <dd className={TONO[d.tono]}>{d.valor}</dd>
+              <dd className={TONO[d.tono]}>
+                {Array.isArray(d.valor) ? d.valor.map((v) => <span key={v}>{v}</span>) : d.valor}
+              </dd>
             </div>
           ))}
         </dl>

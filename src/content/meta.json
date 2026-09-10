@@ -14,7 +14,7 @@
     },
     {
       "titulo": "Equipo",
-      "valor": "Sergio Junca · Juan José Henao · Samuel Cadavid"
+      "valor": ["Sergio Junca", "Juan José Henao", "Samuel Cadavid"]
     },
     {
       "titulo": "Docente",
