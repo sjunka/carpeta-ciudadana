@@ -1,6 +1,6 @@
 {
   "contexto": {
-    "titulo": "4.3 Representación gráfica",
+    "titulo": "2.1 Perspectiva del producto",
     "pasos": [
       "1 · El ciudadano se afilia: el operador verifica identidad y afiliación única.",
       "2 · Una entidad emite un documento firmado dirigido al ciudadano.",
@@ -9,11 +9,31 @@
       "5 · El operador avisa al ciudadano y el documento aparece en su carpeta."
     ]
   },
-  "casosDeUso": {
+  "secuencia": {
     "pasos": [
-      "1 · Lo que hace el ciudadano: afiliarse, consultar, compartir y autorizar.",
-      "2 · Lo que hace la entidad: emitir documentos y pedir documentos.",
-      "3 · Lo que el operador hace por debajo: verificar, enrutar y notificar."
+      "1 · La entidad entrega a su operador el documento firmado y la cédula del destinatario.",
+      "2 · El operador emisor pregunta al centralizador ante qué operador está esa cédula.",
+      "3 · El documento viaja directo al operador destino, que confirma con acuse idempotente.",
+      "4 · El operador destino avisa al ciudadano por correo y SMS.",
+      "5 · El ciudadano consulta y descarga el documento con su firma intacta."
+    ]
+  },
+  "estados": {
+    "pasos": [
+      "1 · El certificado entra como recibido y se verifica su firma.",
+      "2 · Con metadatos completos pasa a vigente: inmutable y a perpetuidad.",
+      "3 · Si la firma no es válida queda rechazado y no entra a la carpeta.",
+      "4 · El temporal consume cuota y el titular puede eliminarlo cuando quiera.",
+      "5 · Al llegar la versión firmada queda enlazada. Solo la retención retira un vigente."
+    ]
+  },
+  "flujoDatos": {
+    "pasos": [
+      "1 · El ciudadano entrega datos de identidad y decisiones de autorización.",
+      "2 · Hacia el centralizador solo viajan identificadores, nunca documentos.",
+      "3 · La entidad emite el documento y la custodia lo deposita en la carpeta.",
+      "4 · La autorización del titular convierte un documento guardado en paquete que puede salir.",
+      "5 · La interoperabilidad intercambia contenido con los operadores pares."
     ]
   }
 }

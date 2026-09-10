@@ -1,0 +1,51 @@
+{
+  "intro": "Tres modelos, tres preguntas distintas sobre lo mismo. La secuencia responde <b>en qué orden pasan las cosas</b> cuando un documento cruza la federación. El diagrama de estados responde <b>qué le puede pasar a un documento</b> a lo largo de su vida. El flujo de datos responde <b>qué información cruza cada frontera</b> del sistema. Ninguno introduce requerimientos nuevos: cada uno cita los que representa.",
+  "modelos": [
+    {
+      "id": "seq",
+      "num": "4.1",
+      "titulo": "Diagrama de secuencia — transferencia entre operadores",
+      "archivo": "diagramas/secuencia-transferencia.html",
+      "introduccion": "El caso más importante del sistema y el que más partes involucra: una entidad emite un documento para un ciudadano que está afiliado a otro operador. Se eligió este escenario porque es donde se ve la decisión de arquitectura que sostiene todo lo demás.",
+      "narrativa": [
+        "La entidad entrega el documento firmado a su operador, identificando al destinatario solo por su cédula. No sabe ni necesita saber dónde está afiliado.",
+        "El operador emisor le hace al centralizador <b>una sola pregunta</b>: ante qué operador está esa cédula. La respuesta trae el operador y su dirección de transferencia, y se cachea.",
+        "Con esa respuesta, el operador emisor abre una conexión <b>directa</b> con el operador destino y le entrega el documento con sus metadatos y su firma. Es el único tramo por el que viaja contenido, y es azul en el diagrama por eso.",
+        "El destino confirma con un acuse idempotente: si el emisor reintenta, la segunda entrega no duplica nada.",
+        "El operador destino avisa al ciudadano por correo y SMS. Cuando el ciudadano entra, consulta el documento con su firma intacta."
+      ],
+      "cierre": "Lo que el diagrama demuestra es una ausencia: entre el paso 2 y el paso 3 el centralizador desaparece. Nunca toca el documento.",
+      "trazabilidad": "RF-03.1, RF-03.2, RF-03.3, RF-03.5, RF-03.7, RF-05.1, RF-05.2, RF-06.4, RI-01, RNF-05, RNF-07, RNF-20"
+    },
+    {
+      "id": "std",
+      "num": "4.2",
+      "titulo": "Diagrama de transición de estados — ciclo de vida de un documento",
+      "archivo": "diagramas/estados-documento.html",
+      "introduccion": "Un documento entra a la carpeta por uno de dos caminos, y el camino decide sus derechos: si se puede borrar, si consume cuota y cuánto tiempo se conserva. Modelarlo como máquina de estados es lo que hace verificables los requerimientos de retención y de eliminación.",
+      "narrativa": [
+        "El <b>documento certificado</b> llega firmado por una entidad y entra como <i>recibido</i>. Si la firma es válida pasa a <i>verificado</i>, con su hash registrado; si no lo es queda <i>rechazado</i> y no ingresa a la carpeta.",
+        "Con metadatos completos pasa a <i>vigente</i>, que es el estado terminal de custodia: inmutable, sin cuota y a perpetuidad. Solo la política de retención lo mueve a <i>retirado</i>; el titular no puede.",
+        "El <b>documento temporal</b> lo carga el ciudadano, entra como <i>cargado</i> y consume cuota. Puede eliminarlo cuando quiera.",
+        "Cuando llega la versión firmada del mismo documento, el temporal pasa a <i>sustituido</i> y queda enlazado a la certificada, que sigue el camino de arriba hasta <i>vigente</i>. Ese enlace es lo que conserva la trazabilidad entre ambas."
+      ],
+      "cierre": "La asimetría del dibujo es intencionada: la fila de arriba no tiene ninguna transición que dependa de la voluntad del ciudadano, y la de abajo casi solo tiene de esas.",
+      "trazabilidad": "RF-02.1, RF-02.2, RF-02.3, RF-02.4, RF-02.5, RF-02.9, RF-02.10, RNF-02, RNF-03, RNF-24, RI-05"
+    },
+    {
+      "id": "dfd",
+      "num": "4.3",
+      "titulo": "Diagrama de flujo de datos — nivel 1",
+      "archivo": "diagramas/flujo-datos.html",
+      "introduccion": "El diagrama de contexto de *2.1 trata al operador como una caja. Este lo abre en cuatro procesos y muestra qué dato cruza cada frontera. Los cuatro procesos coinciden con la partición de servicios que sugiere el análisis de granularidad de *3.8, y no es casualidad: el mismo criterio los separó.",
+      "narrativa": [
+        "<b>1 · Afiliación</b> recibe los datos de identidad del ciudadano y es el único proceso que escribe en el centralizador. Lo que le manda son identificadores, nunca documentos.",
+        "<b>2 · Custodia documental</b> recibe los documentos firmados de las entidades y es el único que escribe en el almacén de la carpeta. Todo lo demás pasa por él para leer.",
+        "<b>3 · Autorización</b> es el cuello por diseño: recibe la decisión del ciudadano y es lo único que convierte un documento almacenado en un paquete que puede salir. Está resaltado porque ningún flujo hacia afuera lo esquiva.",
+        "<b>4 · Interoperabilidad</b> habla con los operadores pares y consulta al centralizador la afiliación del destinatario. Es la frontera por la que entra y sale contenido."
+      ],
+      "cierre": "Las dos flechas azules son las únicas del sistema por las que viaja contenido documental hacia afuera. Las cuatro que van al centralizador solo llevan identificadores: esa es, otra vez, la asimetría de *2.1.",
+      "trazabilidad": "RF-01, RF-02, RF-03, RF-04, RF-06, RF-08, RF-09, RD-11, RD-12, RI-01, RI-08"
+    }
+  ]
+}

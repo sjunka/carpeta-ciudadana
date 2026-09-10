@@ -14,7 +14,7 @@
         "id": "RD-15",
         "nombre": "Contrato GovCarpeta congelado",
         "descripcion": "El sistema debe consumir la API GovCarpeta tal como se verificó: Swagger 2.0, sin definiciones de seguridad y sin versionado en la ruta.",
-        "fuente": "Evidencia de la API · sección 08",
+        "fuente": "Evidencia de la API · *3.1.3",
         "origen": "caso"
       },
       {
@@ -112,7 +112,7 @@
   },
   "inversos": {
     "titulo": "4.2 Requerimientos inversos",
-    "intro": "Lo que el sistema <b>no</b> debe hacer. El template del curso los pide aparte (§3.6) porque un límite explícito evita que alguien lo cruce creyendo que mejora el producto.",
+    "intro": "Lo que el sistema <b>no</b> debe hacer. El template del curso los pide aparte (*3.6) porque un límite explícito evita que alguien lo cruce creyendo que mejora el producto.",
     "filas": [
       {
         "id": "RI-01",

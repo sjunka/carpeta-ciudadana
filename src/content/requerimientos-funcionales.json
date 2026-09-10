@@ -9,13 +9,48 @@
           "id": "RF-02.1",
           "nombre": "Almacenamiento a perpetuidad",
           "descripcion": "El sistema debe conservar de forma indefinida todos los documentos certificados, sin límite de tamaño ni de cantidad.",
-          "prioridad": "Alta"
+          "prioridad": "Alta",
+          "detalle": {
+            "introduccion": "La promesa central del producto: lo que entró certificado sigue estando dentro de cien años.",
+            "entradas": [
+              "Documento certificado aceptado y su hash."
+            ],
+            "procesamiento": [
+              "El sistema replica el contenido en al menos tres zonas independientes.",
+              "El sistema verifica periódicamente cada réplica contra el hash registrado.",
+              "El sistema excluye los certificados de toda política de cuota y de caducidad."
+            ],
+            "salidas": [
+              "Documento durable, sin límite de tamaño ni de cantidad."
+            ],
+            "errores": [
+              "Réplica divergente: se restaura desde una réplica válida y se alerta.",
+              "Zona no disponible: la lectura se sirve desde otra; la escritura se reintenta."
+            ]
+          }
         },
         {
           "id": "RF-02.4",
           "nombre": "Conservación de la firma",
           "descripcion": "Los documentos emitidos por entidades deben conservarse con su firma digital intacta, de modo que su autenticidad no pueda discutirse.",
-          "prioridad": "Alta"
+          "prioridad": "Alta",
+          "detalle": {
+            "introduccion": "La firma es lo que convierte un archivo en prueba; si se pierde en la custodia, el documento deja de valer.",
+            "entradas": [
+              "Documento firmado por la entidad emisora."
+            ],
+            "procesamiento": [
+              "El sistema almacena la firma junto al contenido, sin recodificar el documento.",
+              "El sistema impide toda operación que altere los bytes del certificado."
+            ],
+            "salidas": [
+              "Documento certificado con su firma verificable en cualquier momento."
+            ],
+            "errores": [
+              "Transformación que rompería la firma: se rechaza la operación, no el documento.",
+              "Firma no conservable por el formato: el documento se rechaza en la recepción."
+            ]
+          }
         },
         {
           "id": "RF-02.5",
@@ -26,6 +61,25 @@
             "tipo": "bloqueo",
             "ref": "B-03",
             "nota": "No hay PKI ni autoridad certificadora definida."
+          },
+          "detalle": {
+            "introduccion": "Poder demostrar, hoy y dentro de diez años, que este documento es el que la entidad emitió.",
+            "entradas": [
+              "Documento certificado y su firma.",
+              "Material de verificación del emisor."
+            ],
+            "procesamiento": [
+              "El sistema recalcula el hash del contenido y lo contrasta con el registrado.",
+              "El sistema verifica la firma y su sello de tiempo.",
+              "El sistema registra el resultado en la bitácora del documento."
+            ],
+            "salidas": [
+              "Veredicto de autenticidad, con fecha y motivo si es negativo."
+            ],
+            "errores": [
+              "Material de verificación del emisor no disponible: se devuelve «no verificable», nunca «válido».",
+              "Hash distinto del registrado: se marca el documento como comprometido y se alerta."
+            ]
           }
         },
         {
@@ -37,19 +91,73 @@
             "tipo": "bloqueo",
             "ref": "B-01",
             "nota": "No hay esquema de metadatos común definido por MinTIC."
+          },
+          "detalle": {
+            "introduccion": "Sin metadatos un documento es un archivo opaco: no se busca, no se clasifica y no sirve para analítica.",
+            "entradas": [
+              "Metadatos declarados por la entidad emisora.",
+              "Atributos derivables del propio documento."
+            ],
+            "procesamiento": [
+              "El sistema exige tipo documental, entidad emisora, fecha y vigencia.",
+              "El sistema normaliza los valores contra el catálogo de tipos documentales.",
+              "El sistema indexa los metadatos para búsqueda y filtrado."
+            ],
+            "salidas": [
+              "Registro de metadatos asociado al documento e indexado."
+            ],
+            "errores": [
+              "Metadato obligatorio ausente: el documento no se acepta y se devuelve al emisor con el motivo.",
+              "Tipo documental desconocido: se acepta como tipo genérico y se marca para revisión."
+            ]
           }
         },
         {
           "id": "RF-02.11",
           "nombre": "Bitácora del documento",
           "descripcion": "El sistema debe registrar en una bitácora inalterable toda operación sobre cada documento: cargue, consulta, descarga, compartición y transferencia.",
-          "prioridad": "Alta"
+          "prioridad": "Alta",
+          "detalle": {
+            "introduccion": "Sin bitácora por documento, ninguna de las promesas anteriores es demostrable.",
+            "entradas": [
+              "Cualquier operación sobre un documento: cargue, consulta, descarga, compartición o eliminación."
+            ],
+            "procesamiento": [
+              "El sistema anexa el evento con actor, fecha, origen y resultado.",
+              "El sistema impide toda modificación o borrado de un evento ya escrito."
+            ],
+            "salidas": [
+              "Bitácora del documento, consultable por el titular y por auditoría."
+            ],
+            "errores": [
+              "Fallo al anexar: la operación de negocio no se confirma.",
+              "Intento de modificar la bitácora: se rechaza y se alerta."
+            ]
+          }
         },
         {
           "id": "RF-02.6",
           "nombre": "Consulta y navegación",
           "descripcion": "El ciudadano debe poder listar, buscar y filtrar sus documentos por tipo, entidad emisora, fecha y estado de certificación.",
-          "prioridad": "Alta"
+          "prioridad": "Alta",
+          "detalle": {
+            "introduccion": "Encontrar un documento entre cientos es la operación más frecuente del ciudadano.",
+            "entradas": [
+              "Criterios: tipo, entidad emisora, rango de fechas y estado de certificación."
+            ],
+            "procesamiento": [
+              "El sistema filtra sobre el índice de metadatos del titular.",
+              "El sistema pagina el resultado y lo ordena por fecha descendente.",
+              "El sistema aplica el control de acceso antes de devolver nada."
+            ],
+            "salidas": [
+              "Listado paginado de documentos del titular."
+            ],
+            "errores": [
+              "Sin resultados: se devuelve lista vacía con los filtros aplicados a la vista, no un error.",
+              "Petición de documentos ajenos: se deniega y se registra (RF-09.2)."
+            ]
+          }
         },
         {
           "id": "RF-02.8",
@@ -60,13 +168,49 @@
             "tipo": "bloqueo",
             "ref": "B-13",
             "nota": "Falta definir si es un buzón real de internet o un identificador."
+          },
+          "detalle": {
+            "introduccion": "El correo institucional no es decorativo: lo que llega ahí tiene que aparecer en la carpeta solo.",
+            "entradas": [
+              "Mensaje entrante dirigido a la cuenta institucional del ciudadano."
+            ],
+            "procesamiento": [
+              "El sistema resuelve el titular a partir de la dirección de destino.",
+              "El sistema extrae los adjuntos y determina si vienen firmados por una entidad.",
+              "El sistema los incorpora como certificados o como temporales según el resultado."
+            ],
+            "salidas": [
+              "Documentos incorporados a la carpeta y notificación al titular."
+            ],
+            "errores": [
+              "Remitente no reconocido: el adjunto entra como temporal y consume cuota.",
+              "Dirección inexistente: el mensaje se rechaza en la recepción.",
+              "Adjunto que excede el límite: se rechaza avisando al remitente."
+            ]
           }
         },
         {
           "id": "RF-02.7",
           "nombre": "Descarga e impresión",
           "descripcion": "El ciudadano debe poder descargar e imprimir cualquier documento conservando la evidencia de firma.",
-          "prioridad": "Alta"
+          "prioridad": "Alta",
+          "detalle": {
+            "introduccion": "Un documento que no se puede sacar de la carpeta no sustituye al papel.",
+            "entradas": [
+              "Documento seleccionado por el titular."
+            ],
+            "procesamiento": [
+              "El sistema genera la copia conservando la firma y su evidencia.",
+              "El sistema anota la descarga en la bitácora del documento."
+            ],
+            "salidas": [
+              "Archivo descargable o imprimible, con la evidencia de firma visible."
+            ],
+            "errores": [
+              "Documento comprometido en la verificación: se bloquea la descarga y se explica por qué.",
+              "Fallo al escribir la bitácora: la descarga no se entrega (RF-09.4)."
+            ]
+          }
         },
         {
           "id": "RF-02.2",
@@ -76,13 +220,52 @@
           "marca": {
             "tipo": "asuncion",
             "nota": "El caso dice «limitada», sin cifra."
+          },
+          "detalle": {
+            "introduccion": "El ciudadano también sube cosas suyas, y eso sí cuesta espacio, así que tiene tope.",
+            "entradas": [
+              "Archivo cargado por el ciudadano.",
+              "Consumo actual de su cuota."
+            ],
+            "procesamiento": [
+              "El sistema comprueba el tope de documentos y de bytes antes de aceptar.",
+              "El sistema almacena el archivo como documento temporal, sin firma de entidad.",
+              "El sistema actualiza el consumo de cuota."
+            ],
+            "salidas": [
+              "Documento temporal visible en la carpeta, marcado como no certificado."
+            ],
+            "errores": [
+              "Cuota al 80 %: se avisa y se permite la carga.",
+              "Cuota al 100 %: se bloquea la carga indicando qué liberar.",
+              "Archivo corrupto o no legible: se rechaza sin consumir cuota."
+            ]
           }
         },
         {
           "id": "RF-02.9",
           "nombre": "Sustitución de temporal",
           "descripcion": "El sistema debe permitir relacionar la versión firmada con el temporal que sustituye, conservando la trazabilidad de ambos.",
-          "prioridad": "Media"
+          "prioridad": "Media",
+          "detalle": {
+            "introduccion": "Cuando llega la versión buena de algo que el ciudadano había subido a mano, hay que poder ver que son lo mismo.",
+            "entradas": [
+              "Documento certificado entrante.",
+              "Documento temporal candidato a ser sustituido, señalado por el titular."
+            ],
+            "procesamiento": [
+              "El sistema enlaza ambos documentos y marca el temporal como sustituido.",
+              "El sistema libera la cuota que ocupaba el temporal.",
+              "El sistema conserva ambos accesibles, con el enlace visible."
+            ],
+            "salidas": [
+              "Par de documentos enlazado, con la trazabilidad de la sustitución."
+            ],
+            "errores": [
+              "Tipos documentales incompatibles: se pide confirmación explícita al titular.",
+              "Temporal ya sustituido: se rechaza el segundo enlace."
+            ]
+          }
         },
         {
           "id": "RF-02.10",
@@ -93,9 +276,57 @@
             "tipo": "bloqueo",
             "ref": "B-11",
             "nota": "Perpetuidad y derecho de supresión no están conciliados."
+          },
+          "detalle": {
+            "introduccion": "El derecho a borrar existe, pero se detiene donde empieza el valor probatorio del documento.",
+            "entradas": [
+              "Orden de eliminación del titular."
+            ],
+            "procesamiento": [
+              "El sistema comprueba si el documento es certificado.",
+              "El sistema elimina el temporal y libera su cuota.",
+              "El sistema registra la eliminación en la bitácora."
+            ],
+            "salidas": [
+              "Documento temporal eliminado y cuota liberada."
+            ],
+            "errores": [
+              "Documento certificado: la orden se rechaza; solo la política de retención lo retira.",
+              "Documento con autorización vigente sobre él: se avisa antes de eliminar."
+            ]
           }
         }
-      ]
+      ],
+      "desglose": {
+        "introduccion": "Es el corazón del producto: qué se guarda, con qué metadatos, por cuánto tiempo y bajo qué evidencia. Distingue dos naturalezas de documento con reglas opuestas —el certificado, que se conserva a perpetuidad y no se puede alterar, y el temporal, que el ciudadano sube y puede borrar— y sostiene la bitácora que hace auditable todo lo que le pasa a un documento.",
+        "entradas": [
+          "Documento firmado por una entidad emisora, con sus metadatos (RF-02.4).",
+          "Documento no certificado cargado por el ciudadano, sujeto a cuota (RF-02.2).",
+          "Documento que llega a la cuenta de correo institucional del ciudadano (RF-02.8).",
+          "Criterios de búsqueda y filtro: tipo, entidad emisora, fecha y estado de certificación (RF-02.6)."
+        ],
+        "procesamiento": [
+          "El sistema valida la firma digital del documento entrante y rechaza el que no la tenga íntegra.",
+          "El sistema extrae y persiste los metadatos que clasifican el documento, identifican a su emisor y fijan su vigencia.",
+          "El sistema calcula y almacena el hash del contenido para poder verificar su integridad en cualquier momento posterior.",
+          "El sistema replica el contenido en al menos tres zonas independientes (RNF-02) y verifica periódicamente que las réplicas siguen coincidiendo con el hash.",
+          "El sistema contabiliza el consumo de cuota del ciudadano cuando el documento es temporal, y bloquea la carga al alcanzar el límite.",
+          "El sistema anota en la bitácora inalterable toda operación sobre el documento: cargue, consulta, descarga, compartición y eliminación."
+        ],
+        "salidas": [
+          "Documento almacenado, indexado y visible en la carpeta del titular.",
+          "Resultado de verificación de autenticidad: firma válida o inválida, con su sello de tiempo.",
+          "Listado paginado y filtrado de documentos del ciudadano.",
+          "Copia descargable o imprimible que conserva la evidencia de firma.",
+          "Entradas de bitácora, en modo solo-anexar."
+        ],
+        "errores": [
+          "<b>Firma inválida o ausente en un documento que se declara certificado.</b> El documento se rechaza y no ingresa a la carpeta; se notifica al emisor, no al ciudadano.",
+          "<b>Cuota de documentos temporales agotada.</b> Se avisa al 80 % y se bloquea la carga al 100 %. La cuota nunca aplica a documentos certificados (RI-05).",
+          "<b>Divergencia entre réplicas.</b> El sistema restaura desde la réplica cuyo hash coincide con el registrado y levanta una alerta de durabilidad.",
+          "<b>Intento de eliminar un documento certificado.</b> La operación se rechaza: los certificados solo se retiran por política de retención, nunca por decisión del titular (RF-02.10)."
+        ]
+      }
     },
     {
       "id": "RF-03",
@@ -106,13 +337,53 @@
           "id": "RF-03.1",
           "nombre": "Localización del operador destino",
           "descripcion": "El operador debe consultar al centralizador ante qué operador está afiliado el destinatario antes de enviarle documentos.",
-          "prioridad": "Alta"
+          "prioridad": "Alta",
+          "detalle": {
+            "introduccion": "Antes de mover un documento hay que saber a qué operador mandarlo, y eso solo lo sabe el centralizador.",
+            "entradas": [
+              "Documento de identidad del destinatario."
+            ],
+            "procesamiento": [
+              "El operador busca primero en su caché local del directorio.",
+              "Si no hay entrada vigente, consulta al centralizador.",
+              "El operador guarda la respuesta con tiempo de vida acotado."
+            ],
+            "salidas": [
+              "Identificador del operador destino y su dirección de transferencia."
+            ],
+            "errores": [
+              "Destinatario no afiliado a ningún operador: se activa la entrega alterna por correo (RF-03.4).",
+              "Centralizador no disponible: se usa la caché aunque esté vencida y se marca la entrega como provisional.",
+              "Respuesta en prosa que no se puede parsear: se trata como no resuelta y se alerta."
+            ]
+          }
         },
         {
           "id": "RF-03.2",
           "nombre": "Transferencia directa",
           "descripcion": "El operador debe transferir los documentos y sus metadatos directamente al operador destino, sin que el contenido pase por el centralizador.",
-          "prioridad": "Alta"
+          "prioridad": "Alta",
+          "detalle": {
+            "introduccion": "El tramo por el que viaja contenido, y el único. Es la decisión que mantiene liviano al centralizador.",
+            "entradas": [
+              "Documentos, metadatos y firmas a entregar.",
+              "Dirección de transferencia del operador destino."
+            ],
+            "procesamiento": [
+              "El operador abre conexión directa con el destino, con autenticación mutua.",
+              "El operador envía el paquete con una clave de idempotencia.",
+              "El operador registra la transferencia y su estado."
+            ],
+            "salidas": [
+              "Documentos entregados en el operador destino.",
+              "Traza de la transferencia con su latencia."
+            ],
+            "errores": [
+              "Destino inalcanzable: la transferencia queda encolada y se reintenta (RF-03.5).",
+              "Certificado del destino no verificable: la conexión se rechaza.",
+              "Intento de enrutar el contenido por el centralizador: prohibido por diseño (RI-01)."
+            ]
+          }
         },
         {
           "id": "RF-03.3",
@@ -123,13 +394,54 @@
             "tipo": "bloqueo",
             "ref": "B-01",
             "nota": "No existe contrato MinTIC para esta interfaz."
+          },
+          "detalle": {
+            "introduccion": "El lado receptor del mismo contrato: aceptar lo que otro operador entrega, sin fiarse de él.",
+            "entradas": [
+              "Documentos, metadatos y firmas enviados por un operador par.",
+              "Clave de idempotencia del envío."
+            ],
+            "procesamiento": [
+              "El operador autentica al par emisor.",
+              "El operador valida la firma de cada documento y la completitud de sus metadatos.",
+              "El operador comprueba la clave de idempotencia para no duplicar.",
+              "El operador incorpora los documentos a la carpeta del destinatario."
+            ],
+            "salidas": [
+              "Documentos en la carpeta del destinatario.",
+              "Acuse de recibo hacia el emisor."
+            ],
+            "errores": [
+              "Firma inválida: se rechaza con motivo explícito y se registra en auditoría.",
+              "Clave de idempotencia ya vista: se devuelve el acuse original sin volver a incorporar.",
+              "Destinatario no afiliado aquí: se rechaza indicando que el directorio está desactualizado."
+            ]
           }
         },
         {
           "id": "RF-03.5",
           "nombre": "Confirmación y reintento",
           "descripcion": "Toda transferencia debe generar acuse de recibo, reintentarse ante fallas y ser idempotente.",
-          "prioridad": "Alta"
+          "prioridad": "Alta",
+          "detalle": {
+            "introduccion": "Una entrega que no confirma y no reintenta no es una entrega: es una esperanza.",
+            "entradas": [
+              "Transferencia enviada y su clave de idempotencia."
+            ],
+            "procesamiento": [
+              "El operador espera el acuse del destino dentro de una ventana acotada.",
+              "Sin acuse, reintenta con retroceso exponencial.",
+              "Agotados los reintentos, mueve la transferencia a la cola de fallidas y alerta."
+            ],
+            "salidas": [
+              "Acuse de recibo registrado, o entrada en la cola de fallidas."
+            ],
+            "errores": [
+              "Acuse duplicado: se ignora, el estado ya es confirmado.",
+              "Reintento tras un acuse perdido: la idempotencia evita la entrega doble.",
+              "Nunca se descarta un mensaje en silencio."
+            ]
+          }
         },
         {
           "id": "RF-03.8",
@@ -140,19 +452,73 @@
             "tipo": "bloqueo",
             "ref": "B-01",
             "nota": "Hoy solo 16 de 70 operadores publican endpoint de transferencia."
+          },
+          "detalle": {
+            "introduccion": "Sin un contrato idéntico para todos, la federación son operadores aislados que se saludan.",
+            "entradas": [
+              "Especificación de servicios de interoperabilidad publicada por MinTIC."
+            ],
+            "procesamiento": [
+              "El operador implementa el contrato tal como esté especificado, tras una capa anticorrupción.",
+              "El operador publica su propia dirección de transferencia en el directorio.",
+              "El operador versiona el contrato y mantiene retrocompatibilidad."
+            ],
+            "salidas": [
+              "Interfaz de interoperabilidad publicada y descubrible desde el directorio."
+            ],
+            "errores": [
+              "Contrato inexistente: se implementa el propio, documentado y versionado, y se declara como supuesto (*2.5).",
+              "Par con versión incompatible: se negocia la versión o se rechaza limpiamente, nunca a medias."
+            ]
           }
         },
         {
           "id": "RF-03.7",
           "nombre": "Emisión por parte de la entidad",
           "descripcion": "Una entidad afiliada debe poder cargar documentos firmados dirigidos a un ciudadano, disparando la resolución de operador y la entrega.",
-          "prioridad": "Alta"
+          "prioridad": "Alta",
+          "detalle": {
+            "introduccion": "La puerta de entrada de todo el contenido certificado del sistema.",
+            "entradas": [
+              "Documento firmado y documento de identidad del destinatario.",
+              "Metadatos del documento."
+            ],
+            "procesamiento": [
+              "El operador autentica al funcionario y su entidad.",
+              "El operador valida firma y metadatos antes de aceptar la emisión.",
+              "El operador dispara la resolución de operador destino (RF-03.1)."
+            ],
+            "salidas": [
+              "Documento aceptado y encaminado hacia el operador del destinatario."
+            ],
+            "errores": [
+              "Funcionario sin rol de emisión: se deniega y se registra.",
+              "Destinatario inexistente en la Registraduría: se rechaza la emisión."
+            ]
+          }
         },
         {
           "id": "RF-03.6",
           "nombre": "Solicitud de documentos a entidades",
           "descripcion": "El ciudadano debe poder radicar solicitudes de expedición ante entidades y consultar el estado de cada una.",
-          "prioridad": "Alta"
+          "prioridad": "Alta",
+          "detalle": {
+            "introduccion": "El ciudadano también empuja: pide a una entidad que le expida algo que no tiene.",
+            "entradas": [
+              "Entidad destinataria y tipo documental solicitado."
+            ],
+            "procesamiento": [
+              "El operador resuelve el operador de la entidad y le entrega la solicitud.",
+              "El operador registra el estado inicial y lo expone al ciudadano."
+            ],
+            "salidas": [
+              "Solicitud radicada ante la entidad, con estado consultable."
+            ],
+            "errores": [
+              "Entidad no afiliada a ningún operador: la solicitud se entrega por correo.",
+              "Tipo documental que la entidad no expide: se rechaza indicando el catálogo."
+            ]
+          }
         },
         {
           "id": "RF-03.4",
@@ -163,9 +529,55 @@
             "tipo": "bloqueo",
             "ref": "B-14",
             "nota": "El correo plano contradice el requisito de confidencialidad."
+          },
+          "detalle": {
+            "introduccion": "Cuando el destinatario no está en la federación, el documento no se pierde: se entrega por el canal que sí lo alcanza.",
+            "entradas": [
+              "Documento a entregar y dirección de correo del destinatario."
+            ],
+            "procesamiento": [
+              "El operador firma el envío y lo entrega por correo electrónico.",
+              "El operador registra la entrega alterna y su acuse."
+            ],
+            "salidas": [
+              "Documento entregado por correo, con la firma del operador."
+            ],
+            "errores": [
+              "Dirección de correo inválida: la entrega falla y se notifica al emisor.",
+              "Documento confidencial por su tipo: se avisa de la tensión con RNF-10 antes de enviar."
+            ]
           }
         }
-      ]
+      ],
+      "desglose": {
+        "introduccion": "Es lo que convierte a un operador aislado en parte de una federación. Cubre cómo se localiza al operador de un destinatario, cómo viaja un documento de un operador a otro sin pasar por el centro, y cómo se garantiza que ese viaje termine exactamente una vez. Es el dominio con más dependencia externa y el que más riesgo concentra.",
+        "entradas": [
+          "Documento firmado con destinatario identificado por su número de documento (RF-03.7).",
+          "Respuesta del centralizador con el operador destino y su dirección de transferencia (RF-03.1).",
+          "Documento entrante enviado por otro operador (RF-03.3).",
+          "Acuse de recibo del operador destino (RF-03.5)."
+        ],
+        "procesamiento": [
+          "El operador consulta al centralizador ante qué operador está afiliado el destinatario y cachea la respuesta con tiempo de vida acotado (RNF-21).",
+          "El operador abre una conexión directa con el operador destino, autenticada mutuamente, y le entrega el documento con sus metadatos y su firma. El contenido nunca pasa por el centralizador (RI-01).",
+          "El operador marca cada transferencia con una clave de idempotencia, de modo que un reintento no duplique la entrega.",
+          "Al recibir un documento de otro operador, el operador valida la firma y la conformidad de los metadatos antes de aceptarlo.",
+          "Si el destinatario no está afiliado a ningún operador, el operador entrega el documento firmado por correo electrónico (RF-03.4)."
+        ],
+        "salidas": [
+          "Documento entregado en la carpeta del destinatario, en su operador.",
+          "Acuse de recibo hacia el operador emisor.",
+          "Documento entregado por correo, cuando la ruta alterna aplica.",
+          "Traza distribuida de la transferencia, con latencia y resultado (RNF-25)."
+        ],
+        "errores": [
+          "<b>El destinatario no está en el directorio.</b> Se activa la entrega alterna por correo (RF-03.4) y se registra el caso.",
+          "<b>El operador destino no publica dirección de transferencia.</b> La entrega no es posible por el canal federado; el documento queda en cola y se escala. Hoy afecta a 54 de los 70 operadores del directorio (ver *2.5).",
+          "<b>El operador destino no responde o responde con error.</b> Reintento con retroceso exponencial; tras agotar los reintentos, el mensaje pasa a la cola de mensajes fallidos y se alerta. Nunca se descarta (RNF-07).",
+          "<b>Acuse duplicado o entrega repetida.</b> La clave de idempotencia hace que la segunda entrega sea un no-op verificable, no un documento duplicado.",
+          "<b>Firma inválida en un documento entrante.</b> Se rechaza con motivo explícito hacia el operador emisor y se registra en auditoría."
+        ]
+      }
     },
     {
       "id": "RF-01",
@@ -176,13 +588,49 @@
           "id": "RF-01.1",
           "nombre": "Registro de ciudadano",
           "descripcion": "El operador debe permitir la inscripción de un ciudadano capturando documento, nombres, correo de contacto y teléfono móvil.",
-          "prioridad": "Alta"
+          "prioridad": "Alta",
+          "detalle": {
+            "introduccion": "Alta de un ciudadano en el operador, capturando el mínimo de datos que permite identificarlo y avisarle.",
+            "entradas": [
+              "Documento de identidad, nombres y apellidos.",
+              "Correo de contacto y teléfono móvil."
+            ],
+            "procesamiento": [
+              "El operador valida formato y completitud de cada campo.",
+              "El operador comprueba que el documento de identidad no esté ya registrado localmente.",
+              "El operador crea el registro en estado pendiente, sin carpeta activa."
+            ],
+            "salidas": [
+              "Registro de ciudadano en estado pendiente de verificación."
+            ],
+            "errores": [
+              "Campo obligatorio ausente o mal formado: se rechaza el envío indicando el campo.",
+              "Documento ya registrado en este operador: se ofrece recuperar el acceso, no crear otro registro."
+            ]
+          }
         },
         {
           "id": "RF-01.3",
           "nombre": "Validación de afiliación única",
           "descripcion": "El operador debe consultar al centralizador que el ciudadano no esté afiliado a otro operador antes de completar el registro.",
-          "prioridad": "Alta"
+          "prioridad": "Alta",
+          "detalle": {
+            "introduccion": "Comprobación de que el ciudadano no tiene carpeta abierta en otro operador, que es la invariante de toda la federación.",
+            "entradas": [
+              "Documento de identidad verificado."
+            ],
+            "procesamiento": [
+              "El operador consulta al centralizador la afiliación vigente de ese documento.",
+              "El operador interpreta la respuesta: afiliado a otro operador, o libre."
+            ],
+            "salidas": [
+              "Veredicto de unicidad: puede afiliarse aquí, o ya está en otro operador."
+            ],
+            "errores": [
+              "Ya afiliado: el registro se rechaza y se ofrece la ruta de traslado (RF-01.7).",
+              "Centralizador no disponible: el registro queda en trámite y se encola; nunca se asume que está libre."
+            ]
+          }
         },
         {
           "id": "RF-01.2",
@@ -192,13 +640,51 @@
           "marca": {
             "tipo": "asuncion",
             "nota": "No existe API de Registraduría; se asume un adaptador propio."
+          },
+          "detalle": {
+            "introduccion": "Comprobación de que la persona que se registra es quien dice ser, contra la fuente autoritativa de identidad.",
+            "entradas": [
+              "Documento de identidad del registro pendiente."
+            ],
+            "procesamiento": [
+              "El operador consulta a la Registraduría por el documento.",
+              "El operador contrasta nombres y apellidos con la respuesta.",
+              "El operador marca la identidad como verificada solo si coincide."
+            ],
+            "salidas": [
+              "Resultado de verificación: confirmada o no confirmada.",
+              "Documento de identidad firmado, para RF-01.6."
+            ],
+            "errores": [
+              "Registraduría no disponible: el registro queda pendiente y se reintenta; nunca se activa la carpeta a ciegas.",
+              "Identidad no confirmada: el registro no avanza y se registra el intento."
+            ]
           }
         },
         {
           "id": "RF-01.4",
           "nombre": "Notificación de afiliación",
           "descripcion": "El operador debe informar al centralizador que el ciudadano es ahora cliente suyo.",
-          "prioridad": "Alta"
+          "prioridad": "Alta",
+          "detalle": {
+            "introduccion": "Declaración ante el centralizador de que este operador pasa a custodiar la carpeta del ciudadano.",
+            "entradas": [
+              "Documento de identidad y datos básicos del ciudadano.",
+              "Identificador de este operador."
+            ],
+            "procesamiento": [
+              "El operador registra la afiliación en el centralizador.",
+              "El operador confirma que la afiliación quedó a su nombre antes de activar la carpeta."
+            ],
+            "salidas": [
+              "Afiliación creada en el directorio del centralizador.",
+              "Carpeta activa en el operador."
+            ],
+            "errores": [
+              "El centralizador responde que ya existe afiliación: se aborta y se trata como el caso de RF-01.3.",
+              "Error del centralizador: se reintenta con retroceso exponencial y la carpeta no se activa hasta confirmar."
+            ]
+          }
         },
         {
           "id": "RF-01.8",
@@ -209,13 +695,52 @@
             "tipo": "bloqueo",
             "ref": "B-01",
             "nota": "El protocolo de transferencia no está especificado por MinTIC."
+          },
+          "detalle": {
+            "introduccion": "La parte peligrosa del traslado: mover todo y desafiliar solo cuando el destino confirmó.",
+            "entradas": [
+              "Solicitud de traslado aprobada.",
+              "Inventario íntegro de documentos y metadatos de la carpeta."
+            ],
+            "procesamiento": [
+              "El operador origen transfiere documentos y metadatos al destino, por lotes idempotentes.",
+              "El operador destino verifica la integridad de cada documento contra su hash.",
+              "Solo tras la confirmación de integridad, el origen desafilia al ciudadano del centralizador.",
+              "El destino registra la afiliación a su nombre y conserva la cuenta de correo institucional."
+            ],
+            "salidas": [
+              "Carpeta íntegra en el operador destino.",
+              "Afiliación reasignada en el centralizador."
+            ],
+            "errores": [
+              "Verificación de integridad fallida: el origen no desafilia y el traslado se reintenta desde el lote fallido.",
+              "Caída a mitad del traslado: el ciudadano sigue siendo del origen; un traslado a medias es peor que uno no empezado.",
+              "Destino inalcanzable: la solicitud vuelve a estado pendiente y se avisa al ciudadano."
+            ]
           }
         },
         {
           "id": "RF-01.7",
           "nombre": "Solicitud de traslado",
           "descripcion": "El ciudadano debe poder solicitar el traslado de su carpeta hacia otro operador autorizado.",
-          "prioridad": "Alta"
+          "prioridad": "Alta",
+          "detalle": {
+            "introduccion": "Ejercicio del derecho del ciudadano a cambiar de operador sin perder nada.",
+            "entradas": [
+              "Elección del operador destino, tomada del directorio de operadores autorizados."
+            ],
+            "procesamiento": [
+              "El operador comprueba que el destino esté autorizado y publique dirección de transferencia.",
+              "El operador registra la solicitud y notifica al ciudadano el plazo previsto."
+            ],
+            "salidas": [
+              "Solicitud de traslado registrada, con su estado consultable."
+            ],
+            "errores": [
+              "Operador destino sin dirección de transferencia publicada: la solicitud se rechaza con motivo explícito.",
+              "Operador destino suspendido: no se ofrece en la lista."
+            ]
+          }
         },
         {
           "id": "RF-01.5",
@@ -225,27 +750,130 @@
           "marca": {
             "tipo": "asuncion",
             "nota": "El caso fija el ejemplo pero no la regla de derivación ni el manejo de colisiones."
+          },
+          "detalle": {
+            "introduccion": "Asignación de la dirección de correo que identifica al ciudadano de por vida, sobreviva al operador que sobreviva.",
+            "entradas": [
+              "Nombres, apellidos y documento de identidad del ciudadano."
+            ],
+            "procesamiento": [
+              "El sistema deriva una dirección a partir de los datos del ciudadano.",
+              "El sistema resuelve las colisiones con un sufijo determinista.",
+              "El sistema marca la dirección como inmutable: ninguna operación posterior la cambia."
+            ],
+            "salidas": [
+              "Cuenta de correo institucional única, asociada a la carpeta."
+            ],
+            "errores": [
+              "Colisión de nombre: se aplica la regla de desambiguación, nunca se reasigna una dirección ya usada.",
+              "Intento posterior de cambiarla: se rechaza (RI-04)."
+            ]
           }
         },
         {
           "id": "RF-01.6",
           "nombre": "Carga del documento de identidad",
           "descripcion": "El operador debe subir a la carpeta el documento de identidad firmado por la Registraduría al completar el registro.",
-          "prioridad": "Alta"
+          "prioridad": "Alta",
+          "detalle": {
+            "introduccion": "Primer documento que entra a toda carpeta: la identidad firmada del titular.",
+            "entradas": [
+              "Documento de identidad firmado por la Registraduría."
+            ],
+            "procesamiento": [
+              "El operador valida la firma del documento.",
+              "El operador lo incorpora a la carpeta como documento certificado, exento de cuota."
+            ],
+            "salidas": [
+              "Documento de identidad visible en la carpeta, con su firma intacta."
+            ],
+            "errores": [
+              "Firma ausente o inválida: la carpeta se activa igual, pero el documento queda pendiente y se alerta.",
+              "Fallo de almacenamiento: se reintenta; el registro no se da por completo."
+            ]
+          }
         },
         {
           "id": "RF-01.9",
           "nombre": "Registro de entidades y empresas",
           "descripcion": "El operador debe permitir el registro de entidades y empresas, dotándolas de una carpeta institucional con las mismas capacidades.",
-          "prioridad": "Alta"
+          "prioridad": "Alta",
+          "detalle": {
+            "introduccion": "Las entidades y empresas también tienen carpeta: es lo que les permite emitir y recibir por el mismo canal.",
+            "entradas": [
+              "Datos de constitución de la entidad o empresa.",
+              "Datos de su representante y de sus funcionarios autorizados."
+            ],
+            "procesamiento": [
+              "El operador valida la existencia legal de la entidad.",
+              "El operador crea la carpeta institucional con las mismas capacidades de custodia.",
+              "El operador asocia los funcionarios autorizados con sus roles."
+            ],
+            "salidas": [
+              "Carpeta institucional activa, con sus usuarios y roles."
+            ],
+            "errores": [
+              "Entidad ya registrada en la federación: se rechaza y se indica dónde está.",
+              "Representante no verificable: el registro queda pendiente."
+            ]
+          }
         },
         {
           "id": "RF-01.10",
           "nombre": "Cancelación de afiliación",
           "descripcion": "El operador debe permitir dar de baja a un ciudadano o entidad, notificando al centralizador y preservando la custodia de los certificados.",
-          "prioridad": "Media"
+          "prioridad": "Media",
+          "detalle": {
+            "introduccion": "Salida ordenada del sistema, que no puede convertirse en destrucción de documentos con valor legal.",
+            "entradas": [
+              "Solicitud de cancelación del titular o de la entidad."
+            ],
+            "procesamiento": [
+              "El operador notifica la baja al centralizador y elimina la afiliación.",
+              "El operador conserva los documentos certificados según la política de retención, ya sin acceso interactivo.",
+              "El operador registra la baja en la bitácora."
+            ],
+            "salidas": [
+              "Afiliación terminada en el centralizador.",
+              "Custodia de los certificados preservada."
+            ],
+            "errores": [
+              "Traslado en curso: la cancelación se rechaza hasta que el traslado termine o se revierta.",
+              "Documentos certificados presentes: nunca se borran por una cancelación."
+            ]
+          }
         }
-      ]
+      ],
+      "desglose": {
+        "introduccion": "Este dominio cubre el ciclo de vida de la afiliación: el alta de un ciudadano o de una entidad en nuestro operador, la verificación de que tiene derecho a estar aquí y no en otro sitio, y su salida, ya sea por traslado a otro operador o por cancelación. Es la puerta del sistema: sin afiliación válida no existe carpeta, y una afiliación mal resuelta contamina todo lo demás.",
+        "entradas": [
+          "Documento de identidad, nombres, correo de contacto y teléfono móvil del ciudadano (RF-01.1).",
+          "Datos de constitución y representación de una entidad o empresa (RF-01.9).",
+          "Respuesta de la Registraduría a la verificación de identidad (RF-01.2).",
+          "Respuesta del centralizador sobre afiliación previa del ciudadano (RF-01.3).",
+          "Solicitud de traslado con el operador destino elegido por el ciudadano (RF-01.7)."
+        ],
+        "procesamiento": [
+          "El operador valida el formato y la completitud de los datos capturados.",
+          "El operador verifica la identidad contra la Registraduría; si no la confirma, el registro no avanza.",
+          "El operador consulta al centralizador que el ciudadano no esté afiliado en otro lado, y solo entonces registra la afiliación a su nombre.",
+          "El operador deriva una cuenta de correo institucional única, la marca como inmutable de por vida y la asocia a la carpeta.",
+          "El operador sube a la carpeta recién creada el documento de identidad firmado por la Registraduría.",
+          "En un traslado, el operador origen transfiere la totalidad de documentos y metadatos al destino, verifica la integridad de lo recibido y solo entonces desafilia al ciudadano del centralizador."
+        ],
+        "salidas": [
+          "Carpeta activa con cuenta de correo institucional asignada y documento de identidad cargado.",
+          "Registro de afiliación creado en el centralizador.",
+          "Notificación de bienvenida al ciudadano por correo y SMS.",
+          "En un traslado: carpeta íntegra en el operador destino y afiliación reasignada en el centralizador."
+        ],
+        "errores": [
+          "<b>Identidad no verificable.</b> El registro queda en estado pendiente y no se activa la carpeta; el sistema no crea afiliación en el centralizador.",
+          "<b>Ciudadano ya afiliado a otro operador.</b> El registro se rechaza y se le ofrece la ruta de traslado (RF-01.7). Nunca se crea una segunda afiliación (RI-03).",
+          "<b>Centralizador no disponible.</b> La solicitud se encola y se reintenta con retroceso exponencial; el ciudadano recibe estado «en trámite», no un error terminal.",
+          "<b>Traslado interrumpido.</b> Si la verificación de integridad en destino falla, el operador origen no desafilia: la carpeta sigue siendo suya y el traslado se reintenta. Un traslado a medias es peor que uno no empezado."
+        ]
+      }
     },
     {
       "id": "RF-04",
@@ -256,25 +884,102 @@
           "id": "RF-04.4",
           "nombre": "Autorización explícita",
           "descripcion": "Ningún documento puede compartirse sin autorización expresa del titular; el sistema debe capturar la decisión de aprobar, aprobar en parte o rechazar.",
-          "prioridad": "Alta"
+          "prioridad": "Alta",
+          "detalle": {
+            "introduccion": "El punto donde el sistema deja de ser un archivo y se convierte en un guardián del consentimiento.",
+            "entradas": [
+              "Petición pendiente y sus documentos solicitados.",
+              "Decisión del titular sobre cada documento.",
+              "Segundo factor de autenticación."
+            ],
+            "procesamiento": [
+              "El sistema presenta los documentos uno por uno, nunca en bloque.",
+              "El sistema exige segundo factor antes de capturar la decisión.",
+              "El sistema registra qué, a quién, cuándo y con qué vigencia."
+            ],
+            "salidas": [
+              "Registro de autorización por documento, con su evidencia."
+            ],
+            "errores": [
+              "Segundo factor no superado: no se captura ninguna decisión y el intento queda en auditoría.",
+              "Sesión caducada a mitad: las decisiones ya capturadas se conservan; el resto sigue pendiente.",
+              "Entrega sin autorización: imposible por diseño (RI-08)."
+            ]
+          }
         },
         {
           "id": "RF-04.2",
           "nombre": "Envío de paquetes",
           "descripcion": "El paquete debe entregarse a la carpeta institucional del destinatario si está afiliado, o por correo si no lo está. En ambos casos va firmado.",
-          "prioridad": "Alta"
+          "prioridad": "Alta",
+          "detalle": {
+            "introduccion": "Entregar el paquete por el canal que corresponda, sin que el ciudadano tenga que saber cuál es.",
+            "entradas": [
+              "Paquete autorizado y su destinatario."
+            ],
+            "procesamiento": [
+              "El sistema resuelve si el destinatario está afiliado a algún operador.",
+              "Si lo está, entrega a su carpeta institucional por el canal federado.",
+              "Si no, entrega por correo firmado.",
+              "El sistema firma el paquete antes de cualquiera de las dos entregas."
+            ],
+            "salidas": [
+              "Paquete entregado y acuse registrado."
+            ],
+            "errores": [
+              "Entrega federada fallida: se reintenta antes de caer al correo, nunca al revés.",
+              "Autorización vencida entre el armado y la entrega: la entrega se detiene."
+            ]
+          }
         },
         {
           "id": "RF-04.1",
           "nombre": "Armado de paquetes",
           "descripcion": "El ciudadano debe poder seleccionar varios documentos y agruparlos en un paquete para enviarlo a una entidad o empresa.",
-          "prioridad": "Alta"
+          "prioridad": "Alta",
+          "detalle": {
+            "introduccion": "Compartir de a un documento no sirve: los trámites piden conjuntos.",
+            "entradas": [
+              "Selección de documentos del titular.",
+              "Destinatario del paquete."
+            ],
+            "procesamiento": [
+              "El sistema comprueba que todos los documentos pertenezcan al titular.",
+              "El sistema arma el paquete en estado borrador, sin entregar nada todavía."
+            ],
+            "salidas": [
+              "Paquete en borrador, listo para autorización."
+            ],
+            "errores": [
+              "Documento ajeno en la selección: se rechaza el paquete completo.",
+              "Documento comprometido en la verificación: se excluye y se avisa."
+            ]
+          }
         },
         {
           "id": "RF-04.3",
           "nombre": "Petición de documentos",
           "descripcion": "Una entidad debe poder registrar, desde su propio operador, una petición dirigida a un ciudadano indicando qué documentos requiere y con qué finalidad.",
-          "prioridad": "Alta"
+          "prioridad": "Alta",
+          "detalle": {
+            "introduccion": "El caso más común del mundo real: una entidad necesita papeles de una persona.",
+            "entradas": [
+              "Documento de identidad del ciudadano y lista de tipos documentales requeridos.",
+              "Fecha límite de la petición."
+            ],
+            "procesamiento": [
+              "El operador del solicitante resuelve el operador del ciudadano y le entrega la petición.",
+              "El operador del ciudadano registra la petición y notifica por correo y SMS.",
+              "El sistema expone el estado a ambas partes."
+            ],
+            "salidas": [
+              "Petición registrada en la carpeta del ciudadano, pendiente de decisión."
+            ],
+            "errores": [
+              "Ciudadano inexistente: la petición se rechaza indicando el motivo.",
+              "Tipo documental no reconocido: se acepta como texto libre y se marca para revisión."
+            ]
+          }
         },
         {
           "id": "RF-04.5",
@@ -284,21 +989,104 @@
           "marca": {
             "tipo": "asuncion",
             "nota": "El caso no menciona vigencia; la añadimos por el requisito de confidencialidad."
+          },
+          "detalle": {
+            "introduccion": "Un consentimiento que no caduca ni se puede retirar no es consentimiento, es una cesión.",
+            "entradas": [
+              "Autorización vigente.",
+              "Vigencia elegida por el titular, u orden de revocación."
+            ],
+            "procesamiento": [
+              "El sistema aplica la vigencia a la autorización y la expira al cumplirse.",
+              "La revocación crea un registro nuevo; no altera el anterior.",
+              "El sistema notifica al solicitante afectado."
+            ],
+            "salidas": [
+              "Autorización vencida o revocada, con su histórico intacto."
+            ],
+            "errores": [
+              "Revocación posterior a la entrega: se registra y se notifica, pero no deshace lo entregado; el sistema no promete lo que no puede cumplir."
+            ]
           }
         },
         {
           "id": "RF-04.7",
           "nombre": "Compleción con faltantes",
           "descripcion": "El ciudadano debe poder cargar una versión temporal del documento que le falta y radicar en el mismo flujo la solicitud del definitivo.",
-          "prioridad": "Alta"
+          "prioridad": "Alta",
+          "detalle": {
+            "introduccion": "Que al ciudadano le falte un papel no puede ser el final del trámite.",
+            "entradas": [
+              "Documento faltante identificado en una petición.",
+              "Archivo temporal que el ciudadano sube en su lugar."
+            ],
+            "procesamiento": [
+              "El sistema acepta el temporal y lo añade al paquete marcado como no certificado.",
+              "El sistema radica en el mismo flujo la solicitud de expedición ante la entidad competente (RF-03.6).",
+              "El sistema enlaza ambos para cuando llegue la versión firmada (RF-02.9)."
+            ],
+            "salidas": [
+              "Paquete entregable con el faltante declarado y la solicitud de expedición en curso."
+            ],
+            "errores": [
+              "Solicitante que no acepta temporales: se entrega el paquete sin él y se declara el faltante.",
+              "Cuota agotada: no se puede subir el temporal; se radica solo la solicitud."
+            ]
+          }
         },
         {
           "id": "RF-04.6",
           "nombre": "Seguimiento de solicitudes",
           "descripcion": "El sistema debe permitir a solicitante y ciudadano consultar el estado de cada petición: pendiente, autorizada, rechazada o entregada.",
-          "prioridad": "Media"
+          "prioridad": "Media",
+          "detalle": {
+            "introduccion": "Las dos partes necesitan saber en qué punto está la petición sin llamarse por teléfono.",
+            "entradas": [
+              "Identificador de la petición."
+            ],
+            "procesamiento": [
+              "El sistema resuelve el estado: pendiente, autorizada, rechazada o vencida.",
+              "El sistema muestra a cada parte solo lo que le corresponde ver."
+            ],
+            "salidas": [
+              "Estado de la petición y su histórico de cambios."
+            ],
+            "errores": [
+              "Consulta de un tercero: se deniega y se registra.",
+              "Petición inexistente: se responde no encontrada, sin revelar si existió."
+            ]
+          }
         }
-      ]
+      ],
+      "desglose": {
+        "introduccion": "Aquí vive el consentimiento del ciudadano, que es la puerta de todo movimiento de documentos hacia afuera. Cubre el armado de paquetes, la petición que una entidad radica sobre un ciudadano, la autorización documento por documento y su revocación. Ningún otro dominio puede saltarse este.",
+        "entradas": [
+          "Selección de documentos que el ciudadano agrupa en un paquete (RF-04.1).",
+          "Petición de una entidad indicando qué documentos necesita y de quién (RF-04.3).",
+          "Decisión del ciudadano —aprobar o rechazar— sobre cada documento pedido (RF-04.4).",
+          "Orden de revocación de una autorización vigente (RF-04.5)."
+        ],
+        "procesamiento": [
+          "El sistema notifica al ciudadano la petición recibida por correo y SMS, porque es un evento que exige acción suya (RF-05.2).",
+          "El sistema presenta los documentos pedidos uno por uno y captura la decisión individual del titular, con segundo factor de autenticación.",
+          "El sistema registra la evidencia del consentimiento —qué, a quién, cuándo y con qué vigencia— de forma inalterable (RF-09.6).",
+          "El sistema arma el paquete solo con los documentos aprobados y lo firma antes de entregarlo.",
+          "El sistema entrega el paquete a la carpeta institucional del solicitante si está afiliado, o por correo si no lo está.",
+          "Si al ciudadano le falta un documento, el sistema le permite cargar una versión temporal y radicar en el mismo flujo la solicitud de expedición ante la entidad competente (RF-04.7)."
+        ],
+        "salidas": [
+          "Paquete firmado y entregado al solicitante.",
+          "Registro de consentimiento con su vigencia.",
+          "Estado de la petición visible para ambas partes: pendiente, autorizada, rechazada o vencida.",
+          "Solicitud de expedición radicada ante la entidad, cuando aplica."
+        ],
+        "errores": [
+          "<b>El ciudadano rechaza un documento del paquete.</b> El paquete se entrega incompleto con la lista explícita de lo no autorizado. Nunca se entrega lo rechazado (RI-08).",
+          "<b>La autorización vence antes de la entrega.</b> La entrega se detiene y se exige nueva autorización.",
+          "<b>Autorización revocada tras la entrega.</b> La revocación no puede deshacer lo entregado; queda registrada y se notifica al solicitante. El sistema no promete lo que no puede cumplir.",
+          "<b>Segundo factor no superado.</b> La autorización no se captura y el intento queda en auditoría."
+        ]
+      }
     },
     {
       "id": "RF-09",
@@ -309,13 +1097,50 @@
           "id": "RF-09.2",
           "nombre": "Autorización por roles y atributos",
           "descripcion": "El sistema debe impedir que personas no autorizadas vean o modifiquen documentos ajenos, distinguiendo titular, delegado, entidad solicitante y administrador.",
-          "prioridad": "Alta"
+          "prioridad": "Alta",
+          "detalle": {
+            "introduccion": "Autenticar dice quién eres; esto dice qué puedes tocar, que es donde están las fugas.",
+            "entradas": [
+              "Sesión autenticada y recurso solicitado.",
+              "Política de acceso por rol y atributo."
+            ],
+            "procesamiento": [
+              "El sistema resuelve la relación del solicitante con el recurso: titular, delegado, emisor o solicitante autorizado.",
+              "El sistema evalúa la política y decide.",
+              "El sistema registra la decisión con su motivo."
+            ],
+            "salidas": [
+              "Decisión de autorización: permitido o denegado."
+            ],
+            "errores": [
+              "Acceso fuera de política: se deniega, se registra y se alerta si el patrón se repite.",
+              "Política ausente para un recurso nuevo: se deniega por defecto."
+            ]
+          }
         },
         {
           "id": "RF-09.1",
           "nombre": "Autenticación de usuarios",
           "descripcion": "El sistema debe autenticar a ciudadanos, funcionarios y sistemas con un mecanismo sólido, con segundo factor para operaciones sensibles.",
-          "prioridad": "Alta"
+          "prioridad": "Alta",
+          "detalle": {
+            "introduccion": "Saber quién está al otro lado antes de dejarle tocar nada.",
+            "entradas": [
+              "Credenciales del usuario o del sistema cliente.",
+              "Segundo factor cuando la operación lo exige."
+            ],
+            "procesamiento": [
+              "El sistema valida la credencial y establece la sesión con su nivel de aseguramiento.",
+              "El sistema exige segundo factor en toda autorización de compartición."
+            ],
+            "salidas": [
+              "Sesión autenticada con su nivel de aseguramiento."
+            ],
+            "errores": [
+              "Credenciales inválidas repetidas: bloqueo temporal y registro del intento.",
+              "Segundo factor no disponible: la operación que lo exige no se permite; el resto sí."
+            ]
+          }
         },
         {
           "id": "RF-09.3",
@@ -326,27 +1151,122 @@
             "tipo": "bloqueo",
             "ref": "B-09",
             "nota": "Hoy el centralizador no exige credencial alguna."
+          },
+          "detalle": {
+            "introduccion": "Entre máquinas también hace falta saber quién llama, y hoy el centralizador no lo pide.",
+            "entradas": [
+              "Certificado o credencial de servicio del par."
+            ],
+            "procesamiento": [
+              "El sistema autentica mutuamente cada llamada entre operadores.",
+              "El sistema verifica la vigencia del certificado del par."
+            ],
+            "salidas": [
+              "Canal autenticado entre sistemas."
+            ],
+            "errores": [
+              "Certificado vencido o no verificable: la conexión se rechaza.",
+              "Contraparte que no exige credencial: se envía igual la nuestra y se registra la asimetría (*2.5)."
+            ]
           }
         },
         {
           "id": "RF-09.4",
           "nombre": "Registro de auditoría",
           "descripcion": "Toda operación de acceso, autorización y transferencia debe quedar registrada con usuario, fecha, origen y resultado, en un log no alterable.",
-          "prioridad": "Alta"
+          "prioridad": "Alta",
+          "detalle": {
+            "introduccion": "El rastro transversal del sistema, sin el cual nada de lo anterior es demostrable.",
+            "entradas": [
+              "Evento de acceso, autorización o transferencia."
+            ],
+            "procesamiento": [
+              "El sistema anexa el evento con usuario, fecha, origen y resultado.",
+              "El sistema conserva el registro en modo solo-anexar."
+            ],
+            "salidas": [
+              "Registro de auditoría consultable y exportable."
+            ],
+            "errores": [
+              "Fallo al escribir: la operación de negocio no se confirma.",
+              "Intento de modificar un evento: se rechaza y se alerta."
+            ]
+          }
         },
         {
           "id": "RF-09.6",
           "nombre": "Gestión del consentimiento",
           "descripcion": "El sistema debe registrar y conservar la evidencia del consentimiento otorgado por el ciudadano para cada compartición.",
-          "prioridad": "Alta"
+          "prioridad": "Alta",
+          "detalle": {
+            "introduccion": "La evidencia de que el titular dijo que sí, conservada por si algún día hay que demostrarlo.",
+            "entradas": [
+              "Decisión de autorización y su segundo factor."
+            ],
+            "procesamiento": [
+              "El sistema guarda qué se autorizó, a quién, cuándo y con qué vigencia.",
+              "El sistema hace inmutable ese registro y lo conserva junto al histórico de revocaciones."
+            ],
+            "salidas": [
+              "Evidencia de consentimiento, exportable ante requerimiento."
+            ],
+            "errores": [
+              "Consentimiento sin evidencia registrable: la compartición no se ejecuta."
+            ]
+          }
         },
         {
           "id": "RF-09.5",
           "nombre": "Consulta de accesos",
           "descripcion": "El ciudadano debe poder consultar quién accedió a sus documentos y bajo qué autorización.",
-          "prioridad": "Media"
+          "prioridad": "Media",
+          "detalle": {
+            "introduccion": "El ciudadano tiene derecho a saber quién miró sus documentos.",
+            "entradas": [
+              "Petición del titular sobre los accesos a su carpeta."
+            ],
+            "procesamiento": [
+              "El sistema filtra los eventos de auditoría de sus documentos.",
+              "El sistema muestra quién accedió, cuándo y bajo qué autorización."
+            ],
+            "salidas": [
+              "Listado de accesos con su autorización asociada."
+            ],
+            "errores": [
+              "Sin accesos registrados: se muestra la lista vacía.",
+              "Petición sobre carpeta ajena: se deniega y se registra."
+            ]
+          }
         }
-      ]
+      ],
+      "desglose": {
+        "introduccion": "Es lo que impide que el sistema se convierta en una fuga de datos nacional. Cubre quién es cada quien (autenticación de personas y de sistemas), qué puede hacer (autorización por roles y atributos), qué queda registrado (auditoría) y cómo se conserva la evidencia del consentimiento. Atraviesa todos los demás dominios.",
+        "entradas": [
+          "Credenciales de ciudadanos, funcionarios y administradores.",
+          "Certificados o credenciales de servicio de operadores pares y del centralizador.",
+          "Política de acceso: rol, atributo, relación de delegación.",
+          "Evento auditable generado por cualquier dominio."
+        ],
+        "procesamiento": [
+          "El sistema autentica a personas y sistemas, exigiendo segundo factor en toda operación de autorización de compartición.",
+          "El sistema evalúa cada acceso contra la política, distinguiendo titular, delegado, entidad emisora y solicitante.",
+          "El sistema autentica mutuamente toda llamada entre operadores y hacia el centralizador (RF-09.3).",
+          "El sistema escribe cada operación de acceso, autorización y transferencia en un registro solo-anexar, con usuario, fecha, origen y resultado.",
+          "El sistema conserva la evidencia del consentimiento asociada a cada compartición."
+        ],
+        "salidas": [
+          "Sesión autenticada, con su nivel de aseguramiento.",
+          "Decisión de autorización: permitido o denegado, con el motivo.",
+          "Registro de auditoría inalterable, consultable y exportable.",
+          "Vista de accesos para el ciudadano: quién vio qué y bajo qué autorización (RF-09.5)."
+        ],
+        "errores": [
+          "<b>Credenciales inválidas repetidas.</b> Bloqueo temporal de la cuenta y registro del intento.",
+          "<b>Acceso fuera de política.</b> Se deniega, se registra con el motivo y se alerta si el patrón se repite.",
+          "<b>Certificado de operador par vencido o no verificable.</b> La conexión se rechaza. Hoy el directorio del centralizador no publica claves públicas, de modo que esta verificación depende de un canal de confianza fuera del contrato (*2.5).",
+          "<b>Fallo al escribir en la bitácora.</b> La operación de negocio no se confirma. Una operación sin rastro auditable equivale a una operación no realizada."
+        ]
+      }
     },
     {
       "id": "RF-06",
@@ -357,31 +1277,113 @@
           "id": "RF-06.1",
           "nombre": "Directorio ciudadano–operador",
           "descripcion": "El centralizador debe mantener la asociación entre el identificador del ciudadano y su operador, y nada más que eso.",
-          "prioridad": "Alta"
+          "prioridad": "Alta",
+          "detalle": {
+            "introduccion": "La única tabla que el centralizador tiene derecho a mantener sobre una persona.",
+            "entradas": [
+              "Documento de identidad del ciudadano e identificador del operador."
+            ],
+            "procesamiento": [
+              "El centralizador guarda la asociación y su fecha.",
+              "El centralizador no persiste ningún otro dato de negocio."
+            ],
+            "salidas": [
+              "Entrada de directorio ciudadano–operador."
+            ],
+            "errores": [
+              "Intento de guardar metadatos de documentos: fuera de su alcance (RF-06.8)."
+            ]
+          }
         },
         {
           "id": "RF-06.4",
           "nombre": "Consulta de afiliación",
           "descripcion": "El centralizador debe devolver el operador al que pertenece un ciudadano, para habilitar el enrutamiento.",
-          "prioridad": "Alta"
+          "prioridad": "Alta",
+          "detalle": {
+            "introduccion": "La pregunta que sostiene todo el enrutamiento de la federación.",
+            "entradas": [
+              "Documento de identidad a resolver."
+            ],
+            "procesamiento": [
+              "El centralizador busca la afiliación vigente y devuelve el operador."
+            ],
+            "salidas": [
+              "Operador al que pertenece el ciudadano, o indicación de que está libre."
+            ],
+            "errores": [
+              "Ciudadano libre: se responde sin cuerpo; el operador lo trata como no afiliado, no como error.",
+              "Respuesta en prosa: el operador la parsea tras un adaptador que aísla el formato."
+            ]
+          }
         },
         {
           "id": "RF-06.2",
           "nombre": "Registro de ciudadano",
           "descripcion": "El centralizador debe exponer una operación para registrar a un ciudadano, rechazándola si ya existe afiliación vigente con otro operador.",
-          "prioridad": "Alta"
+          "prioridad": "Alta",
+          "detalle": {
+            "introduccion": "El alta que hace exigible la unicidad de afiliación en toda la federación.",
+            "entradas": [
+              "Datos mínimos del ciudadano e identificador del operador solicitante."
+            ],
+            "procesamiento": [
+              "El centralizador comprueba si ya existe afiliación vigente.",
+              "Si no existe, crea la asociación; si existe, rechaza."
+            ],
+            "salidas": [
+              "Confirmación de registro, o rechazo por afiliación existente."
+            ],
+            "errores": [
+              "Afiliación existente: rechazo explícito. Es el comportamiento correcto, no un fallo.",
+              "Error interno: el operador reintenta; nunca asume que quedó registrado."
+            ]
+          }
         },
         {
           "id": "RF-06.3",
           "nombre": "Desregistro de ciudadano",
           "descripcion": "El centralizador debe exponer una operación para eliminar la afiliación y habilitar el traslado.",
-          "prioridad": "Alta"
+          "prioridad": "Alta",
+          "detalle": {
+            "introduccion": "Sin desregistro no hay traslado posible: la afiliación quedaría clavada de por vida.",
+            "entradas": [
+              "Documento de identidad y operador actual."
+            ],
+            "procesamiento": [
+              "El centralizador elimina la asociación vigente.",
+              "El centralizador deja libre el identificador para un alta nueva."
+            ],
+            "salidas": [
+              "Afiliación eliminada."
+            ],
+            "errores": [
+              "Afiliación inexistente: se responde sin error, el estado final es el deseado.",
+              "Desregistro solicitado por un operador que no es el titular: se rechaza."
+            ]
+          }
         },
         {
           "id": "RF-06.8",
           "nombre": "No custodia de documentos",
           "descripcion": "El centralizador no debe almacenar documentos ni metadatos de negocio; su información se limita al enrutamiento y la validación.",
-          "prioridad": "Alta"
+          "prioridad": "Alta",
+          "detalle": {
+            "introduccion": "El límite que hace viable la federación: es un requerimiento por omisión y por eso importa tanto.",
+            "entradas": [
+              "Cualquier petición dirigida al centralizador."
+            ],
+            "procesamiento": [
+              "El centralizador restringe su almacenamiento al enrutamiento y la validación de identidad.",
+              "El centralizador no acepta contenido documental por ninguna vía."
+            ],
+            "salidas": [
+              "Servicio de directorio, sin custodia."
+            ],
+            "errores": [
+              "Intento de enviar contenido: se rechaza. Es la contracara de RI-01."
+            ]
+          }
         },
         {
           "id": "RF-06.5",
@@ -392,6 +1394,22 @@
             "tipo": "bloqueo",
             "ref": "B-16",
             "nota": "54 de 70 operadores no publican endpoint y nadie lo valida."
+          },
+          "detalle": {
+            "introduccion": "Un directorio sin direcciones de servicio no permite hablar con nadie.",
+            "entradas": [
+              "Solicitud del listado de operadores."
+            ],
+            "procesamiento": [
+              "El centralizador devuelve los operadores autorizados con su dirección de interoperabilidad."
+            ],
+            "salidas": [
+              "Directorio de operadores, cacheable por el consumidor."
+            ],
+            "errores": [
+              "Operador sin dirección publicada: aparece en el listado pero es inalcanzable; hoy es la mayoría (*2.5).",
+              "Listado sin paginación: se consume completo y se cachea."
+            ]
           }
         },
         {
@@ -403,15 +1421,72 @@
             "tipo": "bloqueo",
             "ref": "B-03",
             "nota": "Hoy recibe una URL y nunca descarga el documento."
+          },
+          "detalle": {
+            "introduccion": "El servicio que el caso pide para sostener el no repudio de un certificado.",
+            "entradas": [
+              "Referencia del documento a autenticar."
+            ],
+            "procesamiento": [
+              "El centralizador registra la referencia y responde si es auténtica."
+            ],
+            "salidas": [
+              "Constancia de autenticidad del documento."
+            ],
+            "errores": [
+              "Solo recibe una referencia, no el contenido: no puede sellar lo que nunca descarga, de modo que el no repudio se apoya en la firma del emisor (*2.5)."
+            ]
           }
         },
         {
           "id": "RF-06.7",
           "nombre": "Control de operadores",
           "descripcion": "El centralizador debe permitir dar de alta, suspender y dar de baja operadores, verificando las condiciones técnicas exigidas.",
-          "prioridad": "Media"
+          "prioridad": "Media",
+          "detalle": {
+            "introduccion": "Quién puede ser operador y quién deja de serlo: el control de admisión de la federación.",
+            "entradas": [
+              "Solicitud de alta, suspensión o baja de un operador."
+            ],
+            "procesamiento": [
+              "El centralizador verifica las condiciones técnicas exigidas antes del alta.",
+              "El centralizador refleja el cambio de estado en el directorio."
+            ],
+            "salidas": [
+              "Operador dado de alta, suspendido o retirado del directorio."
+            ],
+            "errores": [
+              "Operador con carpetas activas dado de baja: sus ciudadanos quedan sin custodio; exige traslado forzoso previo."
+            ]
+          }
         }
-      ]
+      ],
+      "desglose": {
+        "introduccion": "Este dominio describe lo que el centralizador de MinTIC presta y, con la misma importancia, el límite explícito de lo que no debe hacer. No lo construimos nosotros: lo consumimos. Está en el documento porque nuestros requerimientos dependen de él y porque el límite —no custodiar documentos— es la decisión que hace viable toda la federación.",
+        "entradas": [
+          "Identificador del ciudadano cuya afiliación se consulta o registra.",
+          "Datos de alta, suspensión o baja de un operador.",
+          "Referencia de un documento cuya autenticidad se quiere registrar o verificar."
+        ],
+        "procesamiento": [
+          "El centralizador mantiene la asociación entre el identificador del ciudadano y su operador, y nada más que eso.",
+          "El centralizador rechaza un registro cuando ya existe afiliación vigente para ese identificador, garantizando unicidad.",
+          "El centralizador elimina la afiliación cuando se le solicita, habilitando el traslado.",
+          "El centralizador publica el listado de operadores autorizados con la dirección de sus servicios de interoperabilidad.",
+          "El centralizador registra y verifica la autenticidad de documentos, sin almacenar su contenido."
+        ],
+        "salidas": [
+          "Operador al que pertenece un ciudadano, o la indicación de que está libre.",
+          "Directorio de operadores autorizados con sus direcciones de transferencia.",
+          "Confirmación de registro o desregistro de afiliación.",
+          "Resultado de autenticación de un documento."
+        ],
+        "errores": [
+          "<b>Afiliación ya existente.</b> El registro se rechaza; es el comportamiento correcto y sostiene RI-03.",
+          "<b>Centralizador no disponible.</b> El operador opera con la caché del directorio mientras dure la caída y encola lo que exija escritura. Es un punto único de fallo fuera de nuestro control (*2.5).",
+          "<b>Respuesta en prosa en lugar de datos estructurados.</b> El operador debe parsear la frase de respuesta; cualquier cambio de redacción del centralizador rompe la integración, y el diseño debe aislarlo tras un adaptador."
+        ]
+      }
     },
     {
       "id": "RF-05",
@@ -422,27 +1497,119 @@
           "id": "RF-05.1",
           "nombre": "Aviso por correo",
           "descripcion": "El sistema debe notificar por correo al ciudadano cuando lleguen documentos nuevos a su carpeta.",
-          "prioridad": "Alta"
+          "prioridad": "Alta",
+          "detalle": {
+            "introduccion": "El aviso por defecto, porque el correo institucional lo tienen todos por construcción.",
+            "entradas": [
+              "Evento de documento nuevo en la carpeta."
+            ],
+            "procesamiento": [
+              "El sistema compone el aviso sin incluir el contenido del documento.",
+              "El sistema lo encola y lo entrega por el proveedor de correo."
+            ],
+            "salidas": [
+              "Correo entregado y evento registrado en el centro de notificaciones."
+            ],
+            "errores": [
+              "Proveedor caído: el aviso permanece encolado; el documento ya está en la carpeta.",
+              "Rebote permanente: se marca el canal como no entregable y se avisa por el otro."
+            ]
+          }
         },
         {
           "id": "RF-05.2",
           "nombre": "Aviso por SMS",
           "descripcion": "El sistema debe notificar por SMS los eventos críticos, en particular las peticiones que requieren autorización.",
-          "prioridad": "Alta"
+          "prioridad": "Alta",
+          "detalle": {
+            "introduccion": "Hay eventos que no pueden esperar a que el ciudadano abra el correo.",
+            "entradas": [
+              "Evento crítico: petición que requiere autorización, o traslado en curso."
+            ],
+            "procesamiento": [
+              "El sistema clasifica el evento por criticidad.",
+              "El sistema envía SMS además del correo, sin incluir datos personales en el texto."
+            ],
+            "salidas": [
+              "SMS entregado al número registrado."
+            ],
+            "errores": [
+              "Número inválido: se marca no entregable y se escala al correo.",
+              "Proveedor de SMS caído: se reintenta y se registra la demora."
+            ]
+          }
         },
         {
           "id": "RF-05.3",
           "nombre": "Centro de notificaciones",
           "descripcion": "El sistema debe presentar el historial de notificaciones y las alertas pendientes de atención.",
-          "prioridad": "Media"
+          "prioridad": "Media",
+          "detalle": {
+            "introduccion": "El histórico de avisos es lo que permite al ciudadano recuperar algo que se le pasó.",
+            "entradas": [
+              "Eventos notificados al titular."
+            ],
+            "procesamiento": [
+              "El sistema acumula los avisos con su estado: pendiente de atención o atendido.",
+              "El sistema los ordena por fecha y destaca los que exigen acción."
+            ],
+            "salidas": [
+              "Centro de notificaciones con el histórico y las alertas pendientes."
+            ],
+            "errores": [
+              "Sin notificaciones: se muestra el estado vacío, no un error."
+            ]
+          }
         },
         {
           "id": "RF-05.4",
           "nombre": "Preferencias de canal",
           "descripcion": "El ciudadano debe poder configurar por qué canales desea ser notificado.",
-          "prioridad": "Baja"
+          "prioridad": "Baja",
+          "detalle": {
+            "introduccion": "Elegir por dónde te avisan, con un suelo que no se puede desactivar.",
+            "entradas": [
+              "Preferencias de canal del ciudadano."
+            ],
+            "procesamiento": [
+              "El sistema aplica las preferencias a los avisos no críticos.",
+              "El sistema mantiene el correo institucional siempre activo como canal de última instancia."
+            ],
+            "salidas": [
+              "Preferencias guardadas y aplicadas a los envíos siguientes."
+            ],
+            "errores": [
+              "Intento de desactivar todos los canales: se rechaza; el correo institucional no es desactivable.",
+              "Evento crítico: se envía por todos los canales disponibles pese a las preferencias."
+            ]
+          }
         }
-      ]
+      ],
+      "desglose": {
+        "introduccion": "Es el canal por el que el ciudadano se entera de que algo pasó. Existe porque buena parte de la población objetivo no entra al portal por iniciativa propia: si el sistema no la busca, el documento se queda sin leer y el trámite se cae. Correo y SMS no son un adorno, son el requisito de alcance (RNF-18).",
+        "entradas": [
+          "Evento de documento nuevo recibido en la carpeta.",
+          "Evento de petición que requiere autorización del titular.",
+          "Preferencias de canal configuradas por el ciudadano (RF-05.4)."
+        ],
+        "procesamiento": [
+          "El sistema traduce el evento de negocio a un mensaje por cada canal habilitado, respetando las preferencias del ciudadano.",
+          "El sistema encola el envío y lo reintenta ante fallo del proveedor, sin bloquear la operación que lo originó.",
+          "El sistema clasifica el evento por criticidad: los que exigen acción del titular van también por SMS (RF-05.2).",
+          "El sistema acumula el historial de notificaciones y marca las que siguen pendientes de atención."
+        ],
+        "salidas": [
+          "Correo electrónico entregado al ciudadano.",
+          "SMS entregado en eventos críticos.",
+          "Entrada en el centro de notificaciones, con su estado.",
+          "Métrica de latencia entre la recepción del documento y el aviso (RNF-05)."
+        ],
+        "errores": [
+          "<b>Proveedor de correo o SMS caído.</b> El mensaje permanece encolado y se reintenta; el documento ya está en la carpeta, de modo que el fallo de aviso no es pérdida de información.",
+          "<b>Dirección o número inválido.</b> Se marca el canal como no entregable, se avisa por el canal restante y se pide al ciudadano actualizar sus datos.",
+          "<b>Todos los canales fallan.</b> La notificación queda visible en el centro de notificaciones y se levanta alerta operativa."
+        ]
+      }
     },
     {
       "id": "RF-08",
@@ -453,7 +1620,24 @@
           "id": "RF-08.2",
           "nombre": "Anonimización",
           "descripcion": "El sistema debe disociar de la identidad del ciudadano todo dato entregado para análisis, salvo autorización legal expresa.",
-          "prioridad": "Alta"
+          "prioridad": "Alta",
+          "detalle": {
+            "introduccion": "Sin disociación, la analítica del Estado sería vigilancia.",
+            "entradas": [
+              "Metadatos con identidad del titular."
+            ],
+            "procesamiento": [
+              "El sistema disocia el identificador del ciudadano de cada registro.",
+              "El sistema suprime las celdas por debajo del umbral de anonimato."
+            ],
+            "salidas": [
+              "Conjunto de datos anonimizado, apto para publicación."
+            ],
+            "errores": [
+              "Consulta que exige dato identificado: se rechaza salvo autorización legal expresa, y se registra.",
+              "Riesgo de reidentificación por cruce: se suprime la dimensión que lo permite."
+            ]
+          }
         },
         {
           "id": "RF-08.1",
@@ -464,33 +1648,136 @@
             "tipo": "bloqueo",
             "ref": "B-04",
             "nota": "Choca con el mandato de mínima información en el centralizador."
+          },
+          "detalle": {
+            "introduccion": "Llevar a analítica los metadatos, y solo los metadatos.",
+            "entradas": [
+              "Metadatos de los documentos custodiados."
+            ],
+            "procesamiento": [
+              "El sistema extrae periódicamente los metadatos al repositorio analítico.",
+              "El sistema excluye el contenido documental de toda extracción."
+            ],
+            "salidas": [
+              "Repositorio analítico actualizado, con su fecha de corte."
+            ],
+            "errores": [
+              "Contenido documental en la extracción: se aborta el proceso completo.",
+              "Extracción incompleta: el corte se marca como parcial, no se publica como definitivo."
+            ]
           }
         },
         {
           "id": "RF-08.3",
           "nombre": "Contexto Notarías",
           "descripcion": "El sistema debe permitir responder preguntas sobre actividad notarial: volúmenes, tipos de acto y distribución geográfica y temporal.",
-          "prioridad": "Media"
+          "prioridad": "Media",
+          "detalle": {
+            "introduccion": "Una de las tres preguntas de negocio que el caso nombra.",
+            "entradas": [
+              "Metadatos de actos notariales anonimizados."
+            ],
+            "procesamiento": [
+              "El sistema agrega por tipo de acto, volumen y territorio."
+            ],
+            "salidas": [
+              "Respuestas agregadas sobre actividad notarial."
+            ],
+            "errores": [
+              "Territorio con volumen bajo el umbral: se agrupa en una categoría mayor."
+            ]
+          }
         },
         {
           "id": "RF-08.4",
           "nombre": "Contexto Educación",
           "descripcion": "El sistema debe permitir responder preguntas sobre títulos y actas de grado emitidos: institución, programa, nivel y año.",
-          "prioridad": "Media"
+          "prioridad": "Media",
+          "detalle": {
+            "introduccion": "La segunda pregunta: qué está titulando el país y dónde.",
+            "entradas": [
+              "Metadatos de títulos y actas de grado anonimizados."
+            ],
+            "procesamiento": [
+              "El sistema agrega por institución, programa, nivel y año."
+            ],
+            "salidas": [
+              "Respuestas agregadas sobre titulación."
+            ],
+            "errores": [
+              "Programa con pocos egresados: se suprime la celda por riesgo de reidentificación."
+            ]
+          }
         },
         {
           "id": "RF-08.5",
           "nombre": "Contexto Registraduría",
           "descripcion": "El sistema debe permitir responder preguntas sobre documentos de identidad y cobertura de registro de la población.",
-          "prioridad": "Media"
+          "prioridad": "Media",
+          "detalle": {
+            "introduccion": "La tercera: cuánta población tiene documento y registro al día.",
+            "entradas": [
+              "Metadatos de documentos de identidad anonimizados."
+            ],
+            "procesamiento": [
+              "El sistema agrega por tipo de documento y cobertura territorial."
+            ],
+            "salidas": [
+              "Respuestas agregadas sobre cobertura de registro."
+            ],
+            "errores": [
+              "Cobertura calculada sobre carpetas activas, no sobre población: el indicador declara su denominador."
+            ]
+          }
         },
         {
           "id": "RF-08.6",
           "nombre": "Tableros y reportes",
           "descripcion": "El sistema debe ofrecer tableros para el consumo de los resultados por MinTIC y las entidades autorizadas.",
-          "prioridad": "Baja"
+          "prioridad": "Baja",
+          "detalle": {
+            "introduccion": "Los datos sin una superficie de consumo no responden preguntas.",
+            "entradas": [
+              "Resultados agregados de los tres contextos."
+            ],
+            "procesamiento": [
+              "El sistema publica tableros por contexto, con su fecha de corte visible.",
+              "El sistema restringe el acceso a las entidades autorizadas."
+            ],
+            "salidas": [
+              "Tableros y reportes descargables."
+            ],
+            "errores": [
+              "Entidad sin autorización: se deniega el acceso y se registra.",
+              "Datos del corte incompletos: el tablero lo declara en lugar de mostrar un hueco silencioso."
+            ]
+          }
         }
-      ]
+      ],
+      "desglose": {
+        "introduccion": "Cubre lo que el Estado quiere saber sin tocar el contenido de ningún documento: volúmenes notariales, títulos emitidos, cobertura de registro. La restricción que lo define es que la analítica opera sobre metadatos disociados de la identidad, nunca sobre el contenido ni sobre la persona.",
+        "entradas": [
+          "Metadatos de los documentos custodiados: tipo, entidad emisora, fecha, ubicación geográfica.",
+          "Definición de las preguntas de negocio de cada contexto: notarías, educación, Registraduría.",
+          "Autorización legal expresa, cuando una consulta exige dato identificado (RF-08.2)."
+        ],
+        "procesamiento": [
+          "El sistema consolida periódicamente los metadatos en un repositorio analítico separado del operacional, nunca el contenido de los documentos (RF-08.1).",
+          "El sistema disocia de la identidad del ciudadano todo dato entregado para análisis.",
+          "El sistema agrega por dimensiones de negocio: tipo de acto, institución, programa, nivel, año y territorio.",
+          "El sistema publica los resultados en tableros para MinTIC y las entidades autorizadas."
+        ],
+        "salidas": [
+          "Repositorio analítico de metadatos anonimizados.",
+          "Respuestas agregadas a las preguntas de los tres contextos.",
+          "Tableros y reportes para las entidades autorizadas."
+        ],
+        "errores": [
+          "<b>Riesgo de reidentificación por agregación fina.</b> El sistema suprime las celdas cuyo conteo esté por debajo del umbral de anonimato en lugar de publicarlas.",
+          "<b>Consulta que exige dato identificado sin autorización legal.</b> Se rechaza y se registra en auditoría.",
+          "<b>Desfase entre el repositorio operacional y el analítico.</b> Se admite: la analítica es eventualmente consistente por diseño (RNF-06) y cada tablero declara su fecha de corte."
+        ]
+      }
     },
     {
       "id": "RF-07",
@@ -506,33 +1793,144 @@
             "tipo": "bloqueo",
             "ref": "B-05",
             "nota": "No está cerrado qué es básico y qué es Premium."
+          },
+          "detalle": {
+            "introduccion": "Lo que se cobra tiene que estar escrito, y lo básico tiene que quedar fuera.",
+            "entradas": [
+              "Definición de servicios y tarifas del operador."
+            ],
+            "procesamiento": [
+              "El operador publica el catálogo y sus condiciones.",
+              "El operador verifica que ningún servicio básico del ciudadano entre en él."
+            ],
+            "salidas": [
+              "Catálogo Premium contratable por empresas."
+            ],
+            "errores": [
+              "Servicio básico incluido en el catálogo: se rechaza la publicación (RI-07)."
+            ]
           }
         },
         {
           "id": "RF-07.4",
           "nombre": "API para empresas",
           "descripcion": "El operador debe exponer una API que permita a las empresas integrar sus sistemas de trámite con la carpeta.",
-          "prioridad": "Media"
+          "prioridad": "Media",
+          "detalle": {
+            "introduccion": "Cuando el volumen sube, la consola manual deja de servir.",
+            "entradas": [
+              "Credenciales de la empresa y llamadas a la interfaz."
+            ],
+            "procesamiento": [
+              "El operador autentica la aplicación cliente y aplica su cuota.",
+              "El operador expone las operaciones de petición, consulta y recepción."
+            ],
+            "salidas": [
+              "Respuestas de la interfaz y consumo contabilizado."
+            ],
+            "errores": [
+              "Cuota excedida: se limita la tasa de esa empresa, sin degradar el servicio de los ciudadanos.",
+              "Credencial revocada: se rechazan las llamadas y se avisa a la empresa."
+            ]
+          }
         },
         {
           "id": "RF-07.5",
           "nombre": "Medición y facturación",
           "descripcion": "El sistema debe medir el consumo Premium y facturarlo, garantizando que los servicios básicos sigan siendo gratuitos.",
-          "prioridad": "Media"
+          "prioridad": "Media",
+          "detalle": {
+            "introduccion": "Medir es lo que separa un modelo de negocio de una intención.",
+            "entradas": [
+              "Eventos de consumo de servicios Premium."
+            ],
+            "procesamiento": [
+              "El sistema contabiliza el consumo por empresa y periodo.",
+              "El sistema excluye toda operación básica del ciudadano antes de facturar.",
+              "El sistema emite la factura del periodo."
+            ],
+            "salidas": [
+              "Registro de consumo y factura por empresa."
+            ],
+            "errores": [
+              "Operación básica en el cómputo: se descarta y se alerta; es una invariante, no una regla configurable.",
+              "Discrepancia entre consumo medido y facturado: se bloquea la emisión."
+            ]
+          }
         },
         {
           "id": "RF-07.2",
           "nombre": "Casos de soporte PQRS",
           "descripcion": "El operador debe permitir a una empresa cliente armar casos de soporte y asociarles documentos.",
-          "prioridad": "Media"
+          "prioridad": "Media",
+          "detalle": {
+            "introduccion": "El envoltorio de negocio con el que una empresa gestiona a su cliente.",
+            "entradas": [
+              "Datos del caso y cliente final afectado."
+            ],
+            "procesamiento": [
+              "El operador crea el caso y le asocia documentos y peticiones.",
+              "El operador expone el estado del caso a la empresa."
+            ],
+            "salidas": [
+              "Caso PQRS con sus documentos y peticiones asociadas."
+            ],
+            "errores": [
+              "Cliente final inexistente: el caso se crea, la petición no.",
+              "Empresa sin contrato Premium vigente: se deniega la creación."
+            ]
+          }
         },
         {
           "id": "RF-07.3",
           "nombre": "Solicitud desde un caso",
           "descripcion": "Desde un caso PQRS la empresa debe poder pedir documentos a sus clientes sin importar su operador.",
-          "prioridad": "Media"
+          "prioridad": "Media",
+          "detalle": {
+            "introduccion": "Pedir documentos desde el caso, sin que importe dónde tenga la carpeta el cliente.",
+            "entradas": [
+              "Caso PQRS y tipos documentales requeridos."
+            ],
+            "procesamiento": [
+              "El operador radica la petición por el canal federado (RF-04.3).",
+              "El operador asocia la respuesta al caso cuando llegue."
+            ],
+            "salidas": [
+              "Petición vinculada al caso, con su estado."
+            ],
+            "errores": [
+              "Cliente en otro operador: se enruta, no falla.",
+              "Cliente que rechaza: el caso lo refleja como faltante, no como error."
+            ]
+          }
         }
-      ]
+      ],
+      "desglose": {
+        "introduccion": "Es la parte del modelo de negocio que financia lo gratuito. El caso obliga a que los servicios básicos del ciudadano no tengan costo (RI-07), de modo que el ingreso tiene que venir de las empresas: catálogo Premium, casos de soporte tipo PQRS e integración por API con sus sistemas de trámite.",
+        "entradas": [
+          "Definición del catálogo de servicios Premium y sus tarifas.",
+          "Contratación de un servicio Premium por parte de una empresa.",
+          "Caso de soporte abierto por una empresa, con documentos asociados.",
+          "Llamadas de la empresa a la API de integración (RF-07.4)."
+        ],
+        "procesamiento": [
+          "El operador publica el catálogo y gestiona su contratación por empresa.",
+          "El operador asocia documentos y peticiones a un caso de soporte, sin importar en qué operador esté afiliado el cliente final.",
+          "El operador mide el consumo de cada servicio Premium por cliente.",
+          "El operador factura el consumo medido, verificando que ninguna operación básica del ciudadano entre en la factura."
+        ],
+        "salidas": [
+          "Catálogo Premium contratable.",
+          "Caso PQRS con sus documentos y peticiones asociadas.",
+          "Registro de consumo y factura por empresa cliente.",
+          "Credenciales y cuotas de la API de integración."
+        ],
+        "errores": [
+          "<b>Cuota de API excedida.</b> Se limita la tasa de la empresa cliente y se le notifica, sin degradar el servicio de los ciudadanos.",
+          "<b>Intento de facturar una operación básica.</b> La medición la rechaza; es una invariante del sistema, no una regla de negocio configurable (RI-07).",
+          "<b>Cliente final en otro operador.</b> La petición se enruta por el canal federado (RF-03), no falla."
+        ]
+      }
     }
   ]
 }

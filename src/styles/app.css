@@ -89,7 +89,8 @@ a:hover { text-decoration: underline }
   background: var(--surface); border: 1px solid var(--hairline);
   border-radius: var(--r-md);
 }
-.tema:hover { border-color: var(--ink-faint); color: var(--ink) }
+.tema { text-decoration: none }
+.tema:hover { text-decoration: none; border-color: var(--ink-faint); color: var(--ink) }
 .tema:active { transform: scale(0.97) }
 .tema svg { flex: none }
 
@@ -106,6 +107,21 @@ a:hover { text-decoration: underline }
 .toc-in a:hover { color: var(--ink); text-decoration: none }
 .toc-in a.on { color: var(--primary-text); border-bottom-color: var(--primary) }
 
+/* ---- Segunda barra: los tres bloques de la sección 3, solo mientras se está en ella ---- */
+.toc-sub {
+  background: var(--surface); border-top: 1px solid var(--hairline);
+}
+.toc-sub .toc-in {
+  max-width: 1180px; margin: 0 auto; padding: 0 var(--s-lg);
+  align-items: center; gap: var(--s-sm);
+}
+.toc-sub .lab {
+  flex: none; font-size: 12px; font-weight: 600; letter-spacing: .125px;
+  color: var(--ink-faint-text); text-transform: uppercase; white-space: nowrap;
+}
+.toc-in a.sub { padding: var(--s-sm) var(--s-xs); font-size: 14px; color: var(--ink-muted) }
+.toc-in a.sub:hover { color: var(--ink) }
+
 /* ============================================================
    Secciones
    ============================================================ */
@@ -119,13 +135,19 @@ section { padding: var(--s-xxl) 0 var(--s-xs); scroll-margin-top: calc(var(--nav
 .sec-head h2 { font-size: clamp(26px, 2.6vw, 40px) }
 .sec-head p { margin: 0; font-size: 15px; line-height: 1.33; color: var(--ink-muted); flex: 1 1 280px }
 
-h3.dom {
+h3.dom { scroll-margin-top: calc(var(--navh) + var(--s-md));
   margin: var(--s-xxl) 0 0;
   font-size: 20px; font-weight: 600; line-height: 1.4; letter-spacing: -0.125px;
   color: var(--ink);
 }
 h3.dom span { font-weight: 400; font-size: 15px; color: var(--ink-muted); letter-spacing: 0 }
 
+h4.sub3 { scroll-margin-top: calc(var(--navh) + var(--s-md));
+  margin: var(--s-lg) 0 var(--s-xs);
+  font-size: 16px; font-weight: 600; line-height: 1.4; letter-spacing: -0.125px;
+  color: var(--ink);
+}
+span.id { font-family: var(--font-mono); font-size: 13px; color: var(--ink-muted) }
 p.lede { font-size: 16px; color: var(--ink-secondary); max-width: 68ch }
 .pull {
   border-left: 3px solid var(--primary);
@@ -203,31 +225,38 @@ tr.block td.id { box-shadow: inset 3px 0 0 var(--st-bloqueo) }
 .note { display: block; font-size: 14px; line-height: 1.43; color: var(--ink-faint-text); margin-top: var(--s-xxs) }
 
 /* ============================================================
-   Filtro y controles — botones utilitarios de 8px.
+   Controles del diagrama — botones utilitarios de 8px.
    ============================================================ */
-.filter, .diagctl { display: flex; align-items: center; gap: var(--s-xs); flex-wrap: wrap }
-.filter {
-  background: var(--surface); border: 1px solid var(--hairline);
-  border-radius: var(--r-lg); padding: var(--s-sm) var(--s-md); margin: var(--s-md) 0;
-}
-.diagctl { margin: var(--s-lg) 0 var(--s-sm) }
-.filter .lab, .diagctl .lab {
+.diagctl { display: flex; align-items: center; gap: var(--s-xs); flex-wrap: wrap; margin: var(--s-lg) 0 var(--s-sm) }
+.diagctl .lab {
   font-size: 12px; font-weight: 600; line-height: 1.33; letter-spacing: 0.125px;
   color: var(--ink-faint-text); margin-right: var(--s-xxs);
 }
-.filter button, .diagctl button {
+.diagctl button {
   font: inherit; font-size: 16px; font-weight: 500; line-height: 1.5;
   cursor: pointer; background: var(--surface); color: var(--ink);
   border: 1px solid var(--hairline); border-radius: var(--r-md);
   padding: var(--s-xxs) 14px;
 }
-.filter button:hover, .diagctl button:hover { border-color: var(--ink-faint) }
-.filter button[aria-pressed="true"], .diagctl button[aria-pressed="true"] {
+.diagctl button:hover { border-color: var(--ink-faint) }
+.diagctl button[aria-pressed="true"] {
   background: var(--primary); color: var(--on-accent); border-color: var(--primary);
 }
-.filter button:active, .diagctl button:active { transform: scale(0.97) }
-.filter .count { margin-left: auto; font-size: 14px; color: var(--ink-faint-text) }
-.diagctl .step { margin-left: auto; font-size: 15px; color: var(--ink-muted) }
+.diagctl button:active { transform: scale(0.97) }
+.diagctl .pasos { display: flex; align-items: center; gap: var(--s-xxs); margin-left: auto }
+.diagctl .pasos button { min-width: 40px; text-align: center }
+.diagctl .pasos button:disabled { opacity: .4; cursor: default }
+.diagctl .cuenta { font-family: var(--font-mono); font-size: 14px; color: var(--ink-faint-text); margin-left: var(--s-xs) }
+
+/* El rótulo del paso se lee desde el fondo del aula: es lo que narra el diagrama. */
+.diagcap {
+  margin: var(--s-sm) 0 var(--s-lg);
+  padding: var(--s-sm) var(--s-md);
+  border-left: 3px solid var(--primary);
+  background: var(--surface); border-radius: 0 var(--r-md) var(--r-md) 0;
+  font-size: 20px; font-weight: 600; line-height: 1.4; letter-spacing: -0.125px;
+  color: var(--ink); max-width: none;
+}
 
 .diagbox {
   border: 1px solid var(--hairline); border-radius: var(--r-xl);
@@ -235,57 +264,43 @@ tr.block td.id { box-shadow: inset 3px 0 0 var(--st-bloqueo) }
 }
 
 /* ============================================================
-   Bloqueos — tarjeta con banda de estado a la izquierda.
+   Referencias — un identificador que explica qué es al pasar el cursor.
    ============================================================ */
-.blockers { display: grid; gap: var(--s-md); margin-top: var(--s-lg) }
-.bk {
-  background: var(--surface);
-  border: 1px solid var(--hairline);
-  border-left: 4px solid var(--ink-faint);
-  border-radius: var(--r-lg);
-  padding: var(--s-lg);
-  display: grid; gap: var(--s-sm);
+.ref {
+  font-family: var(--font-mono); font-size: 13px; color: var(--primary-text);
+  border-bottom: 1px dotted var(--primary); cursor: help; position: relative;
 }
-.bk.crit { border-left-color: var(--st-bloqueo); box-shadow: var(--e-1) }
-.bk.done { border-left-color: var(--st-caso) }
-.bk.done .bk-id { color: var(--st-caso) }
-.bk-top { display: flex; align-items: baseline; gap: var(--s-sm); flex-wrap: wrap }
-.bk-id { font-family: var(--font-mono); font-size: 14px; font-weight: 600; color: var(--st-bloqueo) }
-.bk-solved {
-  font-size: 12px; font-weight: 600; letter-spacing: 0.125px;
-  background: var(--st-caso-bg); color: var(--st-caso);
-  border-radius: var(--r-full); padding: var(--s-xxs) var(--s-xs);
+.ref:hover, .ref:focus-visible { outline: none; background: var(--st-caso-bg) }
+.ref:hover::after, .ref:focus-visible::after {
+  content: attr(data-tip);
+  position: absolute; left: 0; top: calc(100% + 6px); z-index: 20;
+  width: max-content; max-width: 320px;
+  font-family: var(--font); font-size: 13px; line-height: 1.33; font-weight: 400;
+  color: var(--ink); background: var(--surface);
+  border: 1px solid var(--hairline); border-radius: var(--r-md);
+  box-shadow: var(--e-2); padding: var(--s-xs) var(--s-sm);
 }
-.bk-q { font-size: 22px; font-weight: 700; line-height: 1.27; letter-spacing: -0.25px; flex: 1 1 320px; min-width: 0 }
-.bk-grid {
-  display: grid; gap: var(--s-md);
-  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-  border-top: 1px solid var(--hairline); padding-top: var(--s-sm);
-}
-.bk-grid h4 {
-  margin: 0 0 var(--s-xxs);
-  font-size: 12px; font-weight: 600; line-height: 1.33; letter-spacing: 0.125px;
-  color: var(--ink-faint-text);
-}
-.bk-grid p { margin: 0; font-size: 15px; line-height: 1.33; color: var(--ink-muted); max-width: none }
-.bk-grid .why p { color: var(--ink-secondary) }
 
 /* ============================================================
-   Hallazgos de la API
+   Plegado — vista de exposición.
+   El contenido no se borra: se pliega para que lo esencial se lea primero.
    ============================================================ */
-.finds {
-  border: 1px solid var(--hairline); border-radius: var(--r-lg);
-  background: var(--surface); margin: var(--s-md) 0; overflow: hidden;
+.vistas { margin: var(--s-md) 0 0 }
+.fold {
+  border: 1px solid var(--hairline); border-radius: var(--r-md);
+  background: var(--surface); margin: var(--s-sm) 0;
 }
-.find {
-  display: grid; grid-template-columns: 32px 1fr; gap: var(--s-md);
-  padding: var(--s-md); border-bottom: 1px solid var(--hairline);
+.fold > summary {
+  cursor: pointer; list-style: none;
+  padding: var(--s-xs) var(--s-sm);
+  font-size: 14px; font-weight: 500; line-height: 1.43; color: var(--ink-muted);
 }
-.find:last-child { border-bottom: 0 }
-.find .n { font-family: var(--font-mono); font-size: 13px; font-weight: 500; color: var(--ink-faint-text) }
-.find p { margin: 0; font-size: 15px; line-height: 1.43; max-width: none }
-.find.hot { background: linear-gradient(90deg, var(--st-bloqueo) 0 3px, transparent 3px) }
-.find.hot .n { color: var(--st-bloqueo) }
+.fold > summary::-webkit-details-marker { display: none }
+.fold > summary::before { content: "▸ "; color: var(--ink-faint-text) }
+.fold[open] > summary::before { content: "▾ " }
+.fold > summary:hover { color: var(--ink) }
+.fold-in { padding: 0 var(--s-sm) var(--s-sm); border-top: 1px solid var(--hairline) }
+.fold-in > *:first-child { margin-top: var(--s-sm) }
 
 /* ============================================================
    Listas y tarjetas de prosa
@@ -295,8 +310,8 @@ ol.flow li { margin-bottom: var(--s-xs); font-size: 16px; line-height: 1.5 }
 ul.logic { padding-left: var(--s-md); max-width: 74ch }
 ul.logic li { margin-bottom: var(--s-xs); font-size: 16px; line-height: 1.5 }
 
-.simple { display: grid; gap: var(--s-lg); margin-top: var(--s-xs) }
 .qa {
+  margin: var(--s-md) 0;
   background: var(--surface); border: 1px solid var(--hairline);
   border-radius: var(--r-lg); padding: var(--s-lg);
 }

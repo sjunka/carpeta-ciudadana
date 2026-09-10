@@ -21,7 +21,7 @@ bloqueos abiertos con el enunciado.
 | 9 · Bloqueos | 16 preguntas abiertas, 3 ya cerradas |
 
 La sección 4 sale del material del curso: el *template* de especificación basado en
-ANSI/IEEE Std. 830 (§3.6 y §3.7) y el módulo de arquitectura nativa de la nube
+ANSI/IEEE Std. 830 (*3.6 y *3.7) y el módulo de arquitectura nativa de la nube
 —*Twelve-Factor App*, pilares cloud native y drivers de granularidad de microservicios.
 
 ## Empezar

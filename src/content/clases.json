@@ -1,0 +1,209 @@
+{
+  "intro": "Modelo conceptual del dominio, no de la implementación. Cada clase existe porque algún requerimiento la necesita, y lo cita. No hay tablas, ni claves foráneas, ni tecnología: eso es diseño y no pertenece a este documento. La regla que ordena el modelo es la del caso: <b>la carpeta pertenece al ciudadano, no al operador</b>, de modo que todo lo que sobrevive a un traslado cuelga del ciudadano y no de nosotros.",
+  "clases": [
+    {
+      "nombre": "Ciudadano",
+      "proposito": "Titular de una carpeta. Es la raíz de identidad del modelo: todo lo demás existe respecto a él.",
+      "atributos": [
+        "documentoIdentidad — identificador nacional, inmutable, clave de resolución ante el centralizador",
+        "nombres, apellidos",
+        "correoContacto, telefonoMovil — canales de notificación",
+        "cuentaInstitucional — correo asignado por el sistema, único e inmutable de por vida",
+        "estadoAfiliacion — pendiente, activa o cancelada",
+        "operadorActual"
+      ],
+      "funciones": [
+        "verificarIdentidad() — contra la Registraduría, antes de activar la carpeta",
+        "solicitarTraslado(operadorDestino)",
+        "autorizar(peticion, decisionPorDocumento)",
+        "revocar(autorizacion)"
+      ],
+      "realiza": "RF-01.1, RF-01.2, RF-01.5, RF-01.7, RF-04.4, RF-04.5"
+    },
+    {
+      "nombre": "Carpeta",
+      "proposito": "Contenedor de los documentos de un titular. Existe una por ciudadano y una por entidad registrada.",
+      "atributos": [
+        "titular — Ciudadano o Entidad",
+        "fechaApertura",
+        "cuotaTemporales — límite de documentos y bytes no certificados",
+        "consumoTemporales"
+      ],
+      "funciones": [
+        "listar(filtros) — por tipo, emisor, fecha y estado de certificación",
+        "incorporar(documento)",
+        "retirar(documento) — solo si no es certificado",
+        "exportarIntegra() — para el traslado a otro operador"
+      ],
+      "realiza": "RF-02.6, RF-02.2, RF-02.10, RF-01.8, RF-01.9"
+    },
+    {
+      "nombre": "Documento",
+      "proposito": "Unidad de custodia. Se especializa en dos naturalezas con reglas de vida opuestas.",
+      "atributos": [
+        "identificador",
+        "contenido — nunca sale del operador sin autorización",
+        "hashIntegridad",
+        "metadatos — Metadatos",
+        "estado — recibido, vigente, sustituido o retirado",
+        "esCertificado — decide retención, cuota y derecho de eliminación"
+      ],
+      "funciones": [
+        "verificarIntegridad() — recalcula el hash contra el registrado",
+        "descargar() — conservando la evidencia de firma",
+        "sustituirPor(documentoFirmado) — enlaza el temporal con la versión certificada"
+      ],
+      "realiza": "RF-02.1, RF-02.5, RF-02.7, RF-02.9",
+      "especializaciones": [
+        { "nombre": "DocumentoCertificado", "detalle": "Lleva Firma, se conserva a perpetuidad, no consume cuota y no puede eliminarlo el titular (RF-02.1, RI-05)." },
+        { "nombre": "DocumentoTemporal", "detalle": "Sin firma de entidad, consume cuota, caduca y el titular puede eliminarlo (RF-02.2, RF-02.10)." }
+      ]
+    },
+    {
+      "nombre": "Metadatos",
+      "proposito": "Lo que hace clasificable, buscable y analizable a un documento. Es lo único que se entrega a la analítica del Estado.",
+      "atributos": [
+        "tipoDocumental",
+        "entidadEmisora",
+        "fechaEmision, fechaVigencia",
+        "territorio",
+        "estadoCertificacion"
+      ],
+      "funciones": [
+        "anonimizar() — disocia el metadato de la identidad del titular",
+        "coincideCon(filtros)"
+      ],
+      "realiza": "RF-02.3, RF-08.1, RF-08.2"
+    },
+    {
+      "nombre": "Firma",
+      "proposito": "Evidencia criptográfica de quién emitió el documento y de que no ha sido alterado. Sostiene el no repudio.",
+      "atributos": [
+        "emisor",
+        "selloDeTiempo",
+        "algoritmo",
+        "valor"
+      ],
+      "funciones": [
+        "verificar() — devuelve válida o inválida, con motivo",
+        "conservar() — la firma sobrevive intacta a la custodia y al traslado"
+      ],
+      "realiza": "RF-02.4, RF-02.5, RF-06.6, RNF-13"
+    },
+    {
+      "nombre": "Afiliación",
+      "proposito": "Relación vigente entre un ciudadano y un operador. Es la única información que el centralizador guarda de una persona.",
+      "atributos": [
+        "ciudadano",
+        "operador",
+        "fechaInicio",
+        "estado — vigente o terminada"
+      ],
+      "funciones": [
+        "registrar() — en el centralizador, tras verificar unicidad",
+        "resolverOperador(documentoIdentidad)",
+        "terminar() — solo cuando el destino confirmó la recepción íntegra"
+      ],
+      "realiza": "RF-01.3, RF-01.4, RF-06.1, RF-06.4, RI-03"
+    },
+    {
+      "nombre": "Operador",
+      "proposito": "Par de la federación. Nuestro sistema es uno de ellos; los demás son externos y se conocen por el directorio.",
+      "atributos": [
+        "identificador, nombre",
+        "direccionTransferencia — sin ella el operador es inalcanzable",
+        "estado — autorizado, suspendido o dado de baja"
+      ],
+      "funciones": [
+        "transferir(documento, operadorDestino)",
+        "recibir(documento) — valida firma y metadatos antes de aceptar",
+        "confirmarRecepcion(transferencia)"
+      ],
+      "realiza": "RF-03.1, RF-03.2, RF-03.3, RF-06.5, RF-06.7"
+    },
+    {
+      "nombre": "Transferencia",
+      "proposito": "Un envío de documentos entre dos operadores. Se modela como entidad propia porque tiene estado, reintentos y acuse: no es una llamada, es un proceso.",
+      "atributos": [
+        "claveIdempotencia — hace que un reintento no duplique la entrega",
+        "origen, destino",
+        "documentos",
+        "estado — encolada, enviada, confirmada o fallida",
+        "intentos"
+      ],
+      "funciones": [
+        "enviar()",
+        "reintentar() — con retroceso exponencial",
+        "confirmar(acuse)",
+        "descartarAFallidos() — a la cola de mensajes fallidos, nunca al vacío"
+      ],
+      "realiza": "RF-03.2, RF-03.5, RNF-07"
+    },
+    {
+      "nombre": "Petición",
+      "proposito": "Solicitud de documentos que un tercero radica sobre un ciudadano. Es el disparador de todo el flujo de consentimiento.",
+      "atributos": [
+        "solicitante — Entidad o Empresa",
+        "ciudadanoDestinatario",
+        "documentosSolicitados",
+        "estado — pendiente, autorizada, rechazada o vencida",
+        "fechaLimite"
+      ],
+      "funciones": [
+        "radicar()",
+        "consultarEstado()",
+        "cerrar(paquete)"
+      ],
+      "realiza": "RF-04.3, RF-04.6, RF-03.6"
+    },
+    {
+      "nombre": "Autorización",
+      "proposito": "Evidencia del consentimiento del titular sobre un documento concreto y un destinatario concreto. Sin ella nada sale de la carpeta.",
+      "atributos": [
+        "documento, destinatario",
+        "otorgadaEn",
+        "vigencia",
+        "estado — vigente, vencida o revocada",
+        "evidencia — registro inalterable de la decisión"
+      ],
+      "funciones": [
+        "otorgar() — exige segundo factor",
+        "revocar()",
+        "estaVigente()"
+      ],
+      "realiza": "RF-04.4, RF-04.5, RF-09.6, RI-08"
+    },
+    {
+      "nombre": "Paquete",
+      "proposito": "Conjunto de documentos autorizados que se entrega en un solo acto firmado.",
+      "atributos": [
+        "documentos — solo los autorizados",
+        "destinatario",
+        "firmaOperador",
+        "faltantes — lo pedido y no autorizado, declarado explícitamente"
+      ],
+      "funciones": [
+        "armar(autorizaciones)",
+        "entregar() — a la carpeta del destinatario o por correo si no está afiliado"
+      ],
+      "realiza": "RF-04.1, RF-04.2, RF-04.7"
+    },
+    {
+      "nombre": "EventoAuditoría",
+      "proposito": "Registro solo-anexar de todo lo que pasó. Es la clase que hace verificable el resto del modelo.",
+      "atributos": [
+        "actor, fecha, origen",
+        "operacion",
+        "recursoAfectado",
+        "resultado — permitido o denegado, con motivo"
+      ],
+      "funciones": [
+        "anexar() — nunca actualizar ni borrar",
+        "consultar(filtros)",
+        "exportar()"
+      ],
+      "realiza": "RF-02.11, RF-09.4, RF-09.5, RNF-14"
+    }
+  ],
+  "cierre": "Tres relaciones sostienen el modelo. <b>Ciudadano–Afiliación–Operador</b> es la que el centralizador conoce y la única que viaja fuera. <b>Carpeta–Documento–Firma</b> es la que nunca sale del operador sin pasar por Autorización. Y <b>Petición–Autorización–Paquete</b> es la secuencia del consentimiento: sin las tres, no hay entrega."
+}

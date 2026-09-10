@@ -142,26 +142,81 @@ for (const b of bloqueos.bloqueos) {
 }
 
 // --- 6. Secciones: meta debe cuadrar con lo que App.jsx sabe montar ---
-const MONTABLES = ['rf', 'rnf', 'qos', 'restr', 'ctx', 'cu', 'simple', 'api', 'bloqueos']
+const MONTABLES = ['intro', 'gen', 'req', 'mod', 'cam']
+// Anclas de subsección que el marcado publica con id.
+const ANCLAS = ['rf', 'rnf', 'qos']
 for (const s of meta.secciones) {
   if (!MONTABLES.includes(s.id)) fallo(`Sección "${s.id}" no tiene componente en App.jsx.`)
   if (!s.num || !s.nav || !s.titulo) fallo(`Sección "${s.id}": falta num, nav o titulo.`)
+  // Cada enlace de subnavegación necesita un ancla que exista en la página.
+  for (const sub of s.subs ?? [])
+    if (!ANCLAS.includes(sub.id)) fallo(`Subsección "${sub.id}": no hay ancla declarada en SeccionRequerimientos.jsx.`)
 }
 if (!contexto.actores.length) fallo('contexto.json: no hay actores.')
 
 // --- 7. Contadores de la portada ---
 const totalRF = rf.dominios.reduce((n, d) => n + d.requerimientos.length, 0)
-const abiertos = bloqueos.bloqueos.filter((b) => b.estado !== 'resuelto').length
 const esperado = {
   totalRF: `${totalRF} en ${rf.dominios.length} dominios`,
   totalRNF: String(rnf.requerimientos.length),
   restricciones: `${restr.restricciones.filas.length} RD · ${restr.inversos.filas.length} RI`,
-  bloqueos: `${abiertos} de ${bloqueos.bloqueos.length}`,
+  qos: `${qos.filas.length} atributos`,
 }
 for (const d of meta.datos) {
   if (d.auto && d.valor !== esperado[d.auto])
     fallo(`meta.json → "${d.titulo}" dice "${d.valor}" pero los datos dan "${esperado[d.auto]}".`)
 }
+
+
+// --- 8. Estructura SRS: desglose por dominio, grupos de RNF y modelos ---
+const srs = leer('srs.json')
+const clases = leer('clases.json')
+const datosLogicos = leer('datos-logicos.json')
+const modelos = leer('modelos.json')
+const diagramas = leer('diagramas.json')
+
+const SUBBLOQUES = ['introduccion', 'entradas', 'procesamiento', 'salidas', 'errores']
+for (const d of rf.dominios) {
+  if (!d.desglose) fallo(`Dominio ${d.id}: falta el desglose que pide el template (*3.2).`)
+  else
+    for (const k of SUBBLOQUES)
+      if (!d.desglose[k]?.length) fallo(`Dominio ${d.id}: el desglose no tiene "${k}".`)
+  // Las variantes de *3.2 exigen desglose propio en cada requerimiento: si falta uno,
+  // la variante "completo" saldría con un hueco silencioso.
+  for (const r of d.requerimientos) {
+    if (!r.detalle) fallo(`${r.id}: falta el desglose individual que usan las variantes de *3.2.`)
+    else
+      for (const k of SUBBLOQUES)
+        if (!r.detalle[k]?.length) fallo(`${r.id}: el desglose individual no tiene "${k}".`)
+  }
+}
+
+// Cada RNF vive en exactamente un grupo, y ningún grupo queda vacío.
+const grupos = new Set(rnf.grupos.map((g) => g.nombre))
+for (const r of rnf.requerimientos)
+  if (!grupos.has(r.grupo)) fallo(`${r.id}: grupo "${r.grupo}" no está declarado en rnf.grupos.`)
+for (const g of rnf.grupos)
+  if (!rnf.requerimientos.some((r) => r.grupo === g.nombre)) fallo(`Grupo "${g.nombre}": no tiene ningún RNF.`)
+
+// Los tres modelos de *4 necesitan su tira de pasos para la vista animada.
+const PASOS = { seq: 'secuencia', std: 'estados', dfd: 'flujoDatos' }
+for (const m of modelos.modelos) {
+  if (!diagramas[PASOS[m.id]]?.pasos?.length) fallo(`Modelo ${m.id}: faltan los pasos en diagramas.json.`)
+  if (!m.trazabilidad) fallo(`Modelo ${m.id}: sin trazabilidad no puede estar en el documento.`)
+}
+
+// Una clase del modelo conceptual sin requerimiento que la justifique sobra.
+for (const c of clases.clases) {
+  if (!c.realiza) fallo(`Clase ${c.nombre}: no cita ningún requerimiento (regla de *3.3).`)
+  if (!c.atributos?.length || !c.funciones?.length) fallo(`Clase ${c.nombre}: falta atributos o funciones.`)
+}
+for (const e of datosLogicos.entidades)
+  if (!e.retencion || !e.integridad) fallo(`Dato "${e.entidad}": falta retención o integridad.`)
+
+// La portada y las referencias son parte del entregable, no adorno.
+if (!srs.portada?.version || !srs.portada?.fecha) fallo('srs.json: la portada necesita versión y fecha.')
+if (!srs.historial?.length) fallo('srs.json: el historial de revisiones está vacío.')
+if (srs.referencias.length < 4) fallo('srs.json: *1.4 necesita las referencias del material del curso.')
 
 if (errores.length) {
   console.error(`\n✗ ${errores.length} problema(s) de contenido:\n` + errores.map((e) => '  · ' + e).join('\n') + '\n')
@@ -170,5 +225,5 @@ if (errores.length) {
 console.log(
   `✓ Contenido válido — ${totalRF} RF · ${rnf.requerimientos.length} RNF · ` +
     `${restr.restricciones.filas.length} RD · ${restr.inversos.filas.length} RI · ` +
-    `${qos.filas.length} filas QoS · ${bloqueos.bloqueos.length} bloqueos`,
+    `${qos.filas.length} filas QoS · ${clases.clases.length} clases · ${modelos.modelos.length} modelos`,
 )

@@ -51,34 +51,43 @@
 .dd .tag { fill: var(--ink-faint-text); font-family: var(--font-mono); font-size: 8px; text-anchor: middle; letter-spacing: .1em }
 .dd .tag-ext { fill: none; stroke: var(--hairline); stroke-width: .8 }
 
-/* ---- animación: mismo contenido, revelado por pasos ----
-   El estado lo lleva el contenedor .dd-host; el SVG solo marca sus grupos st1…st5. */
-@keyframes dd-in { from { opacity: 0 } to { opacity: 1 } }
-@keyframes dd-draw { from { stroke-dashoffset: 1 } to { stroke-dashoffset: 0 } }
-
-.dd-host.anim .st1,
-.dd-host.anim .st2,
-.dd-host.anim .st3,
-.dd-host.anim .st4,
-.dd-host.anim .st5 { opacity: 0 }
-
-.dd-host.anim.play .st1 { animation: dd-in .45s ease .1s forwards }
-.dd-host.anim.play .st2 { animation: dd-in .45s ease 2.1s forwards }
-.dd-host.anim.play .st3 { animation: dd-in .45s ease 4.1s forwards }
-.dd-host.anim.play .st4 { animation: dd-in .45s ease 6.1s forwards }
-.dd-host.anim.play .st5 { animation: dd-in .45s ease 8.1s forwards }
-
-.dd-host.anim.play .ap { stroke-dasharray: 1; stroke-dashoffset: 1 }
-.dd-host.anim.play .st1.ap { opacity: 1; animation: dd-draw 1.1s ease-out .2s forwards }
-.dd-host.anim.play .st2.ap { opacity: 1; animation: dd-draw 1.1s ease-out 2.2s forwards }
-.dd-host.anim.play .st3.ap { opacity: 1; animation: dd-draw 1.1s ease-out 4.2s forwards }
-.dd-host.anim.play .st4.ap { opacity: 1; animation: dd-draw 1.1s ease-out 6.2s forwards }
-.dd-host.anim.play .st5.ap { opacity: 1; animation: dd-draw 1.1s ease-out 8.2s forwards }
-
-@media (prefers-reduced-motion: reduce) {
-  .dd-host.anim [class*="st"] { opacity: 1 !important }
-  .dd-host.anim .ap { stroke-dashoffset: 0 !important }
+/* ---- por pasos: el estado lo lleva data-paso en .dd-host ----
+   El SVG solo marca sus grupos st1…st5. Nada de retardos encadenados: cada
+   paso se muestra o no según el paso actual, así el presentador puede ir y volver. */
+.dd-host {
+  display: block;
+  --dd-draw: .6s;   /* lo que tarda en aparecer un paso */
+  --dd-gap: .6s;    /* la pausa para leerlo; el mismo par vive en useDiagramSteps.js */
 }
 
-/* El contenedor da el ancho; el SVG se adapta. */
-.dd-host { display: block }
+.dd-host.anim [class*="st"] { opacity: 0; transition: opacity var(--dd-draw) ease }
+
+/* Cada paso revela el suyo y mantiene los anteriores. */
+.dd-host.anim[data-paso="1"] .st1,
+.dd-host.anim[data-paso="2"] :is(.st1, .st2),
+.dd-host.anim[data-paso="3"] :is(.st1, .st2, .st3),
+.dd-host.anim[data-paso="4"] :is(.st1, .st2, .st3, .st4),
+.dd-host.anim[data-paso="5"] :is(.st1, .st2, .st3, .st4, .st5) { opacity: 1 }
+
+/* El paso actual corre: el trazo avanza en el sentido de la flecha, más grueso,
+   para que se vea qué se mueve y hacia dónde. Los pasos ya recorridos quedan quietos.
+   Los caminos llevan pathLength="1", así el patrón es fracción del recorrido. */
+@keyframes dd-flujo { from { stroke-dashoffset: .2 } to { stroke-dashoffset: 0 } }
+
+.dd-host.anim[data-paso="1"] :is(.st1.ap, .st1 .ap),
+.dd-host.anim[data-paso="2"] :is(.st2.ap, .st2 .ap),
+.dd-host.anim[data-paso="3"] :is(.st3.ap, .st3 .ap),
+.dd-host.anim[data-paso="4"] :is(.st4.ap, .st4 .ap),
+.dd-host.anim[data-paso="5"] :is(.st5.ap, .st5 .ap) {
+  stroke-width: 2.6;
+  stroke-dasharray: .06 .04;
+  animation: dd-flujo 1.4s linear infinite;
+}
+
+/* Terminada la secuencia el dibujo vuelve a su forma estándar: sin trazo en marcha. */
+.dd-host.anim[data-fin] .ap { stroke-dasharray: none; animation: none; stroke-width: inherit }
+
+@media (prefers-reduced-motion: reduce) {
+  .dd-host.anim [class*="st"] { opacity: 1 !important; transition: none }
+  .dd-host.anim .ap { stroke-dasharray: none !important; animation: none !important }
+}

@@ -73,3 +73,13 @@ scripts/       validadores de contenido y de contraste
 5. Añade su bloque a `scripts/build-md.mjs` para que salga también en el documento.
 
 El validador falla si te saltas el paso 3 o el 4.
+
+## Agent skills
+
+### Issue tracker
+
+Los issues viven en GitHub Issues de `sjunka/carpeta-ciudadana`, vía el CLI `gh`. Ver `docs/agents/issue-tracker.md`.
+
+### Domain docs
+
+Repo de contexto único: `CONTEXT.md` en la raíz y ADRs en `docs/adr/`. Ver `docs/agents/domain.md`.

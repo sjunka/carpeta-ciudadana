@@ -16,8 +16,8 @@ export default function ContextDiagram() {
     <line x1="784" y1="72" x2="784" y2="656" className="bnd-int"/>
     <rect x="184" y="48" width="224" height="16" rx="2" className="bg"/>
     <text x="296" y="60" className="bnd-lab auto">LÍNEA DE AUTOMATIZACIÓN</text>
-    <rect x="696" y="48" width="176" height="16" rx="2" className="bg"/>
-    <text x="784" y="60" className="bnd-lab int">INTEGRACIÓN CON…</text>
+    <rect x="672" y="48" width="224" height="16" rx="2" className="bg"/>
+    <text x="784" y="60" className="bnd-lab int">INTEGRACIÓN CON SISTEMAS EXTERNOS</text>
     
     {/* ARROWS: people */}
     <path pathLength="1" className="st1 ap ln-m" d="M 184,184 H 240 Q 248,184 248,192 V 312 Q 248,320 256,320 H 423" markerEnd="url(#c2ar)"/>
@@ -42,7 +42,7 @@ export default function ContextDiagram() {
     </g>
     
     <g className="st5">
-    <rect x="236" y="352" width="164" height="20" rx="2" className="bg"/>
+    <rect x="230" y="352" width="176" height="20" rx="2" className="bg"/>
     <text x="318" y="365" className="alab">ESTADO Y AVISOS DE LA CARPETA</text>
     </g>
     
@@ -53,7 +53,7 @@ export default function ContextDiagram() {
     </g>
     
     <g className="st5">
-    <rect x="236" y="380" width="164" height="20" rx="2" className="bg"/>
+    <rect x="230" y="380" width="176" height="20" rx="2" className="bg"/>
     <text x="318" y="393" className="alab">ACUSE Y ESTADO DE LA PETICIÓN</text>
     </g>
     

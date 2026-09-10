@@ -13,19 +13,27 @@ Secciones fijas, en este orden y con esta numeración:
 
 | # | Sección | Qué contiene |
 |---|---|---|
-| 1 | Requerimientos Funcionales | Tabla por dominio |
-| 2 | Requerimientos No Funcionales | Tabla única |
-| 3 | Mapeo RNF vs QoS | Tabla única |
-| 4 | Restricciones de Arquitectura | Tres tablas: diseño, inversos, granularidad |
-| 5 | Diagrama de Contexto | Actores, flujo, diagrama, lógica |
-| 6 | Casos de Uso | Referencia interna, no se entrega |
-| 7 | El proyecto en palabras simples | Prosa |
-| 8 | Evidencia de la API | Tabla + hallazgos |
-| 9 | Bloqueos y preguntas | Fichas |
+| 1 | Introducción | Propósito, alcance, glosario, referencias y visión general |
+| 2 | Descripción general | Perspectiva y diagrama de contexto, funciones, usuarios, restricciones generales, suposiciones y dependencias |
+| 3 | Requerimientos específicos | Interfaces externas, funcionales por dominio, clases, no funcionales con QoS, inversos, restricciones de diseño, datos lógicos y granularidad |
+| 4 | Modelos de análisis | Secuencia, transición de estados y flujo de datos |
+| 5 | Proceso de gestión de cambios | Procedimiento, historial y aprobación |
 
-La sección 4 existe porque el *template* del curso la pide: §3.6 «Inverse Requirements» y
-§3.7 «Design Constraints». Se añadió el 8 de septiembre de 2026, tras revisar el material del
-profesor, con permiso explícito del usuario.
+La estructura es la del *Software Requirements Specification Template* del curso
+(ANSI/IEEE Std. 830-1984). Se adoptó el 10 de septiembre de 2026 con permiso explícito del usuario,
+sustituyendo al esqueleto de nueve secciones del borrador. En el cambio salieron cuatro bloques:
+casos de uso, «el proyecto en palabras simples», la sección de evidencia de la API y las fichas de
+bloqueos. Ninguno se perdió del todo: la evidencia de la API vive ahora en *3.1.3 y *3.1.4, y los
+bloqueos abiertos se replantearon como *2.5 «Suposiciones y dependencias», que es su lugar en el
+template. El *3.3 del template original —casos de uso— desaparece y las subsecciones posteriores
+se renumeran de forma contigua: no se dejan huecos.
+
+**Numeración de *3.2 y *3.4.** El template pide cinco sub-bloques por requerimiento funcional
+(introducción, entradas, procesamiento, salidas y manejo de errores). Se escriben **una vez por
+dominio**, no por requerimiento: con 65 requerimientos el desglose individual repetiría lo mismo
+nueve veces sin añadir nada verificable. Los 30 requerimientos no funcionales se reparten en los
+seis atributos del template más un séptimo, usabilidad y accesibilidad, porque el caso la declara
+de máxima prioridad.
 
 **Comportamiento fijo de las tablas.** La cabecera de cada tabla queda fija bajo la navegación
 mientras se recorren sus filas, y se suelta al terminar esa tabla. Se consigue con `position:sticky`
@@ -171,7 +179,7 @@ Reglas técnicas, heredadas del skill `diagram-design`:
 - Conectores en ángulo recto redondeado. Diagonales, no.
 - Toda etiqueta lleva máscara opaca detrás y **6–10 px de aire** respecto a su línea.
 - Máximo **9 nodos y 12 flechas** por diagrama. Si te pasas, son dos diagramas.
-  - *Excepción única:* el diagrama de casos de uso. Su gramática son bloques, no nodos sueltos: se cuentan los **bloques** (máximo 3), y cada actor se conecta al bloque, nunca a cada elipse. Así el lector procesa tres cosas, no once.
+  - *Excepción:* en un diagrama de secuencia se cuentan las **líneas de vida** (máximo 5) y los **mensajes** (máximo 12), no los nodos. En un diagrama de estados se cuentan los estados.
 - Acento de color en **1 o 2 elementos**, nunca más.
 - Coordenadas y tamaños múltiplos de 4.
 - Leyenda en tira horizontal abajo, nunca flotando dentro del dibujo.
@@ -194,6 +202,12 @@ Para las secciones de prosa (4, 6 y los pies de diagrama):
 
 ---
 
+## 7 bis. El signo de sección no se escribe
+
+Nunca se escribe el signo de sección (U+00A7, *section sign*). No en el documento, no en el
+sitio, no en los scripts, no en los comentarios, no en la terminal. Las referencias cruzadas
+llevan asterisco: `*3.2`, `*1.4`. Al documentar esta regla el símbolo se nombra, no se imprime.
+
 ## 8. Qué no se hace nunca
 
 - Inventar un número sin marcarlo como asunción.
@@ -201,9 +215,15 @@ Para las secciones de prosa (4, 6 y los pies de diagrama):
 - Añadir un requerimiento que el caso no sostiene, para rellenar.
 - Tocar la paleta, la tipografía o el layout del artefacto.
 - Publicar un diagrama sin pasar las dos verificaciones.
-- **Editar a mano `docs/entrega-1.md` o `assignment1/simulacion-borrador.md`.** Los dos son
-  salida de `npm run md`, igual que `dist/`. Se cambia el JSON y se vuelven a generar; así el
+- **Editar a mano `docs/srs-assignment1.md`, `assignment1/srs-assignment1.md`, los tres HTML de
+  `assignment1/diagramas/` que genera `build-diagrams.mjs` o los cuatro PNG que genera
+  `build-png.mjs`.** Todos son salida de `npm run md`,
+  igual que `dist/`. Se cambia el JSON y se vuelven a generar; así el
   sitio y el documento no pueden desincronizarse.
+  **Excepción: `docs/agents/`.** Ese directorio no es salida de `npm run md`: lo escribe
+  `/setup-matt-pocock-skills` y lo leen los skills de ingeniería para saber dónde viven los
+  issues y la documentación de dominio. Se edita a mano y no se regenera. `CONTEXT.md` y
+  `docs/adr/`, cuando existan, siguen la misma excepción.
 - Añadir una restricción de diseño sin citar su factor, su pilar o el caso.
 - Partir un servicio en el análisis de granularidad sin nombrar el driver que lo justifica.
 

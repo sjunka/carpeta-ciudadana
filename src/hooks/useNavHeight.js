@@ -11,9 +11,11 @@ export default function useNavHeight() {
       if (alto > 0) document.documentElement.style.setProperty('--navh', `${Math.round(alto)}px`)
     }
     medir()
-    window.addEventListener('resize', medir)
+    // La barra cambia de alto al entrar y salir de la sección 3, no solo al redimensionar.
+    const ro = new ResizeObserver(medir)
+    if (ref.current) ro.observe(ref.current)
     document.fonts?.ready.then(medir)
-    return () => window.removeEventListener('resize', medir)
+    return () => ro.disconnect()
   }, [])
 
   return ref
