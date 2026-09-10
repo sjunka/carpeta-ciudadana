@@ -36,6 +36,19 @@ a:hover { text-decoration: underline }
   max-width: 1180px; margin: 0 auto;
   padding: var(--s-xxl) var(--s-lg) var(--s-xl);
   display: grid; gap: var(--s-lg);
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  align-items: center; column-gap: var(--s-xxl);
+}
+.mast-txt { display: grid; gap: var(--s-lg); align-content: center }
+/* El fondo del render es el mismo papel cálido del lienzo: sobre la banda noche
+   funciona como una lámina apoyada, con su propio filete y su elevación. */
+.mast-img { margin: 0; border-radius: var(--r-xl); overflow: hidden; box-shadow: var(--e-2) }
+.mast-img img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover }
+.mast-in .meta { grid-column: 1 / -1 }
+
+@media (max-width: 860px) {
+  .mast-in { grid-template-columns: 1fr }
+  .mast-img { order: 3 }
 }
 .stamp {
   align-self: start;

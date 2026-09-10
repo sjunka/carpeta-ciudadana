@@ -3,6 +3,10 @@
   "titulo": "Carpeta Ciudadana",
   "subtitulo": "Especificación de requerimientos del Operador de Carpeta Ciudadana, con la estructura del <i>Software Requirements Specification Template</i> del curso (ANSI/IEEE Std. 830-1984). Los criterios de aceptación son medibles; los números que el caso no fija están marcados como asunción.",
   "favicon": "🗂️",
+  "portada": {
+    "archivo": "og-carpeta-ciudadana.jpg",
+    "alt": "Un agente digital ordena documentos verificados alrededor de una carpeta azul."
+  },
   "tema": {
     "aOscuro": "Oscuro",
     "aClaro": "Claro"
@@ -14,7 +18,11 @@
     },
     {
       "titulo": "Equipo",
-      "valor": ["Sergio Junca", "Juan José Henao", "Samuel Cadavid"]
+      "valor": [
+        "Sergio Junca",
+        "Juan José Henao",
+        "Samuel Cadavid"
+      ]
     },
     {
       "titulo": "Docente",
