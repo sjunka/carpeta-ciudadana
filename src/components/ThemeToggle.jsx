@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Sun, Moon } from 'lucide-react'
-import meta from '../content/meta.json'
+import metaA1 from '../content/meta.json'
 
 const leer = () => {
   try { return localStorage.getItem('tema') } catch { return null }
@@ -10,7 +10,7 @@ const leer = () => {
 const delSistema = () =>
   window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
 
-export default function ThemeToggle() {
+export default function ThemeToggle({ meta = metaA1 }) {
   const [tema, setTema] = useState(() => leer() || delSistema())
 
   useEffect(() => {

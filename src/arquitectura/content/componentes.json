@@ -1,0 +1,158 @@
+{
+  "intro": "Dos vistas lógicas dicen qué piezas hay y qué se piden entre sí, sin tecnología. Dos vistas técnicas dicen con qué están hechas. Las flechas son dependencias: van de quien llama a quien responde.",
+  "diagramas": [
+    {
+      "id": "logico-nucleo", "num": "3.2.1", "tipo": "componentes", "titulo": "Componentes lógicos · núcleo",
+      "introduccion": "Las piezas que atienden al ciudadano en las cuatro operaciones implementadas.",
+      "cierre": "Solo la pasarela habla con GovCarpeta: el resto del sistema no conoce su contrato.",
+      "realiza": "RF-01, RF-02, RF-06, RF-09, RD-11, RD-12",
+      "w": 1056, "h": 552,
+      "nodos": [
+        { "id": "portal", "nombre": "Portal del ciudadano", "sub": "Mi Carpeta Segura", "x": 40, "y": 224 },
+        { "id": "ms01", "nombre": "Identidad y acceso", "sub": "MS-01", "x": 312, "y": 64 },
+        { "id": "ms03", "nombre": "Afiliación", "sub": "MS-03", "x": 312, "y": 224 },
+        { "id": "ms04", "nombre": "Custodia documental", "sub": "MS-04", "x": 312, "y": 384 },
+        { "id": "reg", "nombre": "Registraduría", "sub": "externo · simulado", "x": 584, "y": 64, "externo": true },
+        { "id": "ms08", "nombre": "Pasarela ACL", "sub": "MS-08", "x": 584, "y": 224, "acento": true },
+        { "id": "ms05", "nombre": "Índice de carpeta", "sub": "MS-05", "x": 584, "y": 384 },
+        { "id": "gov", "nombre": "GovCarpeta", "sub": "centralizador MinTIC", "x": 856, "y": 224, "externo": true },
+        { "id": "ms02", "nombre": "Auditoría", "sub": "MS-02", "x": 856, "y": 384 }
+      ],
+      "flechas": [
+        { "de": "portal", "a": "ms01", "datos": "CREDENCIALES", "puntos": [[120, 224], [120, 96], [312, 96]], "st": 1 },
+        { "de": "portal", "a": "ms03", "datos": "REGISTRO", "st": 2 },
+        { "de": "ms03", "a": "ms01", "datos": "USUARIO", "puntos": [[352, 224], [352, 128]], "st": 2 },
+        { "de": "ms03", "a": "reg", "datos": "IDENTIDAD", "puntos": [[432, 224], [432, 176], [664, 176], [664, 128]], "st": 2 },
+        { "de": "ms03", "a": "ms08", "datos": "AFILIACIÓN", "st": 3 },
+        { "de": "ms08", "a": "gov", "datos": "CÉDULA · URL", "st": 3 },
+        { "de": "portal", "a": "ms04", "datos": "DOCUMENTOS", "puntos": [[120, 288], [120, 416], [312, 416]], "st": 4 },
+        { "de": "ms04", "a": "ms08", "datos": "URL PREFIRMADA", "puntos": [[392, 384], [392, 336], [624, 336], [624, 288]], "acento": true, "st": 4 },
+        { "de": "ms04", "a": "ms05", "datos": "METADATOS", "st": 5 },
+        { "de": "ms04", "a": "ms02", "datos": "EVENTO DE ACCESO", "puntos": [[392, 448], [392, 480], [936, 480], [936, 448]], "st": 5 }
+      ],
+      "pasos": [
+        "1 · El portal autentica al ciudadano contra Identidad y acceso.",
+        "2 · Afiliación crea el usuario y verifica identidad (simulada, B-06).",
+        "3 · Afiliación consulta y registra en GovCarpeta solo a través de la pasarela.",
+        "4 · Custodia guarda documentos y manda al centralizador una URL, nunca el contenido.",
+        "5 · Custodia alimenta el índice de carpeta y la auditoría."
+      ]
+    },
+    {
+      "id": "logico-federacion", "num": "3.2.2", "tipo": "componentes", "titulo": "Componentes lógicos · federación y valor",
+      "introduccion": "Las piezas diseñadas que hablan con otros operadores, con entidades y con el Estado. Se comunican por eventos.",
+      "cierre": "El bus desacopla: si Notificaciones cae, los documentos siguen llegando.",
+      "realiza": "RF-03, RF-04, RF-05, RF-07, RF-08, RNF-07",
+      "w": 1056, "h": 520,
+      "nodos": [
+        { "id": "ent", "nombre": "Entidades emisoras", "sub": "externo", "x": 40, "y": 64, "externo": true },
+        { "id": "ms07", "nombre": "Interoperabilidad", "sub": "MS-07", "x": 312, "y": 64 },
+        { "id": "ms06", "nombre": "Autorizaciones", "sub": "MS-06", "x": 584, "y": 64 },
+        { "id": "ops", "nombre": "Operadores pares", "sub": "externo", "x": 856, "y": 64, "externo": true },
+        { "id": "ms04", "nombre": "Custodia documental", "sub": "MS-04", "x": 40, "y": 224 },
+        { "id": "bus", "nombre": "Bus de eventos", "sub": "eventos de dominio", "x": 312, "y": 224, "w": 432, "acento": true },
+        { "id": "ms11", "nombre": "Premium", "sub": "MS-11", "x": 856, "y": 224 },
+        { "id": "ms09", "nombre": "Notificaciones", "sub": "MS-09", "x": 312, "y": 384 },
+        { "id": "ms10", "nombre": "Analítica", "sub": "MS-10", "x": 584, "y": 384 }
+      ],
+      "flechas": [
+        { "de": "ent", "a": "ms07", "datos": "EMISIÓN", "st": 1 },
+        { "de": "ms07", "a": "ops", "datos": "PAQUETE FIRMADO", "puntos": [[392, 64], [392, 32], [936, 32], [936, 64]], "st": 1 },
+        { "de": "ms07", "a": "ms06", "datos": "CONSENTIMIENTO", "st": 2 },
+        { "de": "ms07", "a": "bus", "datos": "RECIBIDO", "puntos": [[392, 128], [392, 224]], "st": 3 },
+        { "de": "ms06", "a": "bus", "datos": "AUTORIZADO", "puntos": [[664, 128], [664, 224]], "st": 3 },
+        { "de": "ms11", "a": "bus", "datos": "CASO", "st": 3 },
+        { "de": "bus", "a": "ms04", "datos": "INGRESO", "st": 4 },
+        { "de": "bus", "a": "ms09", "datos": "AVISO", "puntos": [[392, 288], [392, 384]], "st": 5 },
+        { "de": "bus", "a": "ms10", "datos": "METADATOS ANÓNIMOS", "puntos": [[664, 288], [664, 384]], "st": 5 }
+      ],
+      "pasos": [
+        "1 · Interoperabilidad recibe de entidades y entrega a operadores pares.",
+        "2 · Ningún documento sale sin consultar Autorizaciones.",
+        "3 · Todo hecho de negocio se publica en el bus de eventos.",
+        "4 · Custodia consume la recepción y guarda el documento.",
+        "5 · Notificaciones y Analítica reaccionan sin estar en el camino crítico."
+      ]
+    },
+    {
+      "id": "tecnico-prototipo", "num": "3.3.1", "tipo": "componentes", "titulo": "Componentes técnicos · prototipo",
+      "introduccion": "Lo que corre hoy: una SPA, Keycloak y tres servicios Express, con PostgreSQL y un almacén compatible con S3.",
+      "cierre": "El binario va del navegador al almacén: ningún servicio lo carga en memoria.",
+      "realiza": "RD-02, RD-05, RD-06, RD-08, RNF-10",
+      "w": 1056, "h": 552,
+      "nodos": [
+        { "id": "spa", "nombre": "SPA React 18", "sub": "oidc-client-ts", "x": 40, "y": 224 },
+        { "id": "kc", "nombre": "Keycloak 26", "sub": "realm carpeta", "x": 312, "y": 64 },
+        { "id": "afil", "nombre": "afiliacion", "sub": "Node 22 · Express 5", "x": 312, "y": 224 },
+        { "id": "cust", "nombre": "custodia", "sub": "Node 22 · Express 5", "x": 312, "y": 384 },
+        { "id": "pg", "nombre": "PostgreSQL 16", "sub": "una base por servicio", "x": 584, "y": 64 },
+        { "id": "pas", "nombre": "pasarela", "sub": "Node 22 · Express 5", "x": 584, "y": 224 },
+        { "id": "s3", "nombre": "MinIO · GCS", "sub": "API S3", "x": 584, "y": 384, "acento": true },
+        { "id": "gov", "nombre": "GovCarpeta", "sub": "Heroku · REST", "x": 856, "y": 224, "externo": true }
+      ],
+      "flechas": [
+        { "de": "spa", "a": "kc", "datos": "OIDC · PKCE", "puntos": [[120, 224], [120, 96], [312, 96]], "st": 1 },
+        { "de": "spa", "a": "afil", "datos": "HTTPS · JSON", "st": 2 },
+        { "de": "afil", "a": "kc", "datos": "ADMIN API", "puntos": [[352, 224], [352, 128]], "st": 2 },
+        { "de": "afil", "a": "pg", "datos": "SQL", "puntos": [[432, 224], [432, 176], [664, 176], [664, 128]], "st": 2 },
+        { "de": "afil", "a": "pas", "datos": "HTTPS · JSON", "st": 3 },
+        { "de": "pas", "a": "gov", "datos": "HTTPS · JSON", "st": 3 },
+        { "de": "spa", "a": "cust", "datos": "BEARER JWT", "puntos": [[120, 288], [120, 416], [312, 416]], "st": 4 },
+        { "de": "cust", "a": "s3", "datos": "S3 V4", "st": 4 },
+        { "de": "spa", "a": "s3", "datos": "PUT PREFIRMADO", "puntos": [[80, 288], [80, 480], [664, 480], [664, 448]], "acento": true, "st": 4 },
+        { "de": "cust", "a": "pas", "datos": "ID TOKEN", "puntos": [[392, 384], [392, 336], [624, 336], [624, 288]], "st": 5 }
+      ],
+      "pasos": [
+        "1 · La SPA inicia sesión con Keycloak por OIDC y PKCE.",
+        "2 · afiliacion crea el usuario en Keycloak y guarda la afiliación en su base.",
+        "3 · afiliacion llega a GovCarpeta a través de la pasarela.",
+        "4 · La SPA sube el binario directo al almacén con la URL que firma custodia.",
+        "5 · custodia pide la autenticación a la pasarela con un ID token."
+      ]
+    },
+    {
+      "id": "tecnico-objetivo", "num": "3.3.2", "tipo": "componentes", "titulo": "Componentes técnicos · plataforma objetivo",
+      "introduccion": "La plataforma para todo el país: borde global, eventos gestionados, datos en alta disponibilidad y analítica separada.",
+      "cierre": "Kafka es la columna: todo lo que no es camino crítico cuelga de él.",
+      "realiza": "RNF-01, RNF-07, RNF-08, RNF-23, RNF-30",
+      "w": 1056, "h": 520,
+      "nodos": [
+        { "id": "lb", "nombre": "Load Balancer", "sub": "Cloud Armor", "x": 40, "y": 224 },
+        { "id": "gke", "nombre": "GKE Autopilot", "sub": "Keycloak HA", "x": 312, "y": 64 },
+        { "id": "run", "nombre": "Cloud Run", "sub": "microservicios", "x": 312, "y": 224 },
+        { "id": "gcs", "nombre": "Cloud Storage", "sub": "dual-region · Bucket Lock", "x": 312, "y": 384 },
+        { "id": "sql", "nombre": "Cloud SQL HA", "sub": "PostgreSQL 16", "x": 584, "y": 64 },
+        { "id": "kafka", "nombre": "Confluent Kafka", "sub": "Schema Registry", "x": 584, "y": 224, "acento": true },
+        { "id": "fn", "nombre": "Cloud Run functions", "sub": "notificaciones", "x": 584, "y": 384 },
+        { "id": "bq", "nombre": "BigQuery", "sub": "proyecto analítico", "x": 856, "y": 384 }
+      ],
+      "flechas": [
+        { "de": "lb", "a": "gke", "datos": "OIDC", "puntos": [[120, 224], [120, 96], [312, 96]], "st": 1 },
+        { "de": "lb", "a": "run", "datos": "HTTPS", "st": 1 },
+        { "de": "gke", "a": "sql", "datos": "SQL", "st": 2 },
+        { "de": "run", "a": "sql", "datos": "SQL", "puntos": [[432, 224], [432, 176], [664, 176], [664, 128]], "st": 2 },
+        { "de": "run", "a": "gcs", "datos": "S3 V4", "puntos": [[392, 288], [392, 384]], "st": 2 },
+        { "de": "run", "a": "kafka", "datos": "CLOUDEVENTS", "acento": true, "st": 3 },
+        { "de": "kafka", "a": "fn", "datos": "AVISOS", "puntos": [[664, 288], [664, 384]], "st": 4 },
+        { "de": "kafka", "a": "bq", "datos": "METADATOS", "puntos": [[744, 256], [936, 256], [936, 384]], "st": 5 }
+      ],
+      "pasos": [
+        "1 · El borde global filtra y reparte el tráfico.",
+        "2 · Los servicios guardan en Cloud SQL HA y en Cloud Storage dual-region.",
+        "3 · Cada hecho de negocio sale a Kafka como CloudEvent.",
+        "4 · Las funciones de notificación consumen sin tocar el camino crítico.",
+        "5 · BigQuery recibe metadatos para la analítica del Estado."
+      ]
+    }
+  ],
+  "tecnologias": [
+    { "componente": "Portal", "tecnologia": "React + oidc-client-ts + lucide-react", "version": "React 18.3 · oidc-client-ts 3", "rol": "SPA estática en GitHub Pages" },
+    { "componente": "MS-01 Identidad", "tecnologia": "Keycloak", "version": "26.x", "rol": "Proveedor OIDC, usuarios, bloqueo por fuerza bruta" },
+    { "componente": "MS-03 · MS-04 · MS-08", "tecnologia": "Node.js + Express", "version": "Node 22 LTS · Express 5", "rol": "Servicios REST sin estado" },
+    { "componente": "Validación de tokens", "tecnologia": "jose", "version": "5.x", "rol": "JWT RS256 con JWKS en caché" },
+    { "componente": "Persistencia", "tecnologia": "PostgreSQL + pg", "version": "16 · pg 8", "rol": "Una base por servicio" },
+    { "componente": "Almacén de objetos", "tecnologia": "MinIO local · Cloud Storage con HMAC", "version": "@aws-sdk/client-s3 3", "rol": "URL prefirmadas V4" },
+    { "componente": "Cómputo", "tecnologia": "Cloud Run", "version": "gen2", "rol": "Contenedores OCI multi-arquitectura" },
+    { "componente": "Eventos (objetivo)", "tecnologia": "Confluent Cloud Kafka + Schema Registry", "version": "Kafka 3.x", "rol": "CloudEvents 1.0" }
+  ]
+}

@@ -2,11 +2,11 @@ import { buscarRef, PATRON } from '../lib/refs.js'
 
 // Convierte los identificadores de una lista de trazabilidad en referencias con
 // su descripción al pasar el cursor. El texto que no reconoce lo deja intacto.
-export default function Refs({ texto, className }) {
+export default function Refs({ texto, className, buscar = buscarRef, patron = PATRON }) {
   const trozos = []
   let ultimo = 0
-  for (const m of texto.matchAll(PATRON)) {
-    const desc = buscarRef(m[0])
+  for (const m of texto.matchAll(patron)) {
+    const desc = buscar(m[0])
     if (!desc) continue
     if (m.index > ultimo) trozos.push(texto.slice(ultimo, m.index))
     trozos.push(

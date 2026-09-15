@@ -8,9 +8,9 @@
     "dev": "vite",
     "build": "npm run check && npm run md && vite build",
     "preview": "vite preview",
-    "check": "node scripts/check-content.mjs && node scripts/check-contrast.mjs && node scripts/check-render.mjs",
-    "md": "node scripts/build-md.mjs && node scripts/build-diagrams.mjs && node scripts/build-png.mjs",
-    "pdf": "npm run md && node scripts/build-pdf.mjs"
+    "check": "node scripts/check-content.mjs && node scripts/check-contrast.mjs && node scripts/check-render.mjs && node scripts/arquitectura/check.mjs",
+    "md": "node scripts/build-md.mjs && node scripts/build-diagrams.mjs && node scripts/build-png.mjs && node scripts/arquitectura/build-md.mjs && node scripts/arquitectura/build-diagramas.mjs",
+    "pdf": "npm run md && node scripts/build-pdf.mjs && node scripts/build-pdf.mjs --fuente docs/arquitectura-assignment2.md --nombre arquitectura/arquitectura-carpeta-ciudadana.pdf --copia ../assignment2/arquitectura-carpeta-ciudadana.pdf"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.3.4",

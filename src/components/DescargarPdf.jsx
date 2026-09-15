@@ -1,8 +1,8 @@
 import { Download } from 'lucide-react'
-import meta from '../content/meta.json'
+import metaA1 from '../content/meta.json'
 
 // Descargar PDF. El archivo vive en public/ y se nombra en meta.json.
-export default function DescargarPdf() {
+export default function DescargarPdf({ meta = metaA1 }) {
   const archivo = meta.pdf?.archivo
   if (!archivo) return null
 

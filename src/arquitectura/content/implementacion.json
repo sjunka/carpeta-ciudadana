@@ -1,0 +1,58 @@
+{
+  "intro": "Cuatro operaciones implementadas de extremo a extremo contra GovCarpeta real. El código vive en <code>operador/</code> del repositorio.",
+  "operaciones": [
+    {
+      "hu": "HU-01",
+      "operacion": "Registro y afiliación",
+      "endpoints": "POST /ciudadanos · pasarela GET y POST /centralizador/ciudadanos",
+      "prueba": "operador/e2e/registro.spec.js"
+    },
+    {
+      "hu": "HU-02",
+      "operacion": "Ingreso",
+      "endpoints": "OIDC de Keycloak · GET /documentos",
+      "prueba": "operador/e2e/login.spec.js"
+    },
+    {
+      "hu": "HU-03",
+      "operacion": "Carga de documento",
+      "endpoints": "POST /documentos · POST /documentos/{id}/confirmacion",
+      "prueba": "operador/e2e/carga.spec.js"
+    },
+    {
+      "hu": "HU-04",
+      "operacion": "Autenticación",
+      "endpoints": "POST /documentos/{id}/autenticacion · pasarela PUT /centralizador/documentos/autenticacion",
+      "prueba": "operador/e2e/autenticacion.spec.js"
+    }
+  ],
+  "correr": [
+    "Copiar <code>operador/.env.example</code> a <code>operador/.env</code>.",
+    "<code>cd operador && docker compose up -d</code> levanta PostgreSQL, MinIO, Keycloak y los tres servicios.",
+    "<code>docker compose --profile migrar run --rm migrar</code> crea las tablas.",
+    "<code>npm --prefix web run dev</code> abre el portal en <code>http://localhost:5174/carpeta-ciudadana/operador/</code>.",
+    "<code>npm --prefix e2e test</code> recorre las cuatro operaciones por la interfaz."
+  ],
+  "estado": [
+    {
+      "item": "Pruebas unitarias",
+      "valor": "Pendiente de ejecutar"
+    },
+    {
+      "item": "e2e local contra GovCarpeta",
+      "valor": "Pendiente: requiere Docker Desktop encendido"
+    },
+    {
+      "item": "Despliegue en Cloud Run",
+      "valor": "Pendiente: requiere crédito GCP y gcloud auth login"
+    },
+    {
+      "item": "Registro de Mi Carpeta Segura en GovCarpeta",
+      "valor": "Pendiente: requiere confirmación del equipo"
+    }
+  ],
+  "pendientes": [
+    "Transferencia entre operadores (RF-03) y publicación de transferAPIURL.",
+    "Kafka, notificaciones, analítica y Premium: diseñados en *3 y *6."
+  ]
+}

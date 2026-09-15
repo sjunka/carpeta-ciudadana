@@ -1,0 +1,225 @@
+{
+  "intro": "Cada historia sigue el formato del ejemplo de la clase: quién, qué quiere y para qué, criterios verificables, escenario principal que alterna actor y sistema, y al menos un escenario alterno. El campo <i>Realiza</i> la ata a los requerimientos del SRS.",
+  "mapa": {
+    "id": "mapa-historias",
+    "tipo": "mapa-historias",
+    "titulo": "Mapa de historias del ciudadano",
+    "corte": "PROTOTIPO ENTREGA 2",
+    "actividades": [
+      { "nombre": "Afiliarse", "historias": ["HU-01", "HU-09"] },
+      { "nombre": "Ingresar y vigilar", "historias": ["HU-02", "HU-11"] },
+      { "nombre": "Guardar documentos", "historias": ["HU-03", "HU-04", "HU-05", "HU-06"] },
+      { "nombre": "Compartir", "historias": ["HU-07", "HU-08"] },
+      { "nombre": "Servicios de valor", "historias": ["HU-10", "HU-12"] }
+    ],
+    "pasos": [
+      "1 · Afiliarse: registro implementado; traslado de operador diseñado.",
+      "2 · Ingresar: login implementado; consulta de accesos diseñada.",
+      "3 · Guardar: carga y autenticación implementadas; recepción y descarga diseñadas.",
+      "4 · Compartir: autorización y envío a no afiliadas, diseñadas.",
+      "5 · Valor: PQRS Premium y analítica para el Estado, diseñadas."
+    ]
+  },
+  "historias": [
+    {
+      "id": "HU-01", "titulo": "Registro y afiliación", "estado": "Implementada",
+      "rol": "ciudadano colombiano sin operador", "accion": "registrarme en Mi Carpeta Segura con mi cédula", "beneficio": "tener una carpeta digital oficial y una cuenta institucional",
+      "realiza": "RF-01.1, RF-01.2, RF-01.3, RF-01.5, RF-06.2, RD-15, RNF-21, RI-03",
+      "criterios": [
+        "Si la cédula ya está afiliada a otro operador, el sistema rechaza el registro con 409 y dice a qué operador pertenece.",
+        "Si el centralizador no responde, el registro queda pendiente con 503 y nunca se crea la cuenta.",
+        "La cuenta institucional sigue el formato nombre.apellido.NNNNN@carpetacolombia.co y es única.",
+        "Al centralizador solo viajan id, nombre, dirección, correo institucional y operador."
+      ],
+      "principal": [
+        { "quien": "Ciudadano", "paso": "Abre «Crear mi carpeta» e ingresa cédula, nombre, apellido, dirección y correo de contacto." },
+        { "quien": "Sistema", "paso": "Valida el formato de los campos y simula la verificación de identidad (B-06)." },
+        { "quien": "Sistema", "paso": "Consulta a GovCarpeta si la cédula ya tiene operador y recibe 204: está libre." },
+        { "quien": "Sistema", "paso": "Deriva la cuenta institucional y crea el usuario deshabilitado en Keycloak." },
+        { "quien": "Sistema", "paso": "Registra al ciudadano en GovCarpeta con operador Mi Carpeta Segura y recibe 201." },
+        { "quien": "Sistema", "paso": "Habilita el usuario y muestra la cuenta institucional." },
+        { "quien": "Ciudadano", "paso": "Define su contraseña y queda listo para ingresar." }
+      ],
+      "alternos": [
+        { "titulo": "Ya afiliado a otro operador", "pasos": ["3a. GovCarpeta responde 200 con el operador en prosa.", "3b. El sistema extrae el nombre del operador y responde 409.", "3c. El portal ofrece el traslado (HU-09) en lugar del registro."] },
+        { "titulo": "Centralizador caído", "pasos": ["3a. La pasarela agota 8 s o el circuit breaker está abierto.", "3b. El sistema responde 503 y guarda la solicitud como pendiente.", "3c. El portal pide intentar más tarde; no se crea ninguna cuenta."] },
+        { "titulo": "GovCarpeta rechaza el alta", "pasos": ["5a. GovCarpeta responde 501 o 500.", "5b. El sistema borra el usuario de Keycloak (compensación) y responde 502."] }
+      ],
+      "prueba": "operador/e2e/registro.spec.js"
+    },
+    {
+      "id": "HU-02", "titulo": "Ingreso al operador", "estado": "Implementada",
+      "rol": "ciudadano afiliado", "accion": "ingresar con mi cuenta institucional y contraseña", "beneficio": "ver mi carpeta sin que nadie más pueda hacerlo",
+      "realiza": "RF-09.1, RNF-11, RNF-10",
+      "criterios": [
+        "El portal usa OIDC Authorization Code con PKCE S256; nunca maneja la contraseña.",
+        "Tras 5 intentos fallidos la cuenta se bloquea temporalmente.",
+        "La sesión expira tras 30 minutos de inactividad y el access token dura 5 minutos.",
+        "«Salir» cierra la sesión en Keycloak, no solo en el navegador."
+      ],
+      "principal": [
+        { "quien": "Ciudadano", "paso": "Pulsa «Ingresar»." },
+        { "quien": "Sistema", "paso": "Redirige a Keycloak con code_challenge y state." },
+        { "quien": "Ciudadano", "paso": "Escribe cuenta institucional y contraseña en la página en español del operador." },
+        { "quien": "Sistema", "paso": "Valida credenciales y devuelve un código de autorización al portal." },
+        { "quien": "Sistema", "paso": "El portal canjea el código con el code_verifier y recibe los tokens." },
+        { "quien": "Sistema", "paso": "Muestra «Mi carpeta» con los documentos del titular." }
+      ],
+      "alternos": [
+        { "titulo": "Credenciales inválidas repetidas", "pasos": ["4a. Keycloak rechaza la contraseña y muestra el error en español.", "4b. Al quinto intento bloquea la cuenta y lo informa sin decir si el usuario existe."] },
+        { "titulo": "Sesión expirada", "pasos": ["6a. La custodia responde 401 por token vencido.", "6b. El portal intenta renovar en silencio; si no puede, vuelve a pedir ingreso."] }
+      ],
+      "prueba": "operador/e2e/login.spec.js"
+    },
+    {
+      "id": "HU-03", "titulo": "Carga de documento temporal", "estado": "Implementada",
+      "rol": "ciudadano con sesión", "accion": "subir un PDF o una foto de un documento", "beneficio": "tenerlo a mano aunque no venga firmado por una entidad",
+      "realiza": "RF-02.2, RF-02.3, RNF-24, RI-06",
+      "criterios": [
+        "Se aceptan PDF, JPG y PNG de hasta 10 MB.",
+        "Cada ciudadano tiene un tope de 20 documentos temporales y 200 MB.",
+        "El binario va del navegador al almacén con una URL prefirmada de 5 minutos; nunca pasa por el servicio.",
+        "Al confirmar, el servicio comprueba tamaño, tipo y SHA-256; si no cuadran, borra el objeto."
+      ],
+      "principal": [
+        { "quien": "Ciudadano", "paso": "Pulsa «Subir documento», elige el archivo y le pone un título." },
+        { "quien": "Sistema", "paso": "Verifica tipo, tamaño y cuota, y registra el documento como pendiente." },
+        { "quien": "Sistema", "paso": "Entrega una URL prefirmada PUT de 5 minutos." },
+        { "quien": "Ciudadano", "paso": "El navegador sube el archivo directo al almacén." },
+        { "quien": "Sistema", "paso": "Confirma tamaño, tipo y SHA-256 y marca el documento como cargado." },
+        { "quien": "Ciudadano", "paso": "Ve la tarjeta del documento con estado «Temporal · sin firma»." }
+      ],
+      "alternos": [
+        { "titulo": "Cuota llena", "pasos": ["2a. El ciudadano ya tiene 20 documentos o 200 MB.", "2b. El sistema responde 422 y el portal explica cuánto espacio libre queda."] },
+        { "titulo": "Archivo no permitido", "pasos": ["2a. El tipo no es PDF, JPG ni PNG, o pesa más de 10 MB.", "2b. El sistema responde 415 o 413 sin emitir URL."] },
+        { "titulo": "Archivo alterado tras la firma de la URL", "pasos": ["5a. El objeto subido no coincide con el tamaño o tipo declarados.", "5b. El sistema borra el objeto y responde 422."] }
+      ],
+      "prueba": "operador/e2e/carga.spec.js"
+    },
+    {
+      "id": "HU-04", "titulo": "Autenticación vía GovCarpeta", "estado": "Implementada",
+      "rol": "ciudadano con un documento cargado", "accion": "pedir que el centralizador autentique mi documento", "beneficio": "tener constancia de que el documento pasó por el centralizador",
+      "realiza": "RF-06.6, RF-02.5, RI-01, RNF-21",
+      "criterios": [
+        "Al centralizador viaja una URL prefirmada GET de 15 minutos, nunca el contenido.",
+        "Solo el titular del documento puede pedir su autenticación; otro usuario recibe 403.",
+        "La respuesta en prosa del centralizador se normaliza y se guarda con fecha.",
+        "El portal lo muestra como «Autenticado por el centralizador», nunca como «certificado» (B-03)."
+      ],
+      "principal": [
+        { "quien": "Ciudadano", "paso": "Abre el detalle del documento y pulsa «Autenticar con el centralizador»." },
+        { "quien": "Sistema", "paso": "Comprueba que el documento es del titular y está cargado." },
+        { "quien": "Sistema", "paso": "Firma una URL GET de 15 minutos." },
+        { "quien": "Sistema", "paso": "La pasarela envía cédula, URL y título a authenticateDocument." },
+        { "quien": "Sistema", "paso": "Normaliza la respuesta y marca el documento como autenticado." },
+        { "quien": "Ciudadano", "paso": "Ve el nuevo estado con la fecha y el texto del centralizador." }
+      ],
+      "alternos": [
+        { "titulo": "Documento ajeno", "pasos": ["2a. El dueño del documento no coincide con el usuario del token.", "2b. El sistema responde 403 sin revelar si el documento existe."] },
+        { "titulo": "GovCarpeta responde error", "pasos": ["4a. El centralizador responde 4xx, 5xx o no contesta en 8 s.", "4b. El documento sigue cargado y el portal ofrece reintentar."] }
+      ],
+      "prueba": "operador/e2e/autenticacion.spec.js"
+    },
+    {
+      "id": "HU-05", "titulo": "Recepción de documento emitido", "estado": "Diseñada",
+      "rol": "ciudadano afiliado", "accion": "recibir en mi carpeta el diploma que emite mi universidad", "beneficio": "no tener que ir a pedirlo en papel",
+      "realiza": "RF-03.2, RF-03.3, RF-05.1, RNF-05",
+      "criterios": ["El documento llega con su firma intacta y metadatos completos.", "Una entrega repetida no duplica el documento.", "El ciudadano recibe un aviso por correo."],
+      "principal": [
+        { "quien": "Entidad", "paso": "Emite el documento firmado dirigido a la cédula." },
+        { "quien": "Sistema", "paso": "Recibe el documento, verifica la firma y lo guarda como vigente." },
+        { "quien": "Sistema", "paso": "Publica el evento de recepción y avisa al ciudadano." },
+        { "quien": "Ciudadano", "paso": "Encuentra el diploma en su carpeta." }
+      ],
+      "alternos": [{ "titulo": "Firma inválida", "pasos": ["2a. La firma no verifica.", "2b. El documento queda rechazado y la entidad recibe el motivo."] }]
+    },
+    {
+      "id": "HU-06", "titulo": "Consulta y descarga", "estado": "Diseñada",
+      "rol": "ciudadano con sesión", "accion": "buscar y descargar un documento de mi carpeta", "beneficio": "presentarlo donde me lo pidan",
+      "realiza": "RF-02.6, RF-02.7, RNF-04, RNF-01",
+      "criterios": ["La lista responde en menos de 2 s en p95.", "La descarga usa una URL prefirmada de corta vida."],
+      "principal": [
+        { "quien": "Ciudadano", "paso": "Filtra su carpeta por tipo o entidad." },
+        { "quien": "Sistema", "paso": "Devuelve la lista desde el índice de carpeta." },
+        { "quien": "Ciudadano", "paso": "Pulsa «Descargar»." },
+        { "quien": "Sistema", "paso": "Entrega una URL prefirmada GET y registra el acceso." }
+      ],
+      "alternos": [{ "titulo": "Almacén no disponible", "pasos": ["4a. El almacén no responde.", "4b. El portal muestra el documento en la lista y ofrece reintentar la descarga."] }]
+    },
+    {
+      "id": "HU-07", "titulo": "Autorización documento a documento", "estado": "Diseñada",
+      "rol": "ciudadano que recibe una petición", "accion": "elegir qué documentos comparto con una entidad", "beneficio": "controlar quién ve cada documento",
+      "realiza": "RF-04.3, RF-04.4, RF-04.5, RI-08",
+      "criterios": ["Ningún documento sale sin autorización explícita del titular.", "La autorización tiene vigencia y se puede revocar."],
+      "principal": [
+        { "quien": "Entidad", "paso": "Pide al ciudadano su diploma y su certificado laboral." },
+        { "quien": "Sistema", "paso": "Muestra la petición con lo que se pide y para qué." },
+        { "quien": "Ciudadano", "paso": "Marca solo el diploma y pulsa «Autorizar diploma»." },
+        { "quien": "Sistema", "paso": "Registra la autorización y entrega únicamente ese documento." }
+      ],
+      "alternos": [{ "titulo": "Petición rechazada", "pasos": ["3a. El ciudadano pulsa «Rechazar».", "3b. La entidad recibe el rechazo sin detalle de la carpeta."] }]
+    },
+    {
+      "id": "HU-08", "titulo": "Envío a entidad no afiliada", "estado": "Diseñada",
+      "rol": "ciudadano", "accion": "enviar un paquete de documentos a una entidad sin operador", "beneficio": "hacer un trámite con quien no está en la federación",
+      "realiza": "RF-04.1, RF-04.2, RF-03.4",
+      "criterios": ["El paquete viaja como enlace de corta vida, no como adjunto.", "El envío queda en la bitácora de accesos."],
+      "principal": [
+        { "quien": "Ciudadano", "paso": "Arma el paquete y escribe el correo de la entidad." },
+        { "quien": "Sistema", "paso": "Genera un enlace con vigencia de 72 horas." },
+        { "quien": "Sistema", "paso": "Envía el enlace por correo y registra el envío." }
+      ],
+      "alternos": [{ "titulo": "Confidencialidad en duda", "pasos": ["2a. El caso exige correo y la confidencialidad lo contradice (B-14).", "2b. Se envía solo el enlace y el contenido nunca va adjunto."] }]
+    },
+    {
+      "id": "HU-09", "titulo": "Traslado de operador", "estado": "Diseñada",
+      "rol": "ciudadano afiliado a otro operador", "accion": "trasladar mi carpeta a Mi Carpeta Segura", "beneficio": "cambiar de proveedor sin perder documentos",
+      "realiza": "RF-01.7, RF-01.8, RI-03, RNF-22",
+      "criterios": ["Durante el traslado el ciudadano nunca queda afiliado a dos operadores.", "Todos los documentos llegan con su firma."],
+      "principal": [
+        { "quien": "Ciudadano", "paso": "Solicita el traslado desde el portal." },
+        { "quien": "Sistema", "paso": "Pide al operador origen la carpeta completa." },
+        { "quien": "Sistema", "paso": "Recibe y verifica los documentos." },
+        { "quien": "Sistema", "paso": "Cambia la afiliación en GovCarpeta y confirma al origen." }
+      ],
+      "alternos": [{ "titulo": "Operador origen sin transferAPIURL", "pasos": ["2a. El operador origen no publica dirección (B-16).", "2b. El traslado queda pendiente y se informa al ciudadano."] }]
+    },
+    {
+      "id": "HU-10", "titulo": "Caso PQRS Premium", "estado": "Diseñada",
+      "rol": "empresa cliente Premium", "accion": "abrir un caso y pedir desde él los documentos de un ciudadano", "beneficio": "resolver trámites sin papel",
+      "realiza": "RF-07.2, RF-07.3, RI-07",
+      "criterios": ["La petición desde el caso sigue la autorización de HU-07.", "El uso se mide para facturar."],
+      "principal": [
+        { "quien": "Empresa", "paso": "Abre un caso PQRS." },
+        { "quien": "Sistema", "paso": "Crea el caso y habilita la petición de documentos." },
+        { "quien": "Empresa", "paso": "Pide los documentos al ciudadano." },
+        { "quien": "Sistema", "paso": "Lanza el flujo de autorización y mide el uso." }
+      ],
+      "alternos": [{ "titulo": "Empresa sin plan", "pasos": ["2a. La empresa no tiene plan Premium activo.", "2b. El sistema ofrece el catálogo sin crear el caso."] }]
+    },
+    {
+      "id": "HU-11", "titulo": "Consulta de accesos", "estado": "Diseñada",
+      "rol": "ciudadano con sesión", "accion": "ver quién consultó mis documentos", "beneficio": "detectar un acceso indebido",
+      "realiza": "RF-09.5, RF-09.4, RNF-14",
+      "criterios": ["Cada acceso muestra quién, cuándo y qué documento.", "La bitácora no se puede alterar."],
+      "principal": [
+        { "quien": "Ciudadano", "paso": "Abre «Actividad de mi carpeta»." },
+        { "quien": "Sistema", "paso": "Consulta la auditoría filtrada por titular." },
+        { "quien": "Ciudadano", "paso": "Revisa la lista de accesos." }
+      ],
+      "alternos": [{ "titulo": "Acceso sospechoso", "pasos": ["3a. El ciudadano no reconoce un acceso.", "3b. Pulsa «No fui yo» y el sistema cierra sus sesiones."] }]
+    },
+    {
+      "id": "HU-12", "titulo": "Analítica anonimizada", "estado": "Diseñada",
+      "rol": "analista del Estado", "accion": "consultar cuántos diplomas se emitieron por región", "beneficio": "planear política educativa con datos",
+      "realiza": "RF-08.1, RF-08.2, RF-08.6, RNF-15",
+      "criterios": ["Ningún resultado permite identificar a un ciudadano.", "Las consultas no afectan el rendimiento de la carpeta."],
+      "principal": [
+        { "quien": "Analista", "paso": "Abre el tablero de educación." },
+        { "quien": "Sistema", "paso": "Consulta metadatos anonimizados en el almacén analítico." },
+        { "quien": "Analista", "paso": "Filtra por región y año." }
+      ],
+      "alternos": [{ "titulo": "Grupo demasiado pequeño", "pasos": ["2a. El filtro deja menos de 10 personas.", "2b. El sistema suprime el valor para evitar reidentificación."] }]
+    }
+  ]
+}

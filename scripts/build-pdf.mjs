@@ -8,10 +8,15 @@ import { tmpdir } from 'node:os'
 import { join, resolve, dirname } from 'node:path'
 import { estilos, RAIZ } from './svg.mjs'
 
-const FUENTE = join(RAIZ, 'docs/srs-assignment1.md')
-const NOMBRE = 'srs-carpeta-ciudadana.pdf'
+// Por defecto el SRS de A1. A2 pasa --fuente, --nombre y --copia.
+const arg = (k, def) => {
+  const i = process.argv.indexOf(`--${k}`)
+  return i > 0 ? process.argv[i + 1] : def
+}
+const FUENTE = join(RAIZ, arg('fuente', 'docs/srs-assignment1.md'))
+const NOMBRE = arg('nombre', 'srs-carpeta-ciudadana.pdf')
 const DESTINO = join(RAIZ, 'public', NOMBRE)
-const COPIA = join(RAIZ, '../assignment1', NOMBRE)
+const COPIA = join(RAIZ, arg('copia', '../assignment1/srs-carpeta-ciudadana.pdf'))
 
 const CHROME = [
   '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
