@@ -1,5 +1,5 @@
 {
-  "intro": "El prototipo corre de verdad en GCP <code>us-east1</code> con la SPA en GitHub Pages. La plataforma objetivo añade borde global, eventos y alta disponibilidad. La tabla de conectores cierra lo que los diagramas no alcanzan a rotular.",
+  "intro": "Hoy el prototipo corre en Docker Compose local y el documento se publica en GitHub Pages. El despliegue 5.1 en GCP <code>us-east1</code> es el siguiente paso: usa las mismas imágenes y solo cambia la configuración. La plataforma objetivo añade borde global, eventos y alta disponibilidad. La tabla de conectores cierra lo que los diagramas no alcanzan a rotular.",
   "diagramas": [
     {
       "id": "despliegue-prototipo", "num": "5.1", "tipo": "despliegue", "titulo": "Despliegue del prototipo",

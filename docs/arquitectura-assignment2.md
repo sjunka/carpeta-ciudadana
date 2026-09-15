@@ -596,7 +596,7 @@ Trazabilidad: HU-04
 
 Dónde corre cada pieza, con qué tecnología, por qué protocolo y en qué formato. Primero el prototipo real, después la plataforma objetivo.
 
-El prototipo corre de verdad en GCP `us-east1` con la SPA en GitHub Pages. La plataforma objetivo añade borde global, eventos y alta disponibilidad. La tabla de conectores cierra lo que los diagramas no alcanzan a rotular.
+Hoy el prototipo corre en Docker Compose local y el documento se publica en GitHub Pages. El despliegue 5.1 en GCP `us-east1` es el siguiente paso: usa las mismas imágenes y solo cambia la configuración. La plataforma objetivo añade borde global, eventos y alta disponibilidad. La tabla de conectores cierra lo que los diagramas no alcanzan a rotular.
 
 ### 5.1 Despliegue del prototipo
 
@@ -1191,26 +1191,25 @@ Cuatro operaciones implementadas de extremo a extremo contra GovCarpeta real. El
 
 | Historia | Operación | Endpoints | Prueba |
 |---|---|---|---|
-| HU-01 | Registro y afiliación | `POST /ciudadanos · pasarela GET y POST /centralizador/ciudadanos` | `operador/e2e/registro.spec.js` |
-| HU-02 | Ingreso | `OIDC de Keycloak · GET /documentos` | `operador/e2e/login.spec.js` |
-| HU-03 | Carga de documento | `POST /documentos · POST /documentos/{id}/confirmacion` | `operador/e2e/carga.spec.js` |
-| HU-04 | Autenticación | `POST /documentos/{id}/autenticacion · pasarela PUT /centralizador/documentos/autenticacion` | `operador/e2e/autenticacion.spec.js` |
+| HU-01 | Registro y afiliación | `POST /ciudadanos · pasarela GET y POST /centralizador/ciudadanos` | `operador/e2e/flujos.spec.js · HU-01` |
+| HU-02 | Ingreso | `OIDC de Keycloak · GET /documentos` | `operador/e2e/flujos.spec.js · HU-02` |
+| HU-03 | Carga de documento | `POST /documentos · POST /documentos/{id}/confirmacion` | `operador/e2e/flujos.spec.js · HU-03` |
+| HU-04 | Autenticación | `POST /documentos/{id}/autenticacion · pasarela PUT /centralizador/documentos/autenticacion` | `operador/e2e/flujos.spec.js · HU-04` |
 
 ## 7.2 Cómo se levanta
 
-1. Copiar `operador/.env.example` a `operador/.env`.
-2. `cd operador && docker compose up -d` levanta PostgreSQL, MinIO, Keycloak y los tres servicios.
-3. `docker compose --profile migrar run --rm migrar` crea las tablas.
-4. `npm --prefix web run dev` abre el portal en `http://localhost:5174/carpeta-ciudadana/operador/`.
-5. `npm --prefix e2e test` recorre las cuatro operaciones por la interfaz.
+1. Copiar `operador/.env.example` a `operador/.env` y cambiar las claves.
+2. `cd operador && docker compose up -d --build` levanta PostgreSQL, MinIO, Keycloak, las migraciones y los tres servicios.
+3. `npx vite --port 4173` desde la raíz abre el portal en `http://localhost:4173/carpeta-ciudadana/operador/`.
+4. `npm --prefix operador/e2e test` recorre las operaciones por la interfaz; con `GOVCARPETA_ESCRITURA=1` incluye registro y autenticación.
 
 ## 7.3 Estado y evidencia
 
 | Verificación | Resultado |
 |---|---|
-| Pruebas unitarias | Pendiente de ejecutar |
-| e2e local contra GovCarpeta | Pendiente: requiere Docker Desktop encendido |
-| Despliegue en Cloud Run | Pendiente: requiere crédito GCP y gcloud auth login |
+| Pruebas unitarias | 17 de 17 en verde (pasarela, afiliación, custodia) |
+| e2e local | Ingreso, carga y 3 alternos en verde, 0 violaciones axe; registro y autenticación esperan el registro del operador |
+| Despliegue en Cloud Run | Planeado: por ahora el prototipo corre solo en Docker Compose local |
 | Registro de Mi Carpeta Segura en GovCarpeta | Pendiente: requiere confirmación del equipo |
 
 ## 7.4 Fuera del prototipo
