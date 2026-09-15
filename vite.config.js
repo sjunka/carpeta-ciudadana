@@ -9,7 +9,9 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
-    // Una página por entrega: A1 en la raíz, A2 en arquitectura/.
-    rollupOptions: { input: { srs: 'index.html', arquitectura: 'arquitectura/index.html' } },
+    // Una página por entrega: A1 en la raíz, A2 en arquitectura/ y la SPA del operador en operador/.
+    rollupOptions: {
+      input: { srs: 'index.html', arquitectura: 'arquitectura/index.html', operador: 'operador/index.html' },
+    },
   },
 })

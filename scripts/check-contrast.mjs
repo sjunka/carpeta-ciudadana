@@ -11,7 +11,10 @@ import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const RAIZ = join(dirname(fileURLToPath(import.meta.url)), '..')
-const css = readFileSync(join(RAIZ, 'src/styles/tokens.css'), 'utf8')
+// --tokens <ruta> revisa otra hoja (la SPA del operador) con sus propios pares.
+const iTokens = process.argv.indexOf('--tokens')
+const RUTA = iTokens > 0 ? process.argv[iTokens + 1] : 'src/styles/tokens.css'
+const css = readFileSync(join(RAIZ, RUTA), 'utf8')
 
 // --- tokens ---
 const bloque = (inicio) => {
@@ -74,6 +77,26 @@ const PARES = [
   ['diagrama · trazo del conector', 'ink-faint', 'surface', 3],
   ['diagrama · trazo del flujo activo', 'primary', 'surface', 3],
 ]
+
+const PARES_SPA = [
+  ['texto base', 'ink', 'bg', 4.5],
+  ['texto sobre tarjeta', 'ink', 'surface', 4.5],
+  ['texto secundario', 'ink-2', 'surface-2', 4.5],
+  ['texto auxiliar', 'ink-3', 'bg', 4.5],
+  ['enlace', 'brand-text', 'bg', 4.5],
+  ['enlace sobre tarjeta', 'brand-text', 'surface', 4.5],
+  ['botón primario', 'on-brand', 'brand', 4.5],
+  ['botón primario en hover', 'on-brand', 'brand-hover', 4.5],
+  ['borde de campo', 'border-strong', 'surface', 3],
+  ['foco', 'brand', 'bg', 3],
+  ['aviso de éxito', 'success', 'success-bg', 4.5],
+  ['aviso de advertencia', 'warning', 'warning-bg', 4.5],
+  ['aviso de error', 'danger', 'danger-bg', 4.5],
+  ['error bajo el campo', 'danger', 'surface', 4.5],
+  ['aviso informativo', 'info', 'info-bg', 4.5],
+  ['texto dentro de un aviso', 'ink', 'danger-bg', 4.5],
+]
+if (iTokens > 0) PARES.splice(0, PARES.length, ...PARES_SPA)
 
 const TEMAS = [
   ['claro', bloque(':root {')],

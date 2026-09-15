@@ -1,0 +1,80 @@
+/* Tokens de «Mi Carpeta Segura». Tema claro: docs/DESIGN.md *11. Tema oscuro: propio, AA verificado
+   por scripts/check-contrast.mjs --tokens operador/web/tokens.css. */
+:root {
+  --ink: #17201C;
+  --ink-2: #46514C;
+  --ink-3: #5F6A65;
+  --bg: #F7F8F6;
+  --surface: #FFFFFF;
+  --surface-2: #EEF1EE;
+  --border: #E0E5E1;
+  --border-strong: #8A9590;
+  --brand: #176B53;
+  --brand-hover: #218161;
+  --brand-text: #176B53;
+  --on-brand: #FFFFFF;
+  --brand-soft: #EFF8F4;
+  --success: #216A45;
+  --success-bg: #EDF7F1;
+  --warning: #895B13;
+  --warning-bg: #FFF7E8;
+  --danger: #B43B37;
+  --danger-bg: #FDEEEE;
+  --info: #245C83;
+  --info-bg: #EEF6FC;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --shadow-1: 0 2px 10px rgba(23, 32, 28, 0.05);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ink: #E6ECE8;
+    --ink-2: #BAC4BF;
+    --ink-3: #9EA9A3;
+    --bg: #111714;
+    --surface: #18201C;
+    --surface-2: #1F2924;
+    --border: #33403A;
+    --border-strong: #6B7872;
+    --brand: #5CC79E;
+    --brand-hover: #79D4B1;
+    --brand-text: #6FD1AB;
+    --on-brand: #0B1A13;
+    --brand-soft: #16291F;
+    --success: #7AD69F;
+    --success-bg: #15271D;
+    --warning: #E7B866;
+    --warning-bg: #2A2213;
+    --danger: #F19A95;
+    --danger-bg: #2E1716;
+    --info: #8FC3EC;
+    --info-bg: #142230;
+    --shadow-1: 0 2px 10px rgba(0, 0, 0, 0.3);
+  }
+}
+
+:root[data-theme="dark"] {
+  --ink: #E6ECE8;
+  --ink-2: #BAC4BF;
+  --ink-3: #9EA9A3;
+  --bg: #111714;
+  --surface: #18201C;
+  --surface-2: #1F2924;
+  --border: #33403A;
+  --border-strong: #6B7872;
+  --brand: #5CC79E;
+  --brand-hover: #79D4B1;
+  --brand-text: #6FD1AB;
+  --on-brand: #0B1A13;
+  --brand-soft: #16291F;
+  --success: #7AD69F;
+  --success-bg: #15271D;
+  --warning: #E7B866;
+  --warning-bg: #2A2213;
+  --danger: #F19A95;
+  --danger-bg: #2E1716;
+  --info: #8FC3EC;
+  --info-bg: #142230;
+  --shadow-1: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
