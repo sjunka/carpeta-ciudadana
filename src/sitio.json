@@ -1,0 +1,13 @@
+{
+  "marca": "Arquitecturas Avanzadas de Software",
+  "aria": "Entregas y recursos del proyecto",
+  "entregas": [
+    { "id": "srs", "num": "1", "nombre": "Requisitos (SRS)", "corto": "SRS", "ruta": "" },
+    { "id": "arquitectura", "num": "2", "nombre": "Arquitectura", "corto": "Arquitectura", "ruta": "arquitectura/" }
+  ],
+  "recursos": [
+    { "id": "mapa", "icono": "map", "nombre": "Mapa técnico", "ruta": "arquitectura/mapa-tecnico.html" },
+    { "id": "videos", "icono": "video", "nombre": "Videos", "ruta": "arquitectura/#seq" },
+    { "id": "repo", "icono": "github", "nombre": "Repositorio", "url": "https://github.com/sjunka/carpeta-ciudadana" }
+  ]
+}

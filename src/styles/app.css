@@ -396,3 +396,46 @@ footer {
 footer p { font-size: 14px; line-height: 1.43; color: var(--ink-muted); margin: 0 }
 
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important } }
+
+/* ---- Barra del sitio: cambia de entrega y abre recursos. Va sobre la portada, no es fija. ---- */
+.sitebar { background: var(--surface); border-bottom: 1px solid var(--hairline); font-size: 14px }
+.sitebar-in {
+  max-width: 1180px; margin: 0 auto; padding: 0 var(--s-lg);
+  display: flex; align-items: center; gap: var(--s-md); min-height: 48px;
+}
+.sitebar ul { list-style: none; margin: 0; padding: 0; display: flex; align-items: center }
+.sitebar-marca { font-weight: 600; color: var(--ink-secondary); white-space: nowrap }
+.sitebar-entregas { gap: var(--s-xxs); margin-right: auto !important }
+.sitebar a {
+  display: inline-flex; align-items: center; gap: var(--s-xs); min-height: 44px;
+  padding: 0 var(--s-sm); color: var(--ink-secondary); text-decoration: none; white-space: nowrap;
+  border-bottom: 2px solid transparent;
+}
+.sitebar a:hover { color: var(--primary-text); text-decoration: none }
+.sitebar a:focus-visible { outline: 2px solid var(--primary); outline-offset: -2px; border-radius: var(--r-md) }
+.sitebar a[aria-current="page"] { color: var(--primary-text); font-weight: 600; border-bottom-color: var(--primary) }
+.sitebar .num {
+  display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 50%;
+  font: 600 12px/1 var(--font-mono); border: 1px solid currentColor;
+}
+.sitebar-recursos { gap: var(--s-xxs) }
+.sitebar .ext { opacity: .7 }
+
+@media (max-width: 900px) { .sitebar-marca { display: none } }
+@media (max-width: 640px) {
+  .sitebar-in { padding: 0 var(--s-sm); gap: var(--s-xxs) }
+  .sitebar a { padding: 0 var(--s-xxs); gap: var(--s-xxs) }
+  /* Recursos solo con icono: el nombre sigue ahí para lectores de pantalla. */
+  .sitebar-recursos .txt { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%) }
+  .sitebar .ext { display: none }
+}
+/* Nombre corto de la entrega en pantallas muy estrechas; el largo queda para lectores de pantalla. */
+.sitebar .corto { display: none }
+@media (max-width: 400px) {
+  .sitebar .largo { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%) }
+  .sitebar .corto { display: inline }
+}
+
+/* Correos, rutas y operaciones largas sin espacios no deben empujar la página en móvil. */
+main.wrap { overflow-wrap: break-word }
+main.wrap li, main.wrap p, main.wrap td { overflow-wrap: anywhere }
