@@ -7,6 +7,21 @@ ANSI/IEEE Std. 830-1984 del curso de Arquitecturas Avanzadas de Software.
 - **PDF:** https://sjunka.github.io/carpeta-ciudadana/srs-carpeta-ciudadana.pdf
 - **Documento en markdown:** [`docs/srs-assignment1.md`](docs/srs-assignment1.md)
 
+## Entrega 2 · Arquitectura
+
+- **Sitio:** https://sjunka.github.io/carpeta-ciudadana/arquitectura/
+- **PDF:** https://sjunka.github.io/carpeta-ciudadana/arquitectura/arquitectura-carpeta-ciudadana.pdf
+- **Mapa técnico:** https://sjunka.github.io/carpeta-ciudadana/arquitectura/mapa-tecnico.html
+- **Implementación «Mi Carpeta Segura»:** [`operador/`](operador/), por ahora solo en local.
+
+Para levantar el operador, pégale esto a Claude Code dentro del repo:
+
+```
+Lee CLAUDE.md. Copia operador/.env.example a operador/.env con claves nuevas,
+corre docker compose up -d --build dentro de operador/, luego npx vite --port 4173
+desde la raíz y npm --prefix operador/e2e test. Dime la URL del portal y el resultado.
+```
+
 ## Instalar y correr — un solo prompt
 
 Abre Claude Code en la carpeta donde quieras el proyecto y pégale esto tal cual:
