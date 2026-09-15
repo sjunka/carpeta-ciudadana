@@ -1,0 +1,129 @@
+{
+  "intro": "Cuatro secuencias, una por operación implementada. El mismo JSON dibuja el diagrama del sitio, el PNG del documento y el video. Cada mensaje lleva arriba los datos que viajan y debajo la operación del contrato.",
+  "secuencias": [
+    {
+      "id": "secuencia-registro", "num": "4.1", "tipo": "secuencia", "titulo": "Registro y afiliación", "hu": "HU-01",
+      "video": { "mp4": "arquitectura/video/registro.mp4", "poster": "arquitectura/video/registro.jpg" },
+      "introduccion": "La afiliación única exige consistencia fuerte con el centralizador. Por eso el usuario nace deshabilitado y solo se habilita cuando GovCarpeta confirma.",
+      "cierre": "Si GovCarpeta rechaza en el paso 10, Afiliación borra el usuario: no queda una cuenta sin afiliación.",
+      "lineas": [
+        { "id": "portal", "nombre": "Portal", "sub": "ciudadano" },
+        { "id": "afil", "nombre": "Afiliación", "sub": "MS-03", "contrato": "afiliacion", "propio": true },
+        { "id": "kc", "nombre": "Keycloak", "sub": "MS-01", "propio": true },
+        { "id": "pas", "nombre": "Pasarela", "sub": "MS-08", "contrato": "pasarela", "propio": true },
+        { "id": "gov", "nombre": "GovCarpeta", "sub": "centralizador" }
+      ],
+      "mensajes": [
+        { "de": "portal", "a": "afil", "datos": "DATOS DE REGISTRO", "op": "POST /ciudadanos", "paso": 1 },
+        { "de": "afil", "a": "afil", "datos": "IDENTIDAD SIMULADA", "op": "verificarIdentidad()", "paso": 1 },
+        { "de": "afil", "a": "pas", "datos": "CÉDULA", "op": "GET /centralizador/ciudadanos/{id}", "paso": 2 },
+        { "de": "pas", "a": "gov", "datos": "CÉDULA", "op": "GET /apis/validateCitizen/{id}", "paso": 2 },
+        { "de": "gov", "a": "pas", "datos": "SIN OPERADOR", "op": "204 No Content", "paso": 2 },
+        { "de": "pas", "a": "afil", "datos": "CIUDADANO LIBRE", "op": "200 {afiliado:false}", "paso": 2 },
+        { "de": "afil", "a": "kc", "datos": "USUARIO DESHABILITADO", "op": "POST /admin/realms/carpeta/users", "paso": 3 },
+        { "de": "afil", "a": "pas", "datos": "DATOS MÍNIMOS", "op": "POST /centralizador/ciudadanos", "paso": 4, "acento": true },
+        { "de": "pas", "a": "gov", "datos": "ID · NOMBRE · CORREO · OPERADOR", "op": "POST /apis/registerCitizen", "paso": 4, "acento": true },
+        { "de": "gov", "a": "pas", "datos": "ALTA CONFIRMADA", "op": "201 Created", "paso": 4 },
+        { "de": "afil", "a": "kc", "datos": "USUARIO HABILITADO", "op": "PUT /admin/realms/carpeta/users/{id}", "paso": 5 },
+        { "de": "afil", "a": "portal", "datos": "CUENTA INSTITUCIONAL", "op": "201 Created", "paso": 5 }
+      ],
+      "pasos": [
+        "1 · El portal envía los datos y Afiliación simula la verificación de identidad.",
+        "2 · La pasarela pregunta a GovCarpeta y traduce el 204 a «libre».",
+        "3 · Afiliación crea el usuario deshabilitado en Keycloak.",
+        "4 · GovCarpeta registra al ciudadano con el mínimo de datos.",
+        "5 · Afiliación habilita el usuario y devuelve la cuenta institucional."
+      ]
+    },
+    {
+      "id": "secuencia-login", "num": "4.2", "tipo": "secuencia", "titulo": "Ingreso con OIDC y PKCE", "hu": "HU-02",
+      "video": { "mp4": "arquitectura/video/login.mp4", "poster": "arquitectura/video/login.jpg" },
+      "introduccion": "El portal es una aplicación pública: no puede guardar secretos. PKCE hace que un código robado no sirva sin el verificador que solo tiene el navegador que lo pidió.",
+      "cierre": "La contraseña solo la ve Keycloak; los servicios solo ven tokens firmados.",
+      "lineas": [
+        { "id": "ciu", "nombre": "Ciudadano", "sub": "navegador" },
+        { "id": "portal", "nombre": "Portal", "sub": "SPA", "propio": true },
+        { "id": "kc", "nombre": "Keycloak", "sub": "MS-01", "propio": true },
+        { "id": "cust", "nombre": "Custodia", "sub": "MS-04", "contrato": "custodia", "propio": true }
+      ],
+      "mensajes": [
+        { "de": "ciu", "a": "portal", "datos": "INGRESAR", "op": "clic", "paso": 1 },
+        { "de": "portal", "a": "kc", "datos": "CODE_CHALLENGE · STATE", "op": "GET /realms/carpeta/…/auth", "paso": 1 },
+        { "de": "ciu", "a": "kc", "datos": "CUENTA · CONTRASEÑA", "op": "POST formulario de ingreso", "paso": 2 },
+        { "de": "kc", "a": "portal", "datos": "CÓDIGO DE AUTORIZACIÓN", "op": "302 redirect_uri?code", "paso": 2 },
+        { "de": "portal", "a": "kc", "datos": "CÓDIGO · CODE_VERIFIER", "op": "POST /realms/carpeta/…/token", "paso": 3, "acento": true },
+        { "de": "kc", "a": "portal", "datos": "ACCESS · ID · REFRESH", "op": "200 JWT RS256", "paso": 3 },
+        { "de": "portal", "a": "cust", "datos": "BEARER TOKEN", "op": "GET /documentos", "paso": 4, "acento": true },
+        { "de": "cust", "a": "kc", "datos": "LLAVES PÚBLICAS", "op": "GET /realms/carpeta/…/certs", "paso": 4 },
+        { "de": "kc", "a": "cust", "datos": "JWKS EN CACHÉ", "op": "200 JSON", "paso": 4 },
+        { "de": "cust", "a": "portal", "datos": "LISTA DE DOCUMENTOS", "op": "200 JSON", "paso": 5 }
+      ],
+      "pasos": [
+        "1 · El portal redirige a Keycloak con el reto PKCE.",
+        "2 · El ciudadano se autentica en Keycloak y el portal recibe un código.",
+        "3 · El portal canjea código y verificador por los tokens.",
+        "4 · Custodia valida la firma del token con las llaves en caché.",
+        "5 · El ciudadano ve su carpeta."
+      ]
+    },
+    {
+      "id": "secuencia-carga", "num": "4.3", "tipo": "secuencia", "titulo": "Carga de documento temporal", "hu": "HU-03",
+      "video": { "mp4": "arquitectura/video/carga.mp4", "poster": "arquitectura/video/carga.jpg" },
+      "introduccion": "Custodia autoriza la subida pero no la transporta. El navegador escribe directo en el almacén con una URL que caduca en 5 minutos.",
+      "cierre": "El servicio nunca carga el binario en memoria: escala por peticiones, no por megas.",
+      "lineas": [
+        { "id": "portal", "nombre": "Portal", "sub": "SPA" },
+        { "id": "cust", "nombre": "Custodia", "sub": "MS-04", "contrato": "custodia", "propio": true },
+        { "id": "pg", "nombre": "PostgreSQL", "sub": "base custodia", "propio": true },
+        { "id": "s3", "nombre": "Almacén S3", "sub": "MinIO · GCS", "propio": true }
+      ],
+      "mensajes": [
+        { "de": "portal", "a": "cust", "datos": "TÍTULO · TIPO · TAMAÑO", "op": "POST /documentos", "paso": 1 },
+        { "de": "cust", "a": "pg", "datos": "DOCUMENTO PENDIENTE", "op": "INSERT tras validar cuota", "paso": 1 },
+        { "de": "cust", "a": "cust", "datos": "URL PUT 5 MIN", "op": "getSignedUrl()", "paso": 2 },
+        { "de": "cust", "a": "portal", "datos": "ID · URL DE CARGA", "op": "201 Created", "paso": 2 },
+        { "de": "portal", "a": "s3", "datos": "BINARIO PDF · JPG · PNG", "op": "PUT urlCarga", "paso": 3, "acento": true },
+        { "de": "s3", "a": "portal", "datos": "ETAG", "op": "200 OK", "paso": 3 },
+        { "de": "portal", "a": "cust", "datos": "ID DEL DOCUMENTO", "op": "POST /documentos/{id}/confirmacion", "paso": 4 },
+        { "de": "cust", "a": "s3", "datos": "TAMAÑO · TIPO · BYTES", "op": "HeadObject · GetObject", "paso": 4 },
+        { "de": "cust", "a": "pg", "datos": "CARGADO · SHA-256", "op": "UPDATE documento", "paso": 5 },
+        { "de": "cust", "a": "portal", "datos": "DOCUMENTO CARGADO", "op": "200 JSON", "paso": 5 }
+      ],
+      "pasos": [
+        "1 · Custodia valida tipo, tamaño y cuota y registra el documento pendiente.",
+        "2 · Custodia firma una URL PUT de 5 minutos, sin llamar al almacén.",
+        "3 · El navegador sube el binario directo al almacén.",
+        "4 · Custodia comprueba el objeto subido y calcula su SHA-256.",
+        "5 · El documento queda cargado."
+      ]
+    },
+    {
+      "id": "secuencia-autenticacion", "num": "4.4", "tipo": "secuencia", "titulo": "Autenticación vía GovCarpeta", "hu": "HU-04",
+      "video": { "mp4": "arquitectura/video/autenticacion.mp4", "poster": "arquitectura/video/autenticacion.jpg" },
+      "introduccion": "El centralizador autentica documentos que no custodia. Recibe una URL de lectura de 15 minutos: puede ir a buscar el documento, pero el contenido nunca viaja por él.",
+      "cierre": "URL, nunca el documento (RI-01). La pasarela convierte la prosa de GovCarpeta en un resultado con estado.",
+      "lineas": [
+        { "id": "portal", "nombre": "Portal", "sub": "SPA" },
+        { "id": "cust", "nombre": "Custodia", "sub": "MS-04", "contrato": "custodia", "propio": true },
+        { "id": "pas", "nombre": "Pasarela", "sub": "MS-08", "contrato": "pasarela", "propio": true },
+        { "id": "gov", "nombre": "GovCarpeta", "sub": "centralizador" }
+      ],
+      "mensajes": [
+        { "de": "portal", "a": "cust", "datos": "ID DEL DOCUMENTO", "op": "POST /documentos/{id}/autenticacion", "paso": 1 },
+        { "de": "cust", "a": "cust", "datos": "DUEÑO · URL GET 15 MIN", "op": "getSignedUrl()", "paso": 2 },
+        { "de": "cust", "a": "pas", "datos": "CÉDULA · URL · TÍTULO", "op": "PUT /centralizador/documentos/autenticacion", "paso": 3, "acento": true },
+        { "de": "pas", "a": "gov", "datos": "IDCITIZEN · URLDOCUMENT · TITLE", "op": "PUT /apis/authenticateDocument", "paso": 3, "acento": true },
+        { "de": "gov", "a": "pas", "datos": "RESPUESTA EN PROSA", "op": "200 text", "paso": 4 },
+        { "de": "pas", "a": "cust", "datos": "RESULTADO NORMALIZADO", "op": "200 {autenticado}", "paso": 4 },
+        { "de": "cust", "a": "portal", "datos": "ESTADO AUTENTICADO", "op": "200 JSON", "paso": 5 }
+      ],
+      "pasos": [
+        "1 · El titular pide autenticar su documento.",
+        "2 · Custodia comprueba que es el dueño y firma una URL de lectura.",
+        "3 · Al centralizador viaja la URL, nunca el contenido.",
+        "4 · La pasarela normaliza la respuesta en prosa.",
+        "5 · El documento queda autenticado por el centralizador."
+      ]
+    }
+  ]
+}

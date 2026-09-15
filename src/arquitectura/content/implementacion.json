@@ -1,0 +1,57 @@
+{
+  "intro": "Cuatro operaciones implementadas de extremo a extremo contra GovCarpeta real. El código vive en <code>operador/</code> del repositorio.",
+  "operaciones": [
+    {
+      "hu": "HU-01",
+      "operacion": "Registro y afiliación",
+      "endpoints": "POST /ciudadanos · pasarela GET y POST /centralizador/ciudadanos",
+      "prueba": "operador/e2e/flujos.spec.js · HU-01"
+    },
+    {
+      "hu": "HU-02",
+      "operacion": "Ingreso",
+      "endpoints": "OIDC de Keycloak · GET /documentos",
+      "prueba": "operador/e2e/flujos.spec.js · HU-02"
+    },
+    {
+      "hu": "HU-03",
+      "operacion": "Carga de documento",
+      "endpoints": "POST /documentos · POST /documentos/{id}/confirmacion",
+      "prueba": "operador/e2e/flujos.spec.js · HU-03"
+    },
+    {
+      "hu": "HU-04",
+      "operacion": "Autenticación",
+      "endpoints": "POST /documentos/{id}/autenticacion · pasarela PUT /centralizador/documentos/autenticacion",
+      "prueba": "operador/e2e/flujos.spec.js · HU-04"
+    }
+  ],
+  "correr": [
+    "Copiar <code>operador/.env.example</code> a <code>operador/.env</code> y cambiar las claves.",
+    "<code>cd operador && docker compose up -d --build</code> levanta PostgreSQL, MinIO, Keycloak, las migraciones y los tres servicios.",
+    "<code>npx vite --port 4173</code> desde la raíz abre el portal en <code>http://localhost:4173/carpeta-ciudadana/operador/</code>.",
+    "<code>npm --prefix operador/e2e test</code> recorre las operaciones por la interfaz; con <code>GOVCARPETA_ESCRITURA=1</code> incluye registro y autenticación."
+  ],
+  "estado": [
+    {
+      "item": "Pruebas unitarias",
+      "valor": "17 de 17 en verde (pasarela, afiliación, custodia)"
+    },
+    {
+      "item": "e2e local",
+      "valor": "Ingreso, carga y 3 alternos en verde, 0 violaciones axe; registro y autenticación esperan el registro del operador"
+    },
+    {
+      "item": "Despliegue en Cloud Run",
+      "valor": "Planeado: por ahora el prototipo corre solo en Docker Compose local"
+    },
+    {
+      "item": "Registro de Mi Carpeta Segura en GovCarpeta",
+      "valor": "Pendiente: requiere confirmación del equipo"
+    }
+  ],
+  "pendientes": [
+    "Transferencia entre operadores (RF-03) y publicación de transferAPIURL.",
+    "Kafka, notificaciones, analítica y Premium: diseñados en *3 y *6."
+  ]
+}

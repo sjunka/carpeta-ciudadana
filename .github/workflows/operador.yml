@@ -1,0 +1,26 @@
+name: operador
+
+on:
+  pull_request:
+    paths: ['operador/**']
+  push:
+    branches: [main]
+    paths: ['operador/**']
+
+jobs:
+  unitarias:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        servicio: [pasarela, afiliacion, custodia]
+    defaults:
+      run:
+        working-directory: operador/servicios/${{ matrix.servicio }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      # Sin escrituras a GovCarpeta: las pruebas unitarias usan dobles.
+      - run: npm ci
+      - run: npm test

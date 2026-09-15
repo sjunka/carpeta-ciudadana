@@ -265,3 +265,63 @@ se queda en 400. **IBM Plex Mono** solo para identificadores, rutas y código.
 En los diagramas: el sistema en construcción va en `--ink-secondary` con texto claro; el flujo
 crítico usa `--primary`; la línea de automatización usa `--accent-orange` porque marca una
 frontera, no una acción.
+
+---
+
+# Parte A2 — Arquitectura (Assignment 2)
+
+Todo lo anterior es la parte A1 y no cambia. Lo que sigue aplica solo a `src/arquitectura/`,
+`operador/` y `scripts/arquitectura/`. El validador es `scripts/arquitectura/check.mjs`.
+
+## A2.1 Esqueleto fijo
+
+01 Introducción y trazabilidad · 02 Historias de usuario · 03 Microservicios y componentes ·
+04 Secuencias · 05 Despliegue · 06 Decisiones de arquitectura · 07 Implementación.
+
+## A2.2 Identificadores
+
+`HU-NN`, `MS-NN`, `AD-NN`. Nunca se reciclan. Todo `RF`, `RNF`, `RD`, `RI` o `B` citado debe existir en A1.
+
+## A2.3 Historias de usuario
+
+- «Como <rol> quiero <acción> para <beneficio>».
+- Criterios de aceptación verificables.
+- Escenario principal numerado que alterna actor y sistema.
+- Al menos un escenario alterno.
+- Campo `realiza` con RF/RNF y estado `Implementada` o `Diseñada`.
+- Cada dominio RF-01..RF-09, salvo RF-06, queda cubierto por al menos una HU.
+
+## A2.4 Microservicios
+
+Responsabilidad en una frase; dominio A1 y veredicto de granularidad (*4.3 de A1) respetados:
+Partir en dos = 2 MS; Aislar o Mantener unido = 1 MS; Fuera del alcance = solo la pasarela ACL.
+Cada MS declara API, eventos, datos propios y estado.
+
+## A2.5 Decisiones de arquitectura (plantilla UAM)
+
+Decisión; impactos e implicaciones; problema, contexto, alcance, restricciones y supuestos;
+arquitectura de la solución; análisis comparativo (al menos 2 alternativas por criterio, con
+Cumple / Parcial / No cumple y motivo, sin puntajes inventados); justificación; consenso y disenso;
+decisiones relacionadas. Criterios solo del conjunto cerrado: atributos RNF de A1, coste y regulación.
+
+## A2.6 Diagramas desde JSON
+
+- Componentes: máximo 9 nodos y 12 flechas.
+- Secuencias: máximo 5 líneas de vida, 12 mensajes y 1 fragmento. Cada mensaje en dos líneas:
+  datos que viajan (sustantivos) y operación del contrato en mono.
+- Despliegue: máximo 3 zonas, 6 nodos, 9 artefactos y 8 rutas.
+- Coordenadas múltiplos de 4, segmentos ortogonales, acento en 2 elementos como mucho.
+
+## A2.7 Verificación de diagramas
+
+`scripts/arquitectura/check.mjs` (presupuestos, ortogonalidad, múltiplos de 4, referencias) y
+`self_check.py` de diagram-design sobre el HTML exportado. Sustituye a `verify-geometry.py`, que no existe.
+
+## A2.8 Salidas A2 que no se editan a mano
+
+`docs/arquitectura-assignment2.md`, `../assignment2/*.md`, `../assignment2/diagramas/*`,
+`public/arquitectura/*.pdf`, videos y mapa archify.
+
+## A2.9 Producto SPA
+
+`docs/DESIGN.md` manda (verde institucional). Tokens en `operador/web/src/tokens.css`. AA en los dos temas.

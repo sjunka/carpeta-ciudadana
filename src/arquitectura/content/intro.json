@@ -1,0 +1,67 @@
+{
+  "proposito": "Este documento fija la arquitectura del operador <b>Mi Carpeta Segura</b> y demuestra que funciona implementando cuatro operaciones reales contra el centralizador GovCarpeta. El SRS dijo <i>qué</i> debe hacer el sistema; aquí se decide <i>cómo</i> se reparte en piezas, dónde corren y por qué.",
+  "alcance": [
+    "<b>Arquitectura objetivo:</b> los once microservicios, el bus de eventos y la plataforma multi-región que exige la escala del país (RNF-08).",
+    "<b>Prototipo de la entrega 2:</b> registro, ingreso, carga de documento temporal y autenticación vía GovCarpeta, desplegados en Docker Compose y en Cloud Run.",
+    "<b>Fuera del alcance:</b> transferencia entre operadores, notificaciones, analítica y Premium. Quedan diseñados, no implementados."
+  ],
+  "glosario": [
+    {
+      "termino": "Mi Carpeta Segura",
+      "definicion": "Nombre de nuestro operador ante GovCarpeta."
+    },
+    {
+      "termino": "Pasarela ACL",
+      "definicion": "Capa anticorrupción, el adaptador que traduce el contrato de GovCarpeta a un modelo propio y aísla sus fallos."
+    },
+    {
+      "termino": "URL prefirmada",
+      "definicion": "Dirección temporal firmada que da permiso para leer o escribir un objeto del almacén sin credenciales."
+    },
+    {
+      "termino": "PKCE",
+      "definicion": "Proof Key for Code Exchange: prueba criptográfica que impide reutilizar un código OIDC robado desde una aplicación pública."
+    },
+    {
+      "termino": "UAM",
+      "definicion": "Unified Architecture Method, cuya plantilla de decisión usamos en *6."
+    },
+    {
+      "termino": "Cloud Run",
+      "definicion": "Servicio de GCP que ejecuta contenedores sin administrar servidores y escala a cero."
+    }
+  ],
+  "herencia": [
+    {
+      "ref": "B-12",
+      "a1": "No se sabía si el entregable incluía implementar el operador.",
+      "a2": "Resuelto: la entrega 2 lo pide y cuatro operaciones quedan implementadas y probadas de extremo a extremo."
+    },
+    {
+      "ref": "B-03",
+      "a1": "Sin Autoridad Certificadora ni formato de firma definidos.",
+      "a2": "Se mantiene como asunción: la respuesta de authenticateDocument se guarda como sello del centralizador, nunca como certificado."
+    },
+    {
+      "ref": "B-06",
+      "a1": "Registraduría y correo entrante: ¿integración real o simulada?",
+      "a2": "Se mantiene: la verificación de identidad es simulada y así lo dice HU-01."
+    },
+    {
+      "ref": "B-09",
+      "a1": "Sin autenticación definida hacia el centralizador.",
+      "a2": "GovCarpeta no la exige; la pasarela queda sin acceso público y exige ID token de Google a quien la llama."
+    },
+    {
+      "ref": "B-10",
+      "a1": "Sin compromiso de disponibilidad del centralizador.",
+      "a2": "Timeout, reintento y circuit breaker en la pasarela: si el centralizador cae, el registro queda pendiente y nunca se asume libre al ciudadano."
+    },
+    {
+      "ref": "B-16",
+      "a1": "54 de 70 operadores no publican transferAPIURL.",
+      "a2": "No publicamos transferAPIURL hasta implementar RF-03."
+    }
+  ],
+  "congelado": "El SRS queda congelado en v1.0. Este documento cita sus identificadores y no los cambia: si una decisión exigiera tocar un requerimiento, entraría por el proceso de cambios del SRS (*5 de A1)."
+}

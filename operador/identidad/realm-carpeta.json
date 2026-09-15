@@ -1,0 +1,78 @@
+{
+  "realm": "carpeta",
+  "displayName": "Mi Carpeta Segura",
+  "enabled": true,
+  "registrationAllowed": false,
+  "loginWithEmailAllowed": true,
+  "internationalizationEnabled": true,
+  "supportedLocales": ["es"],
+  "defaultLocale": "es",
+  "bruteForceProtected": true,
+  "failureFactor": 5,
+  "waitIncrementSeconds": 60,
+  "maxFailureWaitSeconds": 900,
+  "ssoSessionIdleTimeout": 1800,
+  "accessTokenLifespan": 300,
+  "components": {
+    "org.keycloak.userprofile.UserProfileProvider": [
+      {
+        "providerId": "declarative-user-profile",
+        "subComponents": {},
+        "config": {
+          "kc.user.profile.config": [
+            "{\"unmanagedAttributePolicy\":\"ADMIN_VIEW\",\"attributes\":[{\"name\":\"username\",\"displayName\":\"${username}\",\"validations\":{\"length\":{\"min\":3,\"max\":255}},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\"]}},{\"name\":\"email\",\"displayName\":\"${email}\",\"validations\":{\"email\":{}},\"required\":{\"roles\":[\"user\"]},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\"]}},{\"name\":\"firstName\",\"displayName\":\"${firstName}\",\"required\":{\"roles\":[\"user\"]},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\"]}},{\"name\":\"lastName\",\"displayName\":\"${lastName}\",\"required\":{\"roles\":[\"user\"]},\"permissions\":{\"view\":[\"admin\",\"user\"],\"edit\":[\"admin\"]}}],\"groups\":[]}"
+          ]
+        }
+      }
+    ]
+  },
+  "clients": [
+    {
+      "clientId": "portal",
+      "name": "Mi Carpeta Segura",
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": false,
+      "redirectUris": [
+        "http://localhost:5173/carpeta-ciudadana/operador/*",
+        "http://localhost:4173/carpeta-ciudadana/operador/*",
+        "https://sjunka.github.io/carpeta-ciudadana/operador/*"
+      ],
+      "webOrigins": ["http://localhost:5173", "http://localhost:4173", "https://sjunka.github.io"],
+      "attributes": {
+        "pkce.code.challenge.method": "S256",
+        "post.logout.redirect.uris": "http://localhost:5173/carpeta-ciudadana/operador/*##http://localhost:4173/carpeta-ciudadana/operador/*##https://sjunka.github.io/carpeta-ciudadana/operador/*"
+      },
+      "protocolMappers": [
+        {
+          "name": "audiencia-custodia",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "config": { "included.custom.audience": "custodia", "access.token.claim": "true", "id.token.claim": "false" }
+        },
+        {
+          "name": "cedula",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "config": { "user.attribute": "cedula", "claim.name": "cedula", "jsonType.label": "String", "access.token.claim": "true", "id.token.claim": "false", "userinfo.token.claim": "false" }
+        }
+      ]
+    },
+    {
+      "clientId": "afiliacion-admin",
+      "publicClient": false,
+      "secret": "${KC_AFILIACION_SECRETO}",
+      "standardFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true
+    }
+  ],
+  "users": [
+    {
+      "username": "service-account-afiliacion-admin",
+      "enabled": true,
+      "serviceAccountClientId": "afiliacion-admin",
+      "clientRoles": { "realm-management": ["manage-users", "view-users"] }
+    }
+  ]
+}

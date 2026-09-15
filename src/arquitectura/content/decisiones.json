@@ -1,0 +1,1289 @@
+{
+  "intro": "Cada decisión sigue la plantilla <i>Architectural Decision</i> de UAM. Los criterios salen solo de los atributos no funcionales del SRS, el coste y la regulación. La comparación dice Cumple, Parcial o No cumple con su motivo: no hay puntajes.",
+  "grupos": [
+    {
+      "num": "6.1",
+      "titulo": "Criterios de despliegue: nube, on-premise, híbrido o edge",
+      "decisiones": [
+        {
+          "id": "AD-01",
+          "titulo": "Modelo de despliegue por componente",
+          "decision": "Todo el operador se despliega en <b>nube pública</b>. Ningún componente va on-premise ni en edge; la matriz por clase fija cómo se protege cada uno.",
+          "impactos": [
+            "El equipo no compra ni opera hardware.",
+            "La custodia perpetua depende de un proveedor: se mitiga con API S3 estándar y exportación.",
+            "La transferencia internacional de datos personales debe justificarse ante la Ley 1581."
+          ],
+          "problema": "Decidir, componente por componente, si corre en nube pública, en un centro de datos propio, en un modelo híbrido o en el borde.",
+          "contexto": "Un operador nacional debe custodiar documentos a perpetuidad (RNF-03) y absorber picos de campañas (RNF-09) con un modelo de servicios básicos gratuitos (RNF-28, RI-07).",
+          "alcance": "Todos los componentes de *3: prototipo y plataforma objetivo.",
+          "restricciones": [
+            "RD-06: todo se empaqueta en contenedores.",
+            "RD-04: infraestructura inmutable.",
+            "Ley 1581 de 2012 sobre datos personales."
+          ],
+          "supuestos": [
+            "El crédito de GCP del curso cubre el prototipo.",
+            "B-15 sigue abierto: no hay cifra de población objetivo."
+          ],
+          "solucion": "Nube pública para las siete clases de componente. Las diferencias están en el mecanismo de protección, no en la ubicación.",
+          "matriz": [
+            {
+              "clase": "SPA",
+              "modelo": "Nube pública · CDN",
+              "motivo": "Contenido estático, sin datos personales."
+            },
+            {
+              "clase": "Servicios sin estado",
+              "modelo": "Nube pública · Cloud Run",
+              "motivo": "Escala por peticiones y a cero (RD-02, RD-03)."
+            },
+            {
+              "clase": "Custodia perpetua",
+              "modelo": "Nube pública · dual-region con Bucket Lock",
+              "motivo": "Durabilidad sin segundo centro propio (RNF-02)."
+            },
+            {
+              "clase": "Identidad y llaves",
+              "modelo": "Nube pública · Secret Manager y KMS",
+              "motivo": "Rotación y auditoría gestionadas."
+            },
+            {
+              "clase": "Auditoría",
+              "modelo": "Nube pública · bucket WORM",
+              "motivo": "Inalterable por diseño (RNF-14)."
+            },
+            {
+              "clase": "Analítica",
+              "modelo": "Nube pública · proyecto separado",
+              "motivo": "Aislada del OLTP (RF-08)."
+            },
+            {
+              "clase": "Integraciones",
+              "modelo": "Nube pública · pasarela",
+              "motivo": "GovCarpeta ya vive en nube pública."
+            },
+            {
+              "clase": "Edge",
+              "modelo": "No aplica",
+              "motivo": "No hay requisito de tiempo real (RI-02)."
+            }
+          ],
+          "criterios": [
+            "RNF-02",
+            "RNF-30",
+            "Coste",
+            "Regulación"
+          ],
+          "alternativas": [
+            {
+              "nombre": "Nube pública",
+              "elegida": true,
+              "eval": [
+                [
+                  "Cumple",
+                  "Cloud Storage dual-region replica entre regiones."
+                ],
+                [
+                  "Cumple",
+                  "Escala sola hacia arriba y a cero."
+                ],
+                [
+                  "Cumple",
+                  "Pago por uso y crédito del curso."
+                ],
+                [
+                  "Parcial",
+                  "Hay transferencia internacional; la SIC la admite hacia países con nivel adecuado."
+                ]
+              ]
+            },
+            {
+              "nombre": "On-premise",
+              "elegida": false,
+              "eval": [
+                [
+                  "Parcial",
+                  "Exige un segundo centro propio."
+                ],
+                [
+                  "No cumple",
+                  "La capacidad se compra para el pico."
+                ],
+                [
+                  "No cumple",
+                  "Inversión inicial en hardware."
+                ],
+                [
+                  "Cumple",
+                  "Los datos no salen de Colombia."
+                ]
+              ]
+            },
+            {
+              "nombre": "Híbrido",
+              "elegida": false,
+              "eval": [
+                [
+                  "Cumple",
+                  "Custodia en nube."
+                ],
+                [
+                  "Parcial",
+                  "Solo la parte en nube escala."
+                ],
+                [
+                  "Parcial",
+                  "Dos plataformas que operar."
+                ],
+                [
+                  "Cumple",
+                  "Identidad y datos personales en local."
+                ]
+              ]
+            }
+          ],
+          "justificacion": "La nube pública cumple durabilidad, elasticidad y coste. Su único punto parcial, la regulación, se resuelve con la Circular Externa 005 de 2017 de la SIC (AD-02). El modelo híbrido duplica la operación para ganar solo en ese criterio.",
+          "consenso": "Acordado por el equipo en la sesión del 14 de septiembre.",
+          "disenso": "Se planteó mantener la identidad on-premise por soberanía. Se descartó porque el caso no lo exige y la Ley 1581 admite la transferencia con nivel adecuado.",
+          "relacionadas": [
+            "AD-02",
+            "AD-03",
+            "AD-04"
+          ]
+        },
+        {
+          "id": "AD-02",
+          "titulo": "Proveedor y región",
+          "decision": "<b>Google Cloud</b> en la región <code>us-east1</code>, con <code>us-central1</code> como par para recuperación.",
+          "impactos": [
+            "Se usa el crédito de USD 300 del curso.",
+            "Los datos personales residen en EE. UU."
+          ],
+          "problema": "Elegir proveedor de nube y región principal.",
+          "contexto": "GovCarpeta corre en Heroku, en EE. UU. El curso entrega crédito de GCP y usará Kafka en GCP en la próxima sesión.",
+          "alcance": "Prototipo y plataforma objetivo.",
+          "restricciones": [
+            "Ley 1581 de 2012 y Circular Externa 005 de 2017 de la SIC.",
+            "Presupuesto: crédito del curso."
+          ],
+          "supuestos": [
+            "La latencia desde Colombia a us-east1 es aceptable para RNF-04."
+          ],
+          "solucion": "Proyecto GCP único para el prototipo en us-east1; en el objetivo, recursos regionales duplicados en us-central1.",
+          "criterios": [
+            "Coste",
+            "RNF-04",
+            "Regulación",
+            "RNF-23"
+          ],
+          "alternativas": [
+            {
+              "nombre": "GCP us-east1",
+              "elegida": true,
+              "eval": [
+                [
+                  "Cumple",
+                  "Crédito del curso y precios de nivel 1."
+                ],
+                [
+                  "Cumple",
+                  "Cerca de GovCarpeta: menos viajes largos por operación."
+                ],
+                [
+                  "Cumple",
+                  "La SIC reconoce a EE. UU. con nivel adecuado."
+                ],
+                [
+                  "Cumple",
+                  "us-central1 como región par."
+                ]
+              ]
+            },
+            {
+              "nombre": "AWS us-east-1",
+              "elegida": false,
+              "eval": [
+                [
+                  "Parcial",
+                  "Sin crédito del curso."
+                ],
+                [
+                  "Cumple",
+                  "Misma cercanía a GovCarpeta."
+                ],
+                [
+                  "Cumple",
+                  "Mismo país."
+                ],
+                [
+                  "Cumple",
+                  "us-west-2 como par."
+                ]
+              ]
+            },
+            {
+              "nombre": "GCP southamerica-east1",
+              "elegida": false,
+              "eval": [
+                [
+                  "Parcial",
+                  "Región de precio mayor que nivel 1."
+                ],
+                [
+                  "Parcial",
+                  "Cerca del ciudadano, lejos del centralizador."
+                ],
+                [
+                  "Parcial",
+                  "Hay que verificar el nivel de protección de Brasil ante la SIC."
+                ],
+                [
+                  "Cumple",
+                  "southamerica-west1 como par."
+                ]
+              ]
+            }
+          ],
+          "justificacion": "us-east1 es la única opción que cumple los cuatro criterios. AWS empata en técnica pero pierde el crédito; São Paulo gana en cercanía al ciudadano pero cada operación viaja dos veces al norte para hablar con GovCarpeta.",
+          "consenso": "Acordado por el equipo.",
+          "disenso": "Se defendió São Paulo por percepción de soberanía; pesó más la cercanía al centralizador.",
+          "relacionadas": [
+            "AD-01",
+            "AD-03"
+          ]
+        },
+        {
+          "id": "AD-03",
+          "titulo": "Plataforma de cómputo",
+          "decision": "<b>Cloud Run</b> para los servicios y Keycloak del prototipo. En el objetivo, Keycloak y los consumidores de Kafka pasan a <b>GKE Autopilot</b> y las notificaciones a <b>Cloud Run functions</b>.",
+          "impactos": [
+            "Sin servidores que parchear.",
+            "Arranque en frío en servicios con cero instancias.",
+            "Keycloak queda con una sola instancia en el prototipo."
+          ],
+          "problema": "Elegir dónde se ejecutan los contenedores.",
+          "contexto": "Criterios de la clase del 12 de septiembre: duración de los procesos, arranque en frío, carga operativa, dependencia del proveedor y tráfico sostenido frente a esporádico.",
+          "alcance": "Servicios, identidad y funciones.",
+          "restricciones": [
+            "RD-02: procesos sin estado.",
+            "RD-03: escalado horizontal."
+          ],
+          "supuestos": [
+            "El tráfico del prototipo es esporádico."
+          ],
+          "solucion": "Manifiestos Knative declarativos por servicio. Identidad con <code>min-instances=1</code> y sidecar Cloud SQL Auth Proxy; servicios Node con <code>min-instances=0</code>; pasarela sin acceso público.",
+          "criterios": [
+            "RNF-30",
+            "RNF-29",
+            "Coste",
+            "RNF-04"
+          ],
+          "alternativas": [
+            {
+              "nombre": "Cloud Run",
+              "elegida": true,
+              "eval": [
+                [
+                  "Cumple",
+                  "Escala por peticiones y a cero."
+                ],
+                [
+                  "Cumple",
+                  "Revisiones con tráfico dividido."
+                ],
+                [
+                  "Cumple",
+                  "Sin costo sin tráfico."
+                ],
+                [
+                  "Parcial",
+                  "Arranque en frío; Keycloak lo evita con una instancia mínima."
+                ]
+              ]
+            },
+            {
+              "nombre": "GKE Autopilot",
+              "elegida": false,
+              "eval": [
+                [
+                  "Cumple",
+                  "Escalado de pods y nodos gestionado."
+                ],
+                [
+                  "Cumple",
+                  "Rolling update."
+                ],
+                [
+                  "Parcial",
+                  "Costo base del clúster siempre encendido."
+                ],
+                [
+                  "Cumple",
+                  "Pods calientes."
+                ]
+              ]
+            },
+            {
+              "nombre": "Compute Engine",
+              "elegida": false,
+              "eval": [
+                [
+                  "No cumple",
+                  "Grupos de instancias lentos para escalar."
+                ],
+                [
+                  "Parcial",
+                  "Imágenes y scripts propios."
+                ],
+                [
+                  "No cumple",
+                  "Se paga encendida."
+                ],
+                [
+                  "Cumple",
+                  "Sin arranque en frío."
+                ]
+              ]
+            },
+            {
+              "nombre": "Cloud Run functions",
+              "elegida": false,
+              "eval": [
+                [
+                  "Cumple",
+                  "Escala por evento."
+                ],
+                [
+                  "Cumple",
+                  "Despliegue por función."
+                ],
+                [
+                  "Cumple",
+                  "Pago por invocación."
+                ],
+                [
+                  "Parcial",
+                  "Arranque en frío y límite de duración."
+                ]
+              ]
+            }
+          ],
+          "justificacion": "Los servicios hacen procesos cortos con tráfico esporádico: es el caso de Cloud Run. GKE se reserva para lo que necesita estar siempre caliente o consumir colas de forma continua. Las funciones encajan con notificaciones, como indicó el profesor.",
+          "consenso": "Acordado por el equipo, siguiendo los criterios de la clase.",
+          "disenso": "Kubernetes para todo, como en la clase. Se pospone: el prototipo no justifica el costo base del clúster.",
+          "relacionadas": [
+            "AD-01",
+            "AD-06",
+            "AD-12"
+          ]
+        },
+        {
+          "id": "AD-04",
+          "titulo": "Ubicación de datos y custodia",
+          "decision": "Contenido en <b>Cloud Storage</b> y metadatos en <b>Cloud SQL PostgreSQL</b>. En el objetivo, los certificados van a un bucket dual-region con <b>Bucket Lock</b>; los temporales, a un bucket borrable.",
+          "impactos": [
+            "Los certificados no se pueden borrar ni por un administrador.",
+            "El derecho de supresión aplica solo a temporales (B-11)."
+          ],
+          "problema": "Decidir dónde viven el contenido y los metadatos de los documentos.",
+          "contexto": "Los certificados se conservan a perpetuidad y sin alteración (RNF-02, RNF-03, RNF-13); los temporales tienen cuota y se pueden eliminar (RNF-24, RF-02.10).",
+          "alcance": "MS-04 y MS-02.",
+          "restricciones": [
+            "RD-05: servicios de respaldo enchufables.",
+            "RD-11: sin base de datos compartida."
+          ],
+          "supuestos": [
+            "B-11 se resuelve separando certificados de temporales."
+          ],
+          "solucion": "Un objeto por documento, nombrado por identificador; metadatos, dueño, estado y SHA-256 en la base de custodia.",
+          "criterios": [
+            "RNF-02",
+            "RNF-03",
+            "RNF-13",
+            "Coste"
+          ],
+          "alternativas": [
+            {
+              "nombre": "Cloud Storage + Cloud SQL",
+              "elegida": true,
+              "eval": [
+                [
+                  "Cumple",
+                  "Réplica dual-region."
+                ],
+                [
+                  "Cumple",
+                  "Bucket Lock con retención indefinida."
+                ],
+                [
+                  "Cumple",
+                  "Objeto inmutable y hash guardado."
+                ],
+                [
+                  "Cumple",
+                  "Clases frías para documentos viejos."
+                ]
+              ]
+            },
+            {
+              "nombre": "NAS + PostgreSQL on-premise",
+              "elegida": false,
+              "eval": [
+                [
+                  "Parcial",
+                  "Depende de copias propias."
+                ],
+                [
+                  "Parcial",
+                  "WORM por software."
+                ],
+                [
+                  "Parcial",
+                  "Un administrador puede alterar."
+                ],
+                [
+                  "No cumple",
+                  "Hardware y operación."
+                ]
+              ]
+            },
+            {
+              "nombre": "BLOB en la base de datos",
+              "elegida": false,
+              "eval": [
+                [
+                  "Parcial",
+                  "Respaldos de base enormes."
+                ],
+                [
+                  "No cumple",
+                  "Sin retención inalterable."
+                ],
+                [
+                  "Parcial",
+                  "Un DBA puede alterar filas."
+                ],
+                [
+                  "No cumple",
+                  "Almacenamiento de base más caro que objetos."
+                ]
+              ]
+            }
+          ],
+          "justificacion": "Separar contenido de metadatos deja cada dato en el motor hecho para él. Solo Cloud Storage ofrece retención inalterable gestionada.",
+          "consenso": "Acordado por el equipo.",
+          "disenso": "Ninguno registrado.",
+          "relacionadas": [
+            "AD-01",
+            "AD-08"
+          ]
+        }
+      ]
+    },
+    {
+      "num": "6.2",
+      "titulo": "Selección de tecnologías",
+      "decisiones": [
+        {
+          "id": "AD-05",
+          "titulo": "Estilo arquitectónico y comunicación",
+          "decision": "<b>Microservicios</b> según la granularidad del SRS. Las cuatro operaciones del prototipo son <b>REST síncrono</b>; en el objetivo los hechos de negocio viajan por <b>Kafka</b>.",
+          "impactos": [
+            "Cada servicio se despliega y escala solo.",
+            "Aparece consistencia eventual en avisos y analítica."
+          ],
+          "problema": "Elegir estilo y forma de comunicación entre piezas.",
+          "contexto": "El SRS ya dio veredicto por dominio (*4.3 de A1). La afiliación exige consistencia fuerte; el resto admite eventual (RNF-06).",
+          "alcance": "Todo el operador.",
+          "restricciones": [
+            "RD-12: descomposición por capacidad de negocio.",
+            "RD-11: sin base de datos compartida."
+          ],
+          "supuestos": [
+            "Kafka no es necesario para las cuatro operaciones implementadas."
+          ],
+          "solucion": "Llamadas REST con timeout donde el usuario espera respuesta; eventos CloudEvents donde basta con enterarse.",
+          "criterios": [
+            "RNF-07",
+            "RNF-26",
+            "RNF-06",
+            "Coste"
+          ],
+          "alternativas": [
+            {
+              "nombre": "Microservicios, REST y eventos",
+              "elegida": true,
+              "eval": [
+                [
+                  "Cumple",
+                  "Fallos aislados y colas que absorben caídas."
+                ],
+                [
+                  "Cumple",
+                  "Cada dominio cambia solo."
+                ],
+                [
+                  "Parcial",
+                  "Eventual en avisos; fuerte en afiliación."
+                ],
+                [
+                  "Parcial",
+                  "Más piezas que operar."
+                ]
+              ]
+            },
+            {
+              "nombre": "Monolito modular",
+              "elegida": false,
+              "eval": [
+                [
+                  "No cumple",
+                  "Un fallo tumba todo."
+                ],
+                [
+                  "Parcial",
+                  "Módulos acoplados en el despliegue."
+                ],
+                [
+                  "Cumple",
+                  "Transacción local."
+                ],
+                [
+                  "Cumple",
+                  "Una sola pieza."
+                ]
+              ]
+            },
+            {
+              "nombre": "Microservicios solo síncronos",
+              "elegida": false,
+              "eval": [
+                [
+                  "Parcial",
+                  "Cascadas de timeouts."
+                ],
+                [
+                  "Cumple",
+                  "Cada dominio cambia solo."
+                ],
+                [
+                  "Cumple",
+                  "Respuesta inmediata."
+                ],
+                [
+                  "Parcial",
+                  "Más piezas que operar."
+                ]
+              ]
+            }
+          ],
+          "justificacion": "La tolerancia a fallos con 70 operadores ajenos pesa más que la simplicidad del monolito. Kafka se deja fuera del prototipo porque ninguna de sus cuatro operaciones lo necesita.",
+          "consenso": "Acordado por el equipo.",
+          "disenso": "Monolito modular para el prototipo. Se descartó porque no demostraría la arquitectura que se entrega.",
+          "relacionadas": [
+            "AD-09",
+            "AD-10"
+          ]
+        },
+        {
+          "id": "AD-06",
+          "titulo": "Identidad",
+          "decision": "<b>Keycloak 26</b> con OIDC Authorization Code y PKCE para el portal y client credentials entre servicios.",
+          "impactos": [
+            "Hay que operar Keycloak y su base.",
+            "Los servicios solo validan JWT con llaves públicas."
+          ],
+          "problema": "Elegir cómo se autentican ciudadanos y servicios.",
+          "contexto": "RNF-11 exige autenticación sólida y RNF-12 un modelo expresivo de autorización. El portal es una aplicación pública sin secretos.",
+          "alcance": "MS-01 y todos sus clientes.",
+          "restricciones": [
+            "RD-01: configuración fuera del artefacto."
+          ],
+          "supuestos": [
+            "MFA se activa en el objetivo, no en el prototipo."
+          ],
+          "solucion": "Realm <code>carpeta</code> importado con variables, cliente público <code>portal</code> con PKCE S256, audiencia <code>custodia</code>, bloqueo tras 5 intentos, sesión inactiva de 30 minutos, tema en español.",
+          "criterios": [
+            "RNF-11",
+            "RNF-12",
+            "Coste",
+            "RNF-27"
+          ],
+          "alternativas": [
+            {
+              "nombre": "Keycloak",
+              "elegida": true,
+              "eval": [
+                [
+                  "Cumple",
+                  "OIDC, fuerza bruta y MFA."
+                ],
+                [
+                  "Cumple",
+                  "Roles y mapeadores de atributos."
+                ],
+                [
+                  "Parcial",
+                  "Hay que operarlo."
+                ],
+                [
+                  "Cumple",
+                  "Estándar abierto que corre en cualquier nube."
+                ]
+              ]
+            },
+            {
+              "nombre": "Identity Platform",
+              "elegida": false,
+              "eval": [
+                [
+                  "Cumple",
+                  "OIDC y MFA gestionados."
+                ],
+                [
+                  "Parcial",
+                  "Claims propios vía funciones."
+                ],
+                [
+                  "Cumple",
+                  "Pago por usuario activo, sin operación."
+                ],
+                [
+                  "No cumple",
+                  "Atado a GCP."
+                ]
+              ]
+            },
+            {
+              "nombre": "Servicio propio",
+              "elegida": false,
+              "eval": [
+                [
+                  "Parcial",
+                  "Reinventar seguridad."
+                ],
+                [
+                  "Parcial",
+                  "Todo por construir."
+                ],
+                [
+                  "No cumple",
+                  "Desarrollo y auditoría."
+                ],
+                [
+                  "Cumple",
+                  "Sin proveedor."
+                ]
+              ]
+            }
+          ],
+          "justificacion": "Keycloak es el único que cumple autenticación, autorización expresiva y portabilidad a la vez. Su costo operativo se acota con una instancia en el prototipo y HA en GKE en el objetivo.",
+          "consenso": "Acordado por el equipo.",
+          "disenso": "Identity Platform ahorra operación; se rechazó por dependencia del proveedor.",
+          "relacionadas": [
+            "AD-03",
+            "AD-07"
+          ]
+        },
+        {
+          "id": "AD-07",
+          "titulo": "Runtime de los servicios",
+          "decision": "<b>Node.js 22 LTS con Express 5</b> en JavaScript ESM.",
+          "impactos": [
+            "Imágenes pequeñas y arranque rápido.",
+            "Sin tipos estáticos: la validación de entrada es explícita."
+          ],
+          "problema": "Elegir lenguaje y framework de los microservicios.",
+          "contexto": "Los servicios del prototipo son casi solo entrada y salida: base de datos, Keycloak, almacén y GovCarpeta.",
+          "alcance": "MS-03, MS-04 y MS-08.",
+          "restricciones": [
+            "RD-02: procesos sin estado.",
+            "RD-09: registros como flujo de eventos."
+          ],
+          "supuestos": [
+            "El equipo domina JavaScript por los talleres del curso."
+          ],
+          "solucion": "Un servicio Express por microservicio, configuración por entorno, errores problem+json y pruebas con <code>node --test</code>.",
+          "criterios": [
+            "RNF-04",
+            "Coste",
+            "RNF-29"
+          ],
+          "alternativas": [
+            {
+              "nombre": "Node 22 + Express 5",
+              "elegida": true,
+              "eval": [
+                [
+                  "Cumple",
+                  "E/S no bloqueante; aquí casi todo es E/S."
+                ],
+                [
+                  "Cumple",
+                  "Lenguaje de los talleres: sin curva."
+                ],
+                [
+                  "Cumple",
+                  "Imagen pequeña."
+                ]
+              ]
+            },
+            {
+              "nombre": "Quarkus",
+              "elegida": false,
+              "eval": [
+                [
+                  "Cumple",
+                  "Compilación nativa con arranque rápido."
+                ],
+                [
+                  "Parcial",
+                  "Nuevo para el equipo."
+                ],
+                [
+                  "Cumple",
+                  "Imagen nativa pequeña."
+                ]
+              ]
+            },
+            {
+              "nombre": "Spring Boot",
+              "elegida": false,
+              "eval": [
+                [
+                  "Parcial",
+                  "Arranque en frío lento en Cloud Run."
+                ],
+                [
+                  "Parcial",
+                  "Conocido por parte del equipo."
+                ],
+                [
+                  "Parcial",
+                  "Imagen pesada."
+                ]
+              ]
+            },
+            {
+              "nombre": "Go",
+              "elegida": false,
+              "eval": [
+                [
+                  "Cumple",
+                  "Binario rápido."
+                ],
+                [
+                  "No cumple",
+                  "Nadie del equipo lo ha usado."
+                ],
+                [
+                  "Cumple",
+                  "Imagen mínima."
+                ]
+              ]
+            }
+          ],
+          "justificacion": "Node iguala en rendimiento a Quarkus y Go para cargas de E/S y es el único sin curva para el equipo en una semana de entrega.",
+          "consenso": "Acordado por el equipo.",
+          "disenso": "Quarkus aparece en el material del curso sobre microservicios nativos de Kubernetes. Queda como alternativa si un servicio pasa a ser intensivo en CPU.",
+          "relacionadas": [
+            "AD-03",
+            "AD-12"
+          ]
+        },
+        {
+          "id": "AD-08",
+          "titulo": "Persistencia",
+          "decision": "<b>PostgreSQL 16, una base por servicio</b>, y almacén de objetos por <b>API S3</b>: MinIO en local y Cloud Storage con claves HMAC en nube.",
+          "impactos": [
+            "Un solo código S3 para local y nube.",
+            "Cada servicio migra su esquema por separado."
+          ],
+          "problema": "Elegir motor de datos y cómo se reparte entre servicios.",
+          "contexto": "Cuota y estados de documentos necesitan transacciones. Cloud Storage acepta URL prefirmadas AWS V4 con HMAC.",
+          "alcance": "MS-03, MS-04 y Keycloak.",
+          "restricciones": [
+            "RD-11: sin base de datos compartida.",
+            "RD-10: migraciones como proceso aparte."
+          ],
+          "supuestos": [
+            "Una instancia Cloud SQL con tres bases basta para el prototipo."
+          ],
+          "solucion": "Bases <code>afiliacion</code>, <code>custodia</code> y <code>keycloak</code> con usuarios distintos; bucket privado con CORS para el portal.",
+          "criterios": [
+            "RNF-06",
+            "RNF-26",
+            "RNF-27",
+            "Coste"
+          ],
+          "alternativas": [
+            {
+              "nombre": "PostgreSQL por servicio + S3",
+              "elegida": true,
+              "eval": [
+                [
+                  "Cumple",
+                  "Transacciones para cuota y estados."
+                ],
+                [
+                  "Cumple",
+                  "Migraciones por servicio."
+                ],
+                [
+                  "Cumple",
+                  "MinIO en local y GCS en nube con el mismo SDK."
+                ],
+                [
+                  "Parcial",
+                  "Cloud SQL tiene costo base."
+                ]
+              ]
+            },
+            {
+              "nombre": "MongoDB compartido",
+              "elegida": false,
+              "eval": [
+                [
+                  "Parcial",
+                  "Transacciones multi-documento con costo."
+                ],
+                [
+                  "Parcial",
+                  "Esquema compartido que acopla."
+                ],
+                [
+                  "Cumple",
+                  "Corre en cualquier nube."
+                ],
+                [
+                  "Parcial",
+                  "Clúster gestionado de pago."
+                ]
+              ]
+            },
+            {
+              "nombre": "Firestore + Cloud Storage",
+              "elegida": false,
+              "eval": [
+                [
+                  "Parcial",
+                  "Transacciones limitadas."
+                ],
+                [
+                  "Cumple",
+                  "Sin esquema rígido."
+                ],
+                [
+                  "No cumple",
+                  "Solo GCP."
+                ],
+                [
+                  "Cumple",
+                  "Pago por operación."
+                ]
+              ]
+            }
+          ],
+          "justificacion": "PostgreSQL da transacciones y aislamiento por base; la API S3 evita escribir dos adaptadores de almacén.",
+          "consenso": "Acordado por el equipo.",
+          "disenso": "Firestore reduce costo fijo; se rechazó por dependencia del proveedor.",
+          "relacionadas": [
+            "AD-04",
+            "AD-05"
+          ]
+        },
+        {
+          "id": "AD-09",
+          "titulo": "Integración con el centralizador",
+          "decision": "Una <b>pasarela anticorrupción dedicada</b> (MS-08) con timeout de 8 s, reintento con backoff solo en operaciones idempotentes y circuit breaker.",
+          "impactos": [
+            "Un salto de red más.",
+            "El resto del sistema no conoce la prosa ni los códigos de GovCarpeta."
+          ],
+          "problema": "Decidir cómo hablan los servicios con GovCarpeta.",
+          "contexto": "El contrato devuelve prosa, se contradice en registerOperator y no tiene compromiso de disponibilidad (B-10). El centralizador debe recibir la mínima carga (RNF-20).",
+          "alcance": "MS-03, MS-04 y MS-08.",
+          "restricciones": [
+            "RD-14: centralizador externo no modificable.",
+            "RD-15: contrato GovCarpeta congelado.",
+            "RI-01: sin contenido por el centralizador."
+          ],
+          "supuestos": [
+            "GovCarpeta no exige autenticación (B-09)."
+          ],
+          "solucion": "Tres operaciones propias que traducen a validateCitizen, registerCitizen y authenticateDocument. Rechaza cuerpos de más de 2 KB y URL que no sean https, para que ningún contenido pueda viajar.",
+          "criterios": [
+            "RNF-07",
+            "RNF-20",
+            "RNF-26",
+            "RNF-25"
+          ],
+          "alternativas": [
+            {
+              "nombre": "Pasarela dedicada",
+              "elegida": true,
+              "eval": [
+                [
+                  "Cumple",
+                  "Timeout, reintento y circuit breaker en un solo lugar."
+                ],
+                [
+                  "Cumple",
+                  "Un solo punto controla el ritmo hacia el centralizador."
+                ],
+                [
+                  "Cumple",
+                  "Si cambia el contrato cambia un servicio."
+                ],
+                [
+                  "Cumple",
+                  "Todas las llamadas en un mismo registro."
+                ]
+              ]
+            },
+            {
+              "nombre": "Librería compartida",
+              "elegida": false,
+              "eval": [
+                [
+                  "Parcial",
+                  "Cada servicio la configura."
+                ],
+                [
+                  "Parcial",
+                  "Reintentos sin coordinar entre servicios."
+                ],
+                [
+                  "Parcial",
+                  "Hay que redesplegar todos."
+                ],
+                [
+                  "Parcial",
+                  "Registros repartidos."
+                ]
+              ]
+            },
+            {
+              "nombre": "Llamada directa",
+              "elegida": false,
+              "eval": [
+                [
+                  "No cumple",
+                  "Sin protección."
+                ],
+                [
+                  "No cumple",
+                  "Reintentos sin control."
+                ],
+                [
+                  "No cumple",
+                  "El contrato se filtra a todo el código."
+                ],
+                [
+                  "No cumple",
+                  "Sin punto de observación."
+                ]
+              ]
+            }
+          ],
+          "justificacion": "Es la aplicación directa del veredicto del SRS para RF-06: fuera del alcance, solo el adaptador. El salto extra cuesta milisegundos frente a los segundos que tarda GovCarpeta.",
+          "consenso": "Acordado por el equipo.",
+          "disenso": "Librería compartida para ahorrar un servicio; se rechazó porque no protege al centralizador de reintentos cruzados.",
+          "relacionadas": [
+            "AD-05",
+            "AD-10"
+          ]
+        },
+        {
+          "id": "AD-10",
+          "titulo": "Contratos y formatos",
+          "decision": "<b>OpenAPI 3.1</b> antes del código, errores <b>application/problem+json</b> (RFC 9457) y eventos <b>CloudEvents 1.0</b>.",
+          "impactos": [
+            "El validador comprueba que cada endpoint de una secuencia existe en el contrato.",
+            "Los errores son legibles por máquina y por persona."
+          ],
+          "problema": "Elegir cómo se describen APIs, errores y eventos.",
+          "contexto": "RD-08 exige diseño API-first y RNF-19 contratos estándar entre operadores.",
+          "alcance": "Todas las API propias y eventos.",
+          "restricciones": [
+            "RD-08: diseño API-first."
+          ],
+          "supuestos": [
+            "Los operadores pares aceptan JSON sobre HTTPS."
+          ],
+          "solucion": "Un archivo <code>operador/contratos/*.openapi.yaml</code> por servicio.",
+          "criterios": [
+            "RNF-19",
+            "RNF-26",
+            "RNF-25"
+          ],
+          "alternativas": [
+            {
+              "nombre": "OpenAPI + RFC 9457 + CloudEvents",
+              "elegida": true,
+              "eval": [
+                [
+                  "Cumple",
+                  "Estándares abiertos que cualquier operador lee."
+                ],
+                [
+                  "Cumple",
+                  "Contrato primero, código después."
+                ],
+                [
+                  "Cumple",
+                  "Errores con type e instance correlacionables."
+                ]
+              ]
+            },
+            {
+              "nombre": "gRPC + Protobuf",
+              "elegida": false,
+              "eval": [
+                [
+                  "Parcial",
+                  "El navegador necesita un proxy."
+                ],
+                [
+                  "Cumple",
+                  "Esquema estricto."
+                ],
+                [
+                  "Parcial",
+                  "Errores menos legibles fuera de gRPC."
+                ]
+              ]
+            },
+            {
+              "nombre": "Formatos propios",
+              "elegida": false,
+              "eval": [
+                [
+                  "No cumple",
+                  "Cada par los tendría que aprender."
+                ],
+                [
+                  "Parcial",
+                  "Sin herramienta que los valide."
+                ],
+                [
+                  "No cumple",
+                  "Errores sin estructura."
+                ]
+              ]
+            }
+          ],
+          "justificacion": "Son los estándares que ya entienden navegadores, gateways y herramientas de observabilidad.",
+          "consenso": "Acordado por el equipo.",
+          "disenso": "Ninguno registrado.",
+          "relacionadas": [
+            "AD-05",
+            "AD-09"
+          ]
+        },
+        {
+          "id": "AD-11",
+          "titulo": "Frontend",
+          "decision": "<b>SPA React estática</b> publicada en GitHub Pages, sin renderizado en servidor.",
+          "impactos": [
+            "La interfaz sigue en línea aunque caigan los servicios.",
+            "El primer render depende de JavaScript."
+          ],
+          "problema": "Elegir cómo se construye y sirve el portal del ciudadano.",
+          "contexto": "RNF-16 y RNF-17 piden interfaz usable y accesible. El sitio de arquitectura ya es React en GitHub Pages.",
+          "alcance": "Portal Mi Carpeta Segura.",
+          "restricciones": [
+            "docs/DESIGN.md manda en color, contraste e iconos."
+          ],
+          "supuestos": [
+            "El portal no necesita SEO."
+          ],
+          "solucion": "React 18 con oidc-client-ts y vistas por hash, sin router; tokens verdes de DESIGN.md en claro y oscuro.",
+          "criterios": [
+            "Coste",
+            "RNF-16",
+            "RNF-17",
+            "RNF-01"
+          ],
+          "alternativas": [
+            {
+              "nombre": "SPA estática",
+              "elegida": true,
+              "eval": [
+                [
+                  "Cumple",
+                  "GitHub Pages sin servidor."
+                ],
+                [
+                  "Cumple",
+                  "Flujos cortos de pocas pantallas."
+                ],
+                [
+                  "Cumple",
+                  "axe en e2e y AA en los dos temas."
+                ],
+                [
+                  "Cumple",
+                  "CDN independiente de los servicios."
+                ]
+              ]
+            },
+            {
+              "nombre": "SSR con Next.js",
+              "elegida": false,
+              "eval": [
+                [
+                  "Parcial",
+                  "Servidor Node que operar."
+                ],
+                [
+                  "Cumple",
+                  "Mismo diseño posible."
+                ],
+                [
+                  "Cumple",
+                  "Misma accesibilidad."
+                ],
+                [
+                  "Parcial",
+                  "Si cae el servidor cae la interfaz."
+                ]
+              ]
+            },
+            {
+              "nombre": "App móvil nativa",
+              "elegida": false,
+              "eval": [
+                [
+                  "No cumple",
+                  "Dos plataformas que mantener."
+                ],
+                [
+                  "Parcial",
+                  "Hay que instalarla."
+                ],
+                [
+                  "Parcial",
+                  "Accesibilidad por plataforma."
+                ],
+                [
+                  "Cumple",
+                  "Funciona sin la web."
+                ]
+              ]
+            }
+          ],
+          "justificacion": "La SPA cumple los cuatro criterios sin servidor que operar.",
+          "consenso": "Acordado por el equipo.",
+          "disenso": "Ninguno registrado.",
+          "relacionadas": [
+            "AD-06"
+          ]
+        },
+        {
+          "id": "AD-12",
+          "titulo": "Empaquetado, registro, IaC y observabilidad",
+          "decision": "Imágenes <b>OCI multi-arquitectura</b> publicadas en <b>Docker Hub</b> y tomadas por Cloud Run a través de un <b>repositorio remoto de Artifact Registry</b>; infraestructura como manifiestos <b>Knative YAML</b>; logs JSON a stdout y chequeos de salud.",
+          "impactos": [
+            "El mismo artefacto corre en local y en nube (RD-07).",
+            "Sin estado de Terraform que custodiar."
+          ],
+          "problema": "Decidir cómo se construye, publica, despliega y observa cada servicio.",
+          "contexto": "El profesor pidió Docker Hub en el entorno académico e IaC declarativa. Cloud Run solo toma Docker Hub directamente para imágenes oficiales.",
+          "alcance": "Todos los servicios del prototipo.",
+          "restricciones": [
+            "RD-04: infraestructura inmutable.",
+            "RD-07: separación de construcción y ejecución.",
+            "RD-13: observabilidad desde el primer despliegue."
+          ],
+          "supuestos": [
+            "El límite de descargas de Docker Hub se evita con el repositorio remoto y credenciales."
+          ],
+          "solucion": "<code>docker buildx</code> para amd64 y arm64, <code>gcloud run services replace</code> con un YAML por servicio y <code>bootstrap.sh</code> idempotente para lo que se crea una sola vez.",
+          "criterios": [
+            "RNF-29",
+            "RNF-25",
+            "Coste",
+            "RNF-27"
+          ],
+          "alternativas": [
+            {
+              "nombre": "Docker Hub + Artifact Registry remoto + YAML Knative",
+              "elegida": true,
+              "eval": [
+                [
+                  "Cumple",
+                  "Mismo artefacto en local y nube."
+                ],
+                [
+                  "Cumple",
+                  "Logs JSON que Cloud Logging indexa."
+                ],
+                [
+                  "Cumple",
+                  "Registro gratuito y sin estado de IaC."
+                ],
+                [
+                  "Cumple",
+                  "Imágenes que corren en cualquier plataforma."
+                ]
+              ]
+            },
+            {
+              "nombre": "Artifact Registry + Terraform",
+              "elegida": false,
+              "eval": [
+                [
+                  "Cumple",
+                  "Plan y aplicación reproducibles."
+                ],
+                [
+                  "Cumple",
+                  "Mismos logs."
+                ],
+                [
+                  "Parcial",
+                  "Curva y backend de estado."
+                ],
+                [
+                  "Parcial",
+                  "Registro atado a GCP."
+                ]
+              ]
+            },
+            {
+              "nombre": "Despliegue desde código fuente",
+              "elegida": false,
+              "eval": [
+                [
+                  "Parcial",
+                  "Cada despliegue reconstruye."
+                ],
+                [
+                  "Parcial",
+                  "Sin control del artefacto."
+                ],
+                [
+                  "Cumple",
+                  "Nada que configurar."
+                ],
+                [
+                  "No cumple",
+                  "Sin imagen portable."
+                ]
+              ]
+            }
+          ],
+          "justificacion": "Cumple lo que pidió el profesor y los cuatro criterios. Terraform se reserva para la plataforma objetivo, donde el número de recursos lo justifica.",
+          "consenso": "Acordado por el equipo.",
+          "disenso": "Terraform desde el inicio. Se pospuso por tiempo de entrega; los YAML de Knative ya son declarativos.",
+          "relacionadas": [
+            "AD-03",
+            "AD-07"
+          ]
+        }
+      ]
+    }
+  ]
+}

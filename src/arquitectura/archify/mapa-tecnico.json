@@ -1,0 +1,319 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Mi Carpeta Segura · mapa técnico del prototipo",
+    "quality_profile": "showcase",
+    "animation": "trace",
+    "views": [
+      {
+        "id": "registro",
+        "label": "Registro",
+        "focus": [
+          "spa",
+          "afiliacion",
+          "keycloak",
+          "pasarela",
+          "govcarpeta"
+        ],
+        "note": "Afiliación crea el usuario deshabilitado y lo habilita cuando GovCarpeta confirma."
+      },
+      {
+        "id": "login",
+        "label": "Login",
+        "focus": [
+          "ciudadano",
+          "spa",
+          "keycloak",
+          "custodia"
+        ],
+        "note": "Código de autorización con PKCE; custodia valida el JWT con la audiencia custodia."
+      },
+      {
+        "id": "carga",
+        "label": "Carga",
+        "focus": [
+          "spa",
+          "custodia",
+          "minio",
+          "postgres"
+        ],
+        "note": "El binario sube directo al almacén con una URL prefirmada de 5 minutos."
+      },
+      {
+        "id": "autenticacion",
+        "label": "Autenticación",
+        "focus": [
+          "custodia",
+          "pasarela",
+          "govcarpeta",
+          "minio"
+        ],
+        "note": "Viaja la URL firmada de 15 minutos, nunca el documento (RI-01)."
+      },
+      {
+        "id": "despliegue",
+        "label": "Despliegue",
+        "focus": [
+          "keycloak",
+          "afiliacion",
+          "custodia",
+          "pasarela",
+          "postgres",
+          "minio"
+        ],
+        "note": "Hoy en Docker Compose local; las mismas imágenes van a Cloud Run."
+      }
+    ]
+  },
+  "components": [
+    {
+      "id": "ciudadano",
+      "type": "external",
+      "label": "Ciudadano",
+      "sublabel": "navegador",
+      "pos": [
+        40,
+        320
+      ],
+      "size": [
+        150,
+        64
+      ]
+    },
+    {
+      "id": "spa",
+      "type": "frontend",
+      "label": "SPA React",
+      "sublabel": "oidc-client-ts",
+      "pos": [
+        280,
+        320
+      ],
+      "size": [
+        150,
+        64
+      ]
+    },
+    {
+      "id": "keycloak",
+      "type": "security",
+      "label": "Keycloak 26",
+      "sublabel": "MS-01 · OIDC",
+      "pos": [
+        520,
+        120
+      ],
+      "size": [
+        150,
+        64
+      ]
+    },
+    {
+      "id": "afiliacion",
+      "type": "backend",
+      "label": "Afiliación",
+      "sublabel": "MS-03 · Express 5",
+      "pos": [
+        800,
+        120
+      ],
+      "size": [
+        150,
+        64
+      ]
+    },
+    {
+      "id": "custodia",
+      "type": "backend",
+      "label": "Custodia",
+      "sublabel": "MS-04 · Express 5",
+      "pos": [
+        520,
+        320
+      ],
+      "size": [
+        150,
+        64
+      ]
+    },
+    {
+      "id": "pasarela",
+      "type": "backend",
+      "label": "Pasarela ACL",
+      "sublabel": "MS-08 · Express 5",
+      "pos": [
+        800,
+        320
+      ],
+      "size": [
+        150,
+        64
+      ]
+    },
+    {
+      "id": "govcarpeta",
+      "type": "external",
+      "label": "GovCarpeta",
+      "sublabel": "centralizador",
+      "pos": [
+        1080,
+        320
+      ],
+      "size": [
+        150,
+        64
+      ]
+    },
+    {
+      "id": "postgres",
+      "type": "database",
+      "label": "PostgreSQL 16",
+      "sublabel": "una base por servicio",
+      "pos": [
+        520,
+        520
+      ],
+      "size": [
+        150,
+        64
+      ]
+    },
+    {
+      "id": "minio",
+      "type": "database",
+      "label": "MinIO",
+      "sublabel": "API S3",
+      "pos": [
+        800,
+        520
+      ],
+      "size": [
+        150,
+        64
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "Docker Compose local",
+      "wraps": [
+        "keycloak",
+        "afiliacion",
+        "custodia",
+        "pasarela",
+        "postgres",
+        "minio"
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "ciudadano-spa",
+      "from": "ciudadano",
+      "to": "spa",
+      "label": "HTTPS"
+    },
+    {
+      "id": "spa-custodia",
+      "from": "spa",
+      "to": "custodia",
+      "label": "REST + JWT",
+      "variant": "emphasis"
+    },
+    {
+      "id": "spa-keycloak",
+      "from": "spa",
+      "to": "keycloak",
+      "label": "OIDC + PKCE",
+      "variant": "security",
+      "fromSide": "top",
+      "toSide": "left"
+    },
+    {
+      "id": "spa-afiliacion",
+      "from": "spa",
+      "to": "afiliacion",
+      "label": "registro",
+      "fromSide": "top",
+      "toSide": "top",
+      "via": [
+        [
+          355,
+          72
+        ],
+        [
+          875,
+          72
+        ]
+      ]
+    },
+    {
+      "id": "afiliacion-keycloak",
+      "from": "afiliacion",
+      "to": "keycloak",
+      "label": "Admin API",
+      "variant": "security"
+    },
+    {
+      "id": "afiliacion-pasarela",
+      "from": "afiliacion",
+      "to": "pasarela",
+      "label": "afiliación única",
+      "labelDy": 24
+    },
+    {
+      "id": "custodia-pasarela",
+      "from": "custodia",
+      "to": "pasarela",
+      "label": "URL firmada"
+    },
+    {
+      "id": "pasarela-govcarpeta",
+      "from": "pasarela",
+      "to": "govcarpeta",
+      "label": "HTTPS JSON",
+      "variant": "emphasis"
+    },
+    {
+      "id": "custodia-postgres",
+      "from": "custodia",
+      "to": "postgres",
+      "label": "SQL",
+      "labelDy": 24
+    },
+    {
+      "id": "custodia-minio",
+      "from": "custodia",
+      "to": "minio",
+      "label": "S3 V4"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Operaciones",
+      "items": [
+        "Registro, login, carga y autenticación",
+        "Contratos OpenAPI 3.1 por servicio"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Seguridad",
+      "items": [
+        "PKCE S256 y bloqueo tras 5 intentos",
+        "La pasarela rechaza contenido documental"
+      ]
+    },
+    {
+      "dot": "cyan",
+      "title": "Despliegue",
+      "items": [
+        "Hoy: Docker Compose local",
+        "Siguiente: Cloud Run con las mismas imágenes"
+      ]
+    }
+  ]
+}

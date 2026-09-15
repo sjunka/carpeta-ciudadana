@@ -1,0 +1,83 @@
+{
+  "intro": "Hoy el prototipo corre en Docker Compose local y el documento se publica en GitHub Pages. El despliegue 5.1 en GCP <code>us-east1</code> es el siguiente paso: usa las mismas imágenes y solo cambia la configuración. La plataforma objetivo añade borde global, eventos y alta disponibilidad. La tabla de conectores cierra lo que los diagramas no alcanzan a rotular.",
+  "diagramas": [
+    {
+      "id": "despliegue-prototipo", "num": "5.1", "tipo": "despliegue", "titulo": "Despliegue del prototipo",
+      "introduccion": "Tres servicios Node y Keycloak en Cloud Run, datos en Cloud SQL y Cloud Storage. Las mismas imágenes corren en Docker Compose.",
+      "cierre": "El mismo artefacto corre en local y en nube: solo cambia la configuración (RD-01, RD-07).",
+      "realiza": "RD-01, RD-04, RD-06, RD-07, RNF-29",
+      "w": 1128, "h": 520,
+      "zonas": [
+        { "id": "pages", "nombre": "GITHUB PAGES · CDN", "x": 24, "y": 48, "w": 248, "h": 400 },
+        { "id": "gcp", "nombre": "GCP · US-EAST1", "x": 296, "y": 48, "w": 536, "h": 400 },
+        { "id": "ext", "nombre": "EXTERNOS", "x": 856, "y": 48, "w": 248, "h": 400 }
+      ],
+      "nodos": [
+        { "id": "spa", "zona": "pages", "nombre": "Sitio estático", "tecnologia": "HTML · JS · CSS", "x": 48, "y": 96, "w": 200, "h": 112, "artefactos": ["operador/ (SPA)", "arquitectura/"] },
+        { "id": "run", "zona": "gcp", "nombre": "Cloud Run", "tecnologia": "contenedores OCI", "x": 320, "y": 96, "w": 200, "h": 160, "artefactos": ["mcs-identidad + proxy", "mcs-afiliacion", "mcs-custodia", "mcs-pasarela"] },
+        { "id": "sql", "zona": "gcp", "nombre": "Cloud SQL", "tecnologia": "PostgreSQL 16", "x": 600, "y": 96, "w": 200, "h": 96, "artefactos": ["3 bases"] },
+        { "id": "gcs", "zona": "gcp", "nombre": "Cloud Storage", "tecnologia": "bucket privado", "x": 600, "y": 304, "w": 200, "h": 96, "artefactos": ["mcs-documentos"] },
+        { "id": "gov", "zona": "ext", "nombre": "GovCarpeta", "tecnologia": "Heroku", "x": 880, "y": 96, "w": 200, "h": 96, "artefactos": ["govcarpeta-apis"] }
+      ],
+      "rutas": [
+        { "de": "spa", "a": "run", "protocolo": "HTTPS", "formato": "JSON", "st": 1 },
+        { "de": "run", "a": "sql", "protocolo": "PG", "formato": "PROXY", "puntos": [[520, 144], [600, 144]], "st": 2 },
+        { "de": "run", "a": "gcs", "protocolo": "S3 V4", "formato": "HMAC", "puntos": [[480, 256], [480, 352], [600, 352]], "st": 3 },
+        { "de": "spa", "a": "gcs", "protocolo": "PUT PREFIRMADO", "formato": "PDF · JPG · PNG", "puntos": [[148, 208], [148, 424], [700, 424], [700, 400]], "acento": true, "st": 3 },
+        { "de": "run", "a": "gov", "protocolo": "HTTPS", "formato": "JSON", "puntos": [[520, 224], [840, 224], [840, 144], [880, 144]], "st": 4 }
+      ],
+      "pasos": [
+        "1 · La SPA se sirve desde GitHub Pages y llama a Cloud Run por HTTPS.",
+        "2 · Los servicios llegan a Cloud SQL a través del Auth Proxy.",
+        "3 · Custodia firma URL con HMAC; el navegador sube directo al bucket.",
+        "4 · La pasarela es la única salida hacia GovCarpeta."
+      ]
+    },
+    {
+      "id": "despliegue-objetivo", "num": "5.2", "tipo": "despliegue", "titulo": "Despliegue de la plataforma objetivo",
+      "introduccion": "Borde global con Cloud Armor, cómputo mixto, datos en alta disponibilidad y Kafka gestionado.",
+      "cierre": "Los certificados viven en un bucket con Bucket Lock: ni un administrador puede borrarlos (RNF-02, RNF-13).",
+      "realiza": "RNF-01, RNF-02, RNF-08, RNF-23, RNF-30",
+      "w": 1120, "h": 520,
+      "zonas": [
+        { "id": "borde", "nombre": "BORDE GLOBAL", "x": 24, "y": 48, "w": 232, "h": 400 },
+        { "id": "gcp", "nombre": "GCP · US-EAST1 + US-CENTRAL1", "x": 280, "y": 48, "w": 560, "h": 400 },
+        { "id": "saas", "nombre": "CONFLUENT CLOUD", "x": 864, "y": 48, "w": 232, "h": 400 }
+      ],
+      "nodos": [
+        { "id": "lb", "zona": "borde", "nombre": "Load Balancer", "tecnologia": "HTTPS global", "x": 40, "y": 96, "w": 200, "h": 96, "artefactos": ["política Cloud Armor"] },
+        { "id": "run", "zona": "gcp", "nombre": "Cloud Run", "tecnologia": "multi-región", "x": 304, "y": 96, "w": 208, "h": 136, "artefactos": ["microservicios", "notificaciones (functions)", "pasarela"] },
+        { "id": "gke", "zona": "gcp", "nombre": "GKE Autopilot", "tecnologia": "regional", "x": 304, "y": 296, "w": 208, "h": 116, "artefactos": ["Keycloak HA", "consumidores Kafka"] },
+        { "id": "sql", "zona": "gcp", "nombre": "Cloud SQL HA", "tecnologia": "PostgreSQL 16", "x": 608, "y": 96, "w": 208, "h": 96, "artefactos": ["primaria + réplica"] },
+        { "id": "gcs", "zona": "gcp", "nombre": "Cloud Storage", "tecnologia": "dual-region", "x": 608, "y": 272, "w": 208, "h": 104, "artefactos": ["certificados · Bucket Lock"] },
+        { "id": "kafka", "zona": "saas", "nombre": "Kafka", "tecnologia": "Schema Registry", "x": 880, "y": 96, "w": 200, "h": 96, "artefactos": ["CloudEvents 1.0"] }
+      ],
+      "rutas": [
+        { "de": "lb", "a": "run", "protocolo": "HTTPS", "formato": "JSON", "puntos": [[240, 144], [304, 144]], "st": 1 },
+        { "de": "lb", "a": "gke", "protocolo": "OIDC", "formato": "JWT", "puntos": [[140, 192], [140, 352], [304, 352]], "st": 1 },
+        { "de": "run", "a": "sql", "protocolo": "PG", "formato": "TLS", "puntos": [[512, 144], [608, 144]], "st": 2 },
+        { "de": "run", "a": "gcs", "protocolo": "S3 V4", "formato": "BINARIO", "puntos": [[496, 232], [496, 264], [560, 264], [560, 324], [608, 324]], "st": 2 },
+        { "de": "run", "a": "kafka", "protocolo": "KAFKA SASL", "formato": "CLOUDEVENTS", "puntos": [[400, 96], [400, 72], [980, 72], [980, 96]], "acento": true, "st": 3 },
+        { "de": "gke", "a": "kafka", "protocolo": "KAFKA SASL", "formato": "CONSUMO", "puntos": [[512, 400], [912, 400], [912, 192]], "st": 4 }
+      ],
+      "pasos": [
+        "1 · El balanceador global reparte hacia Cloud Run y Keycloak.",
+        "2 · Los datos van a Cloud SQL HA y a Cloud Storage dual-region.",
+        "3 · Los servicios publican CloudEvents en Kafka.",
+        "4 · Los consumidores en GKE procesan los eventos."
+      ]
+    }
+  ],
+  "conectores": [
+    { "origen": "SPA", "destino": "Keycloak", "protocolo": "HTTPS · OIDC Authorization Code + PKCE", "formato": "JWT RS256", "autenticacion": "PKCE S256", "modo": "Síncrono", "estado": "Prototipo" },
+    { "origen": "SPA", "destino": "afiliacion · custodia", "protocolo": "HTTPS TLS 1.3 · REST", "formato": "JSON · application/problem+json (RFC 9457)", "autenticacion": "Bearer JWT (custodia) · límite por IP (afiliación)", "modo": "Síncrono", "estado": "Prototipo" },
+    { "origen": "SPA", "destino": "Cloud Storage", "protocolo": "HTTPS · URL prefirmada S3 V4", "formato": "Binario PDF · JPG · PNG", "autenticacion": "Firma HMAC en la URL, 5 min", "modo": "Síncrono", "estado": "Prototipo" },
+    { "origen": "afiliacion", "destino": "Keycloak Admin", "protocolo": "HTTPS · REST", "formato": "JSON", "autenticacion": "Client credentials afiliacion-admin", "modo": "Síncrono", "estado": "Prototipo" },
+    { "origen": "afiliacion · custodia", "destino": "pasarela", "protocolo": "HTTPS · REST", "formato": "JSON", "autenticacion": "ID token de Google (run.invoker)", "modo": "Síncrono", "estado": "Prototipo" },
+    { "origen": "pasarela", "destino": "GovCarpeta", "protocolo": "HTTPS · REST", "formato": "JSON de entrada · texto en prosa de salida", "autenticacion": "Ninguna (el contrato no la exige)", "modo": "Síncrono", "estado": "Prototipo" },
+    { "origen": "Servicios", "destino": "Cloud SQL", "protocolo": "PostgreSQL wire vía Cloud SQL Auth Proxy", "formato": "SQL", "autenticacion": "IAM de la cuenta de servicio", "modo": "Síncrono", "estado": "Prototipo" },
+    { "origen": "custodia", "destino": "Cloud Storage", "protocolo": "HTTPS · API XML S3 V4", "formato": "Binario", "autenticacion": "Clave HMAC en Secret Manager", "modo": "Síncrono", "estado": "Prototipo" },
+    { "origen": "Servicios", "destino": "Kafka", "protocolo": "Kafka SASL/SSL", "formato": "CloudEvents 1.0 JSON con esquema registrado", "autenticacion": "API key por servicio", "modo": "Asíncrono", "estado": "Objetivo" },
+    { "origen": "Kafka", "destino": "BigQuery", "protocolo": "Conector gestionado", "formato": "Avro · filas anonimizadas", "autenticacion": "Cuenta de servicio", "modo": "Asíncrono", "estado": "Objetivo" }
+  ]
+}

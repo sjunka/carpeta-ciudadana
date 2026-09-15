@@ -63,6 +63,21 @@ docs/          reglas, contexto del curso y la entrega en markdown
 scripts/       validadores de contenido y de contraste
 ```
 
+## Entrega 2 · Arquitectura
+
+A1 (`src/content`) queda congelada en v1.0 y su salida byte-idéntica. A2 es aditiva:
+
+| Pieza | Dónde |
+|---|---|
+| Contenido (única fuente de verdad) | `src/arquitectura/content/*.json` |
+| Página | `arquitectura/index.html` → `/carpeta-ciudadana/arquitectura/` |
+| Validador, md y diagramas | `scripts/arquitectura/` (encadenados en `npm run check`, `md`, `pdf`) |
+| Implementación «Mi Carpeta Segura» | `operador/` (contratos, servicios, identidad, web, infra, e2e) |
+| Salidas (no se editan) | `docs/arquitectura-assignment2.md`, `../assignment2/`, `public/arquitectura/` |
+
+Reglas de A2: parte A2 de `docs/REGLAS.md`. Entrega N: `src/<slug>/` + `<slug>/index.html` +
+`scripts/<slug>/` + `assignmentN/`.
+
 ## Añadir una sección
 
 1. Añádela a `meta.json` → `secciones`.

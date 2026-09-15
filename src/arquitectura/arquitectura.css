@@ -1,0 +1,48 @@
+/* A2 · solo lo que A1 no tiene. Todo sale de tokens: aquí no se escribe ningún hex. */
+
+/* Tarjetas de historia y de decisión */
+.a2-card {
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-lg);
+  box-shadow: var(--e-1);
+  padding: var(--s-lg);
+  margin-block: var(--s-md);
+  scroll-margin-top: calc(var(--navh) + var(--s-md));
+}
+.a2-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--s-xs) var(--s-sm) }
+.a2-head h4 { margin: 0; font-size: 19px; font-weight: 700; letter-spacing: -.25px }
+.a2-id { font-family: var(--font-mono); font-size: 13px; color: var(--primary-text) }
+.a2-card h5 { margin: var(--s-md) 0 var(--s-xxs); font-size: 14px; font-weight: 600; color: var(--ink-muted) }
+.a2-frase { font-size: 17px; line-height: 1.5; max-width: 74ch }
+
+/* Escenarios: actor en negrita a la izquierda, paso a la derecha */
+ol.a2-esc { padding-left: var(--s-lg); max-width: 80ch }
+ol.a2-esc li { margin-bottom: var(--s-xs); line-height: 1.5 }
+.a2-quien { display: inline-block; min-width: 88px; font-weight: 600 }
+.a2-alt { border-left: 2px solid var(--hairline); padding-left: var(--s-sm); margin-block: var(--s-xs) }
+.a2-alt-t { margin: 0; font-weight: 600 }
+ul.a2-alt-p { margin: var(--s-xxs) 0; padding-left: var(--s-md); list-style: none }
+
+/* Contexto de la decisión */
+.a2-dl { display: grid; gap: var(--s-xs); margin: var(--s-sm) 0 }
+.a2-dl > div { display: grid; grid-template-columns: 140px 1fr; gap: var(--s-sm) }
+.a2-dl dt { font-weight: 600; color: var(--ink-muted) }
+.a2-dl dd { margin: 0 }
+.a2-dl ul { margin: 0; padding-left: var(--s-md) }
+@media (max-width: 640px) { .a2-dl > div { grid-template-columns: 1fr; gap: 0 } }
+
+/* Evaluación del análisis comparativo: texto siempre presente, el color solo acompaña */
+.ev { display: inline-block; font-size: 12px; font-weight: 600; padding: 1px var(--s-xs); border-radius: var(--r-full) }
+.ev-c { color: var(--st-caso); background: var(--st-caso-bg) }
+.ev-p { color: var(--st-asuncion); background: var(--st-asuncion-bg) }
+.ev-n { color: var(--st-bloqueo); background: var(--st-bloqueo-bg) }
+
+.a2-video { display: block; width: 100%; max-width: 960px; margin: var(--s-md) auto; border-radius: var(--r-lg); border: 1px solid var(--hairline) }
+
+/* Diagramas A2: acento de nodo, sistema externo, UML y etiquetas alineadas a la izquierda */
+.dd .n-ac { stroke: var(--primary); stroke-width: 1.6 }
+.dd .n-ext { fill: var(--surface); stroke: var(--ink-faint); stroke-width: 1; stroke-dasharray: 5 4 }
+.dd .uml rect { fill: var(--surface); stroke: var(--ink-faint); stroke-width: .8 }
+.dd .op { fill: var(--ink-faint-text); font-family: var(--font-mono); font-size: 9px; text-anchor: middle }
+.dd .lft { text-anchor: start }

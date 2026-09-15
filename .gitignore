@@ -6,3 +6,8 @@ dist
 # Material de terceros: no se publica.
 # Contiene el documento de un compañero y fotos de clase con nombres visibles.
 docs/referencias/
+
+# Secretos locales del operador
+operador/.env
+operador/e2e/test-results/
+operador/e2e/playwright-report/
