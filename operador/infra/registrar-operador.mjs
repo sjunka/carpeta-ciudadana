@@ -4,7 +4,7 @@
 // Uso: CONTACTO=correo@dominio node operador/infra/registrar-operador.mjs
 const GOV = 'https://govcarpeta-apis-4905ff3c005b.herokuapp.com'
 const NOMBRE = 'Mi Carpeta Segura'
-const PARTICIPANTES = ['Sergio Junca', 'Juan José', 'Samuel']
+const PARTICIPANTES = ['Sergio Junca', 'Juan José Henao', 'Samuel Cadavid']
 
 const operadores = async () => (await fetch(`${GOV}/apis/getOperators`)).json()
 
