@@ -1208,9 +1208,9 @@ Cuatro operaciones implementadas de extremo a extremo contra GovCarpeta real. El
 | Verificación | Resultado |
 |---|---|
 | Pruebas unitarias | 17 de 17 en verde (pasarela, afiliación, custodia) |
-| e2e local | Ingreso, carga y 3 alternos en verde, 0 violaciones axe; registro y autenticación esperan el registro del operador |
+| e2e local | 7 de 7 en verde contra GovCarpeta real: registro, ingreso, carga, autenticación y 3 alternos; 0 violaciones axe |
 | Despliegue en Cloud Run | Planeado: por ahora el prototipo corre solo en Docker Compose local |
-| Registro de Mi Carpeta Segura en GovCarpeta | Pendiente: requiere confirmación del equipo |
+| Registro de Mi Carpeta Segura en GovCarpeta | Registrado el 14 sep 2026 (operatorId 6aa8afa3bcc6df0002eb66e5) |
 
 ## 7.4 Fuera del prototipo
 

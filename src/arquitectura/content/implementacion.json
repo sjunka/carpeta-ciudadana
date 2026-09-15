@@ -39,7 +39,7 @@
     },
     {
       "item": "e2e local",
-      "valor": "Ingreso, carga y 3 alternos en verde, 0 violaciones axe; registro y autenticación esperan el registro del operador"
+      "valor": "7 de 7 en verde contra GovCarpeta real: registro, ingreso, carga, autenticación y 3 alternos; 0 violaciones axe"
     },
     {
       "item": "Despliegue en Cloud Run",
@@ -47,7 +47,7 @@
     },
     {
       "item": "Registro de Mi Carpeta Segura en GovCarpeta",
-      "valor": "Pendiente: requiere confirmación del equipo"
+      "valor": "Registrado el 14 sep 2026 (operatorId 6aa8afa3bcc6df0002eb66e5)"
     }
   ],
   "pendientes": [
