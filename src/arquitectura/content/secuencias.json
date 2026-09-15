@@ -3,6 +3,7 @@
   "secuencias": [
     {
       "id": "secuencia-registro", "num": "4.1", "tipo": "secuencia", "titulo": "Registro y afiliación", "hu": "HU-01",
+      "video": { "mp4": "arquitectura/video/registro.mp4", "poster": "arquitectura/video/registro.jpg" },
       "introduccion": "La afiliación única exige consistencia fuerte con el centralizador. Por eso el usuario nace deshabilitado y solo se habilita cuando GovCarpeta confirma.",
       "cierre": "Si GovCarpeta rechaza en el paso 10, Afiliación borra el usuario: no queda una cuenta sin afiliación.",
       "lineas": [
@@ -36,6 +37,7 @@
     },
     {
       "id": "secuencia-login", "num": "4.2", "tipo": "secuencia", "titulo": "Ingreso con OIDC y PKCE", "hu": "HU-02",
+      "video": { "mp4": "arquitectura/video/login.mp4", "poster": "arquitectura/video/login.jpg" },
       "introduccion": "El portal es una aplicación pública: no puede guardar secretos. PKCE hace que un código robado no sirva sin el verificador que solo tiene el navegador que lo pidió.",
       "cierre": "La contraseña solo la ve Keycloak; los servicios solo ven tokens firmados.",
       "lineas": [
@@ -66,6 +68,7 @@
     },
     {
       "id": "secuencia-carga", "num": "4.3", "tipo": "secuencia", "titulo": "Carga de documento temporal", "hu": "HU-03",
+      "video": { "mp4": "arquitectura/video/carga.mp4", "poster": "arquitectura/video/carga.jpg" },
       "introduccion": "Custodia autoriza la subida pero no la transporta. El navegador escribe directo en el almacén con una URL que caduca en 5 minutos.",
       "cierre": "El servicio nunca carga el binario en memoria: escala por peticiones, no por megas.",
       "lineas": [
@@ -96,6 +99,7 @@
     },
     {
       "id": "secuencia-autenticacion", "num": "4.4", "tipo": "secuencia", "titulo": "Autenticación vía GovCarpeta", "hu": "HU-04",
+      "video": { "mp4": "arquitectura/video/autenticacion.mp4", "poster": "arquitectura/video/autenticacion.jpg" },
       "introduccion": "El centralizador autentica documentos que no custodia. Recibe una URL de lectura de 15 minutos: puede ir a buscar el documento, pero el contenido nunca viaja por él.",
       "cierre": "URL, nunca el documento (RI-01). La pasarela convierte la prosa de GovCarpeta en un resultado con estado.",
       "lineas": [

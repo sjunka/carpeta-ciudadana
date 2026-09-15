@@ -443,7 +443,7 @@ La tabla sale del análisis de granularidad del SRS (*4.3 de A1): donde el vered
 
 ## 3.2 Componentes lógicos y 3.3 técnicos
 
-Dos vistas lógicas dicen qué piezas hay y qué se piden entre sí, sin tecnología. Dos vistas técnicas dicen con qué están hechas. Las flechas son dependencias: van de quien llama a quien responde.
+Dos vistas lógicas dicen qué piezas hay y qué se piden entre sí, sin tecnología. Dos vistas técnicas dicen con qué están hechas. Las flechas son dependencias: van de quien llama a quien responde. El <a href="mapa-tecnico.html">mapa técnico explorable</a> recorre las cuatro operaciones y el despliegue; los controles del visor están en inglés porque archify solo ofrece inglés y chino.
 
 ### 3.2.1 Componentes lógicos · núcleo
 
