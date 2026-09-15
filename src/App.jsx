@@ -1,4 +1,5 @@
 import Masthead from './components/Masthead.jsx'
+import SiteBar from './components/SiteBar.jsx'
 import Nav from './components/Nav.jsx'
 import Rich from './components/Rich.jsx'
 import VistaBar from './components/VistaBar.jsx'
@@ -33,6 +34,7 @@ export default function App() {
 
   return (
     <>
+      <SiteBar actual="srs" />
       <Masthead meta={meta} />
       <Nav ref={navRef} secciones={meta.secciones} activa={activa} />
       <VistaBar vista={vista} elegir={elegir} />
