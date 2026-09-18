@@ -35,7 +35,7 @@
     },
     {
       "id": "despliegue-objetivo", "num": "5.2", "tipo": "despliegue", "titulo": "Despliegue de la plataforma objetivo",
-      "introduccion": "Borde global con Cloud Armor, cómputo mixto, datos en alta disponibilidad y Kafka gestionado.",
+      "introduccion": "Borde global con Cloud Armor, cómputo mixto, PostgreSQL y MongoDB gestionados y Kafka gestionado como bus de eventos.",
       "cierre": "Los certificados viven en un bucket con Bucket Lock: ni un administrador puede borrarlos (RNF-02, RNF-13).",
       "realiza": "RNF-01, RNF-02, RNF-08, RNF-23, RNF-30",
       "w": 1120, "h": 520,
@@ -46,9 +46,9 @@
       ],
       "nodos": [
         { "id": "lb", "zona": "borde", "nombre": "Load Balancer", "tecnologia": "HTTPS global", "x": 40, "y": 96, "w": 200, "h": 96, "artefactos": ["política Cloud Armor"] },
-        { "id": "run", "zona": "gcp", "nombre": "Cloud Run", "tecnologia": "multi-región", "x": 304, "y": 96, "w": 208, "h": 136, "artefactos": ["microservicios", "notificaciones (functions)", "pasarela"] },
+        { "id": "run", "zona": "gcp", "nombre": "Cloud Run", "tecnologia": "multi-región", "x": 304, "y": 96, "w": 208, "h": 136, "artefactos": ["microservicios + pasarela", "notificaciones (functions)"] },
         { "id": "gke", "zona": "gcp", "nombre": "GKE Autopilot", "tecnologia": "regional", "x": 304, "y": 296, "w": 208, "h": 116, "artefactos": ["Keycloak HA", "consumidores Kafka"] },
-        { "id": "sql", "zona": "gcp", "nombre": "Cloud SQL HA", "tecnologia": "PostgreSQL 16", "x": 608, "y": 96, "w": 208, "h": 96, "artefactos": ["primaria + réplica"] },
+        { "id": "sql", "zona": "gcp", "nombre": "Bases gestionadas", "tecnologia": "alta disponibilidad", "x": 608, "y": 96, "w": 208, "h": 112, "artefactos": ["Cloud SQL HA · PostgreSQL 16", "MongoDB · metadatos"] },
         { "id": "gcs", "zona": "gcp", "nombre": "Cloud Storage", "tecnologia": "dual-region", "x": 608, "y": 272, "w": 208, "h": 104, "artefactos": ["certificados · Bucket Lock"] },
         { "id": "kafka", "zona": "saas", "nombre": "Kafka", "tecnologia": "Schema Registry", "x": 880, "y": 96, "w": 200, "h": 96, "artefactos": ["CloudEvents 1.0"] }
       ],
@@ -58,13 +58,15 @@
         { "de": "run", "a": "sql", "protocolo": "PG", "formato": "TLS", "puntos": [[512, 144], [608, 144]], "st": 2 },
         { "de": "run", "a": "gcs", "protocolo": "S3 V4", "formato": "BINARIO", "puntos": [[496, 232], [496, 264], [560, 264], [560, 324], [608, 324]], "st": 2 },
         { "de": "run", "a": "kafka", "protocolo": "KAFKA SASL", "formato": "CLOUDEVENTS", "puntos": [[400, 96], [400, 72], [980, 72], [980, 96]], "acento": true, "st": 3 },
-        { "de": "gke", "a": "kafka", "protocolo": "KAFKA SASL", "formato": "CONSUMO", "puntos": [[512, 400], [912, 400], [912, 192]], "st": 4 }
+        { "de": "gke", "a": "kafka", "protocolo": "KAFKA SASL", "formato": "CONSUMO", "puntos": [[512, 400], [912, 400], [912, 192]], "st": 4 },
+        { "de": "kafka", "a": "sql", "protocolo": "SINK", "formato": "JSON", "puntos": [[880, 176], [816, 176]], "st": 5 }
       ],
       "pasos": [
         "1 · El balanceador global reparte hacia Cloud Run y Keycloak.",
-        "2 · Los datos van a Cloud SQL HA y a Cloud Storage dual-region.",
+        "2 · Los datos van a PostgreSQL y MongoDB gestionados y a Cloud Storage dual-region.",
         "3 · Los servicios publican CloudEvents en Kafka.",
-        "4 · Los consumidores en GKE procesan los eventos."
+        "4 · Los consumidores en GKE procesan los eventos.",
+        "5 · Un conector gestionado lleva los metadatos anonimizados de Kafka a MongoDB."
       ]
     }
   ],
@@ -78,6 +80,6 @@
     { "origen": "Servicios", "destino": "Cloud SQL", "protocolo": "PostgreSQL wire vía Cloud SQL Auth Proxy", "formato": "SQL", "autenticacion": "IAM de la cuenta de servicio", "modo": "Síncrono", "estado": "Prototipo" },
     { "origen": "custodia", "destino": "Cloud Storage", "protocolo": "HTTPS · API XML S3 V4", "formato": "Binario", "autenticacion": "Clave HMAC en Secret Manager", "modo": "Síncrono", "estado": "Prototipo" },
     { "origen": "Servicios", "destino": "Kafka", "protocolo": "Kafka SASL/SSL", "formato": "CloudEvents 1.0 JSON con esquema registrado", "autenticacion": "API key por servicio", "modo": "Asíncrono", "estado": "Objetivo" },
-    { "origen": "Kafka", "destino": "BigQuery", "protocolo": "Conector gestionado", "formato": "Avro · filas anonimizadas", "autenticacion": "Cuenta de servicio", "modo": "Asíncrono", "estado": "Objetivo" }
+    { "origen": "Kafka", "destino": "MongoDB analítico", "protocolo": "Conector gestionado (sink)", "formato": "JSON anonimizado", "autenticacion": "Cuenta de servicio", "modo": "Asíncrono", "estado": "Objetivo" }
   ]
 }

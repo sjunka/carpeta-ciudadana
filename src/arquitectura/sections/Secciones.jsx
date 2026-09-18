@@ -153,6 +153,7 @@ export function SeccionMicroservicios({ meta, comprimido }) {
         ]}
         filas={microservicios.filas}
       />
+      <Rich as="p" className="lede" html={microservicios.persistencia} />
       <Rich as="p" className="lede" html={componentes.intro} />
       <Figura d={log1} comprimido={comprimido} />
       <Figura d={log2} comprimido={comprimido} />
@@ -306,7 +307,17 @@ export function SeccionImplementacion({ meta, comprimido }) {
         ]}
         filas={implementacion.estado}
       />
-      <SubTitulo num="7.4" texto="Fuera del prototipo" />
+      <SubTitulo num="7.4" texto="Evidencia visual" />
+      <Rich as="p" className="lede" html={implementacion.evidencia.intro} />
+      <div className="a2-evidencias">
+        {implementacion.evidencia.capturas.map((c, i) => (
+          <figure key={c.archivo}>
+            <img src={`${BASE}arquitectura/evidencias/${c.archivo}`} alt={`${c.titulo}: captura del operador en ejecución`} loading="lazy" />
+            <figcaption>{i + 1} · {c.titulo} (<R texto={c.hu} />)</figcaption>
+          </figure>
+        ))}
+      </div>
+      <SubTitulo num="7.5" texto="Fuera del prototipo" />
       <ul className="logic">
         {implementacion.pendientes.map((p) => <li key={p}><R texto={p} /></li>)}
       </ul>

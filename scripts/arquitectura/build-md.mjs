@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Genera la arquitectura A2 en markdown desde src/arquitectura/content/*.json.
 // Es SALIDA: nunca se edita a mano (regla A2.8 de docs/REGLAS.md).
-import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs'
+import { readFileSync, writeFileSync, existsSync, mkdirSync, copyFileSync } from 'node:fs'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -28,7 +28,7 @@ const lista = (xs) => xs.map((x) => `- ${md(x)}`).join('\n')
 const seccion = (id) => meta.secciones.find((s) => s.id === id)
 const h1 = (id) => `# ${seccion(id).num} ${seccion(id).titulo}\n\n${md(seccion(id).intro)}`
 
-function documento(img) {
+function documento(img, ev) {
   const figura = (d) =>
     [`### ${d.num} ${d.titulo}`, d.introduccion && md(d.introduccion), `![${d.titulo}](${img}/${d.id}.png)`,
       d.cierre && `> ${md(d.cierre)}`, lista(d.pasos), `Trazabilidad: ${d.realiza ?? d.hu}`].filter(Boolean).join('\n\n')
@@ -76,6 +76,7 @@ function documento(img) {
     h1('ms'), `## 3.1 Microservicios y responsabilidades`, md(ms.intro),
     tabla(['ID', 'Microservicio', 'Responsabilidad', 'Dominio · veredicto', 'API', 'Eventos', 'Datos', 'Estado'],
       ms.filas.map((m) => [m.id, m.nombre, m.responsabilidad, `${m.dominio} · ${m.veredicto}`, m.api, m.eventos, m.datos, m.nota ? `${m.estado}. ${m.nota}` : m.estado])),
+    md(ms.persistencia),
     `## 3.2 Componentes lógicos y 3.3 técnicos`, md(comp.intro), ...comp.diagramas.map(figura),
     `### 3.3.3 Tecnología y versión por componente`,
     tabla(['Componente', 'Tecnología', 'Versión', 'Rol'], comp.tecnologias.map((t) => [t.componente, t.tecnologia, t.version, t.rol])),
@@ -93,20 +94,24 @@ function documento(img) {
     tabla(['Historia', 'Operación', 'Endpoints', 'Prueba'], imp.operaciones.map((o) => [o.hu, o.operacion, `\`${o.endpoints}\``, `\`${o.prueba}\``])),
     `## 7.2 Cómo se levanta`, imp.correr.map((p, i) => `${i + 1}. ${md(p)}`).join('\n'),
     `## 7.3 Estado y evidencia`, tabla(['Verificación', 'Resultado'], imp.estado.map((e) => [e.item, e.valor])),
-    `## 7.4 Fuera del prototipo`, lista(imp.pendientes),
+    `## 7.4 Evidencia visual`, md(imp.evidencia.intro),
+    ...imp.evidencia.capturas.map((c, i) => `![${i + 1} · ${c.titulo} (${c.hu})](${ev}/${c.archivo})`),
+    `## 7.5 Fuera del prototipo`, lista(imp.pendientes),
     `---\n\n${md(meta.pie)}`,
   ].join('\n\n') + '\n'
 }
 
 const destinos = [
-  { ruta: join(RAIZ, 'docs/arquitectura-assignment2.md'), img: '../../assignment2/diagramas' },
-  { ruta: join(RAIZ, '../assignment2/arquitectura-assignment2.md'), img: 'diagramas', local: true },
+  { ruta: join(RAIZ, 'docs/arquitectura-assignment2.md'), img: '../../assignment2/diagramas', ev: '../public/arquitectura/evidencias' },
+  { ruta: join(RAIZ, '../assignment2/arquitectura-assignment2.md'), img: 'diagramas', ev: 'evidencias', local: true },
 ]
 for (const d of destinos) {
   if (d.local) {
     if (!existsSync(join(RAIZ, '../assignment1'))) continue
-    mkdirSync(dirname(d.ruta), { recursive: true })
+    mkdirSync(join(dirname(d.ruta), d.ev), { recursive: true })
+    for (const c of imp.evidencia.capturas)
+      copyFileSync(join(RAIZ, 'public/arquitectura/evidencias', c.archivo), join(dirname(d.ruta), d.ev, c.archivo))
   }
-  writeFileSync(d.ruta, documento(d.img))
+  writeFileSync(d.ruta, documento(d.img, d.ev))
   console.log(`✓ ${d.ruta}`)
 }

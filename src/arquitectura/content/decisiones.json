@@ -50,12 +50,12 @@
             },
             {
               "clase": "Auditoría",
-              "modelo": "Nube pública · bucket WORM",
-              "motivo": "Inalterable por diseño (RNF-14)."
+              "modelo": "Nube pública · MongoDB solo-append",
+              "motivo": "Solo se agrega, nunca se edita ni se borra (RNF-14)."
             },
             {
               "clase": "Analítica",
-              "modelo": "Nube pública · proyecto separado",
+              "modelo": "Nube pública · MongoDB en proyecto separado",
               "motivo": "Aislada del OLTP (RF-08)."
             },
             {
@@ -381,7 +381,7 @@
         {
           "id": "AD-04",
           "titulo": "Ubicación de datos y custodia",
-          "decision": "Contenido en <b>Cloud Storage</b> y metadatos en <b>Cloud SQL PostgreSQL</b>. En el objetivo, los certificados van a un bucket dual-region con <b>Bucket Lock</b>; los temporales, a un bucket borrable.",
+          "decision": "Contenido en <b>Cloud Storage</b>, metadatos transaccionales en <b>Cloud SQL PostgreSQL</b> y metadatos de consulta y auditoría en <b>MongoDB gestionado</b>. En el objetivo, los certificados van a un bucket dual-region con <b>Bucket Lock</b>; los temporales, a un bucket borrable.",
           "impactos": [
             "Los certificados no se pueden borrar ni por un administrador.",
             "El derecho de supresión aplica solo a temporales (B-11)."
@@ -795,22 +795,23 @@
         {
           "id": "AD-08",
           "titulo": "Persistencia",
-          "decision": "<b>PostgreSQL 16, una base por servicio</b>, y almacén de objetos por <b>API S3</b>: MinIO en local y Cloud Storage con claves HMAC en nube.",
+          "decision": "<b>PostgreSQL 16</b> para lo transaccional y <b>MongoDB</b> para metadatos de consulta, auditoría y analítica, con una base por servicio, y almacén de objetos por <b>API S3</b>: MinIO en local y Cloud Storage con claves HMAC en nube.",
           "impactos": [
             "Un solo código S3 para local y nube.",
             "Cada servicio migra su esquema por separado."
           ],
           "problema": "Elegir motor de datos y cómo se reparte entre servicios.",
-          "contexto": "Cuota y estados de documentos necesitan transacciones. Cloud Storage acepta URL prefirmadas AWS V4 con HMAC.",
-          "alcance": "MS-03, MS-04 y Keycloak.",
+          "contexto": "Cuota y estados de documentos necesitan transacciones. El índice de carpeta, la auditoría, las preferencias y la analítica son documentos de metadatos que se leen mucho más de lo que se escriben y cuyo esquema va a crecer. Cloud Storage acepta URL prefirmadas AWS V4 con HMAC.",
+          "alcance": "Los once microservicios y Keycloak. En el prototipo, MS-03, MS-04 y Keycloak, que solo usan PostgreSQL.",
           "restricciones": [
             "RD-11: sin base de datos compartida.",
             "RD-10: migraciones como proceso aparte."
           ],
           "supuestos": [
-            "Una instancia Cloud SQL con tres bases basta para el prototipo."
+            "Una instancia Cloud SQL con tres bases basta para el prototipo.",
+            "MongoDB entra con los servicios diseñados (MS-02, MS-05, MS-09 y MS-10); el prototipo no lo necesita."
           ],
-          "solucion": "Bases <code>afiliacion</code>, <code>custodia</code> y <code>keycloak</code> con usuarios distintos; bucket privado con CORS para el portal.",
+          "solucion": "Bases PostgreSQL <code>afiliacion</code>, <code>custodia</code> y <code>keycloak</code> con usuarios distintos; bases MongoDB por servicio para auditoría, índice de carpeta, notificaciones y analítica; bucket privado con CORS para el portal.",
           "criterios": [
             "RNF-06",
             "RNF-26",
@@ -819,7 +820,7 @@
           ],
           "alternativas": [
             {
-              "nombre": "PostgreSQL por servicio + S3",
+              "nombre": "PostgreSQL + MongoDB por servicio + S3",
               "elegida": true,
               "eval": [
                 [
@@ -828,20 +829,42 @@
                 ],
                 [
                   "Cumple",
-                  "Migraciones por servicio."
+                  "Migraciones por servicio y esquema flexible donde el dato crece."
                 ],
                 [
                   "Cumple",
-                  "MinIO en local y GCS en nube con el mismo SDK."
+                  "Ambos motores y la API S3 corren en cualquier nube."
                 ],
                 [
                   "Parcial",
-                  "Cloud SQL tiene costo base."
+                  "Dos motores gestionados con costo base."
                 ]
               ]
             },
             {
-              "nombre": "MongoDB compartido",
+              "nombre": "Solo PostgreSQL",
+              "elegida": false,
+              "eval": [
+                [
+                  "Cumple",
+                  "Transacciones en todo."
+                ],
+                [
+                  "Parcial",
+                  "Cada cambio de metadatos exige migración."
+                ],
+                [
+                  "Cumple",
+                  "Corre en cualquier nube."
+                ],
+                [
+                  "Cumple",
+                  "Un solo motor que operar."
+                ]
+              ]
+            },
+            {
+              "nombre": "Solo MongoDB",
               "elegida": false,
               "eval": [
                 [
@@ -849,45 +872,23 @@
                   "Transacciones multi-documento con costo."
                 ],
                 [
-                  "Parcial",
-                  "Esquema compartido que acopla."
+                  "Cumple",
+                  "Esquema flexible."
                 ],
                 [
                   "Cumple",
                   "Corre en cualquier nube."
                 ],
                 [
-                  "Parcial",
-                  "Clúster gestionado de pago."
-                ]
-              ]
-            },
-            {
-              "nombre": "Firestore + Cloud Storage",
-              "elegida": false,
-              "eval": [
-                [
-                  "Parcial",
-                  "Transacciones limitadas."
-                ],
-                [
                   "Cumple",
-                  "Sin esquema rígido."
-                ],
-                [
-                  "No cumple",
-                  "Solo GCP."
-                ],
-                [
-                  "Cumple",
-                  "Pago por operación."
+                  "Un solo motor que operar."
                 ]
               ]
             }
           ],
-          "justificacion": "PostgreSQL da transacciones y aislamiento por base; la API S3 evita escribir dos adaptadores de almacén.",
+          "justificacion": "Un solo motor obliga a renunciar a las transacciones o a la flexibilidad. PostgreSQL da transacciones y aislamiento por base donde la consistencia manda; MongoDB absorbe los metadatos que crecen sin migraciones; la API S3 evita escribir dos adaptadores de almacén.",
           "consenso": "Acordado por el equipo.",
-          "disenso": "Firestore reduce costo fijo; se rechazó por dependencia del proveedor.",
+          "disenso": "Solo PostgreSQL reduce la operación a un motor; se rechazó porque los metadatos de consulta y la analítica cambian de forma sin pasar por migraciones.",
           "relacionadas": [
             "AD-04",
             "AD-05"

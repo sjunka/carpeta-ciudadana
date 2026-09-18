@@ -35,7 +35,7 @@
   "estado": [
     {
       "item": "Pruebas unitarias",
-      "valor": "17 de 17 en verde (pasarela, afiliación, custodia)"
+      "valor": "17 de 17 en verde: 5 en pasarela, 7 en afiliación y 5 en custodia. Reejecutadas con <code>node --test</code> el 17 de septiembre de 2026, sin fallos."
     },
     {
       "item": "e2e local",
@@ -50,6 +50,15 @@
       "valor": "Registrado el 14 sep 2026 (operatorId 6aa8afa3bcc6df0002eb66e5)"
     }
   ],
+  "evidencia": {
+    "intro": "Capturas del operador ejecutando las cuatro operaciones, tomadas por la prueba e2e contra GovCarpeta real. La cuarta muestra la respuesta textual del centralizador al autenticar el documento.",
+    "capturas": [
+      { "archivo": "01-registro.png", "titulo": "Registro y afiliación", "hu": "HU-01" },
+      { "archivo": "02-login.png", "titulo": "Ingreso al operador", "hu": "HU-02" },
+      { "archivo": "03-carga.png", "titulo": "Carga de documento", "hu": "HU-03" },
+      { "archivo": "04-autenticacion.png", "titulo": "Autenticación vía GovCarpeta", "hu": "HU-04" }
+    ]
+  },
   "pendientes": [
     "Transferencia entre operadores (RF-03) y publicación de transferAPIURL.",
     "Kafka, notificaciones, analítica y Premium: diseñados en *3 y *6."

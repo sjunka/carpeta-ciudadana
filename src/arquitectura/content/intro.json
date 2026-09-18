@@ -2,7 +2,7 @@
   "proposito": "Este documento fija la arquitectura del operador <b>Mi Carpeta Segura</b> y demuestra que funciona implementando cuatro operaciones reales contra el centralizador GovCarpeta. El SRS dijo <i>qué</i> debe hacer el sistema; aquí se decide <i>cómo</i> se reparte en piezas, dónde corren y por qué.",
   "alcance": [
     "<b>Arquitectura objetivo:</b> los once microservicios, el bus de eventos y la plataforma multi-región que exige la escala del país (RNF-08).",
-    "<b>Prototipo de la entrega 2:</b> registro, ingreso, carga de documento temporal y autenticación vía GovCarpeta, desplegados en Docker Compose y en Cloud Run.",
+    "<b>Prototipo de la entrega 2:</b> registro, ingreso, carga de documento temporal y autenticación vía GovCarpeta, desplegados en Docker Compose local; el despliegue en Cloud Run está planeado con las mismas imágenes.",
     "<b>Fuera del alcance:</b> transferencia entre operadores, notificaciones, analítica y Premium. Quedan diseñados, no implementados."
   ],
   "glosario": [
