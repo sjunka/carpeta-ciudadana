@@ -5,7 +5,7 @@
     "fecha": "10 de septiembre de 2026",
     "cargo": "Lead Software Engineers",
     "preparadoPara": "Arquitecturas Avanzadas de Software",
-    "docente": "Fabián Pinzón",
+    "docente": "Danny Andrés Salcedo Saldaña",
     "periodo": "2026-2",
     "estandar": "Estructura basada en el <i>Software Requirements Specification Template</i> del curso, derivado de la <i>IEEE Guide to Software Requirements Specification</i> (ANSI/IEEE Std. 830-1984).",
     "autores": [
@@ -51,7 +51,7 @@
       "cargo": "Lead Software Engineer"
     },
     {
-      "nombre": "Fabián Pinzón",
+      "nombre": "Danny Andrés Salcedo Saldaña",
       "cargo": "Docente, Arquitecturas Avanzadas de Software"
     }
   ],

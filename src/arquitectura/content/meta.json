@@ -11,7 +11,7 @@
   "datos": [
     { "titulo": "Versión", "valor": "1.0 · 20 sep 2026" },
     { "titulo": "Equipo", "valor": ["Sergio Junca", "Juan José Henao", "Samuel Cadavid"] },
-    { "titulo": "Docente", "valor": "Fabián Pinzón" },
+    { "titulo": "Docente", "valor": "Danny Andrés Salcedo Saldaña" },
     { "titulo": "Historias", "valor": "12 · 4 implementadas", "auto": "hu" },
     { "titulo": "Microservicios", "valor": "11 · 4 implementados", "auto": "ms" },
     { "titulo": "Decisiones", "valor": "12 en plantilla UAM", "auto": "ad" },

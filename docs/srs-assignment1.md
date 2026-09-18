@@ -8,7 +8,7 @@
 | **Fecha** | 10 de septiembre de 2026 |
 | **Autores** | Sergio Junca · Juan José Henao Aristizábal · Samuel Cadavid Zapata — Lead Software Engineers |
 | **Preparado para** | Arquitecturas Avanzadas de Software |
-| **Docente** | Fabián Pinzón |
+| **Docente** | Danny Andrés Salcedo Saldaña |
 | **Periodo** | 2026-2 |
 
 Estructura basada en el *Software Requirements Specification Template* del curso, derivado de la *IEEE Guide to Software Requirements Specification* (ANSI/IEEE Std. 830-1984).
@@ -34,7 +34,7 @@ La siguiente Especificación de Requerimientos de Software ha sido aceptada y ap
 |  | Sergio Junca | Lead Software Engineer |  |
 |  | Juan José Henao Aristizábal | Lead Software Engineer |  |
 |  | Samuel Cadavid Zapata | Lead Software Engineer |  |
-|  | Fabián Pinzón | Docente, Arquitecturas Avanzadas de Software |  |
+|  | Danny Andrés Salcedo Saldaña | Docente, Arquitecturas Avanzadas de Software |  |
 
 ---
 

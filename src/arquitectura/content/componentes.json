@@ -112,7 +112,7 @@
     },
     {
       "id": "tecnico-objetivo", "num": "3.3.2", "tipo": "componentes", "titulo": "Componentes técnicos · plataforma objetivo",
-      "introduccion": "La plataforma para todo el país: borde global, eventos gestionados, datos en alta disponibilidad y analítica separada.",
+      "introduccion": "La plataforma para todo el país: borde global, Kafka gestionado como bus de eventos, datos en alta disponibilidad y analítica separada.",
       "cierre": "Kafka es la columna: todo lo que no es camino crítico cuelga de él.",
       "realiza": "RNF-01, RNF-07, RNF-08, RNF-23, RNF-30",
       "w": 1056, "h": 520,
@@ -124,7 +124,7 @@
         { "id": "sql", "nombre": "Cloud SQL HA", "sub": "PostgreSQL 16", "x": 584, "y": 64 },
         { "id": "kafka", "nombre": "Confluent Kafka", "sub": "Schema Registry", "x": 584, "y": 224, "acento": true },
         { "id": "fn", "nombre": "Cloud Run functions", "sub": "notificaciones", "x": 584, "y": 384 },
-        { "id": "bq", "nombre": "BigQuery", "sub": "proyecto analítico", "x": 856, "y": 384 }
+        { "id": "mongo", "nombre": "MongoDB", "sub": "analítica · proyecto aparte", "x": 856, "y": 384 }
       ],
       "flechas": [
         { "de": "lb", "a": "gke", "datos": "OIDC", "puntos": [[120, 224], [120, 96], [312, 96]], "st": 1 },
@@ -134,14 +134,14 @@
         { "de": "run", "a": "gcs", "datos": "S3 V4", "puntos": [[392, 288], [392, 384]], "st": 2 },
         { "de": "run", "a": "kafka", "datos": "CLOUDEVENTS", "acento": true, "st": 3 },
         { "de": "kafka", "a": "fn", "datos": "AVISOS", "puntos": [[664, 288], [664, 384]], "st": 4 },
-        { "de": "kafka", "a": "bq", "datos": "METADATOS", "puntos": [[744, 256], [936, 256], [936, 384]], "st": 5 }
+        { "de": "kafka", "a": "mongo", "datos": "METADATOS", "puntos": [[744, 256], [936, 256], [936, 384]], "st": 5 }
       ],
       "pasos": [
         "1 · El borde global filtra y reparte el tráfico.",
         "2 · Los servicios guardan en Cloud SQL HA y en Cloud Storage dual-region.",
         "3 · Cada hecho de negocio sale a Kafka como CloudEvent.",
         "4 · Las funciones de notificación consumen sin tocar el camino crítico.",
-        "5 · BigQuery recibe metadatos para la analítica del Estado."
+        "5 · MongoDB recibe metadatos anonimizados para la analítica del Estado."
       ]
     }
   ],
@@ -150,7 +150,8 @@
     { "componente": "MS-01 Identidad", "tecnologia": "Keycloak", "version": "26.x", "rol": "Proveedor OIDC, usuarios, bloqueo por fuerza bruta" },
     { "componente": "MS-03 · MS-04 · MS-08", "tecnologia": "Node.js + Express", "version": "Node 22 LTS · Express 5", "rol": "Servicios REST sin estado" },
     { "componente": "Validación de tokens", "tecnologia": "jose", "version": "5.x", "rol": "JWT RS256 con JWKS en caché" },
-    { "componente": "Persistencia", "tecnologia": "PostgreSQL + pg", "version": "16 · pg 8", "rol": "Una base por servicio" },
+    { "componente": "Persistencia transaccional", "tecnologia": "PostgreSQL + pg", "version": "16 · pg 8", "rol": "Una base por servicio" },
+    { "componente": "Persistencia de metadatos (objetivo)", "tecnologia": "MongoDB gestionado", "version": "Servicio gestionado", "rol": "Índice de carpeta, auditoría, preferencias y analítica" },
     { "componente": "Almacén de objetos", "tecnologia": "MinIO local · Cloud Storage con HMAC", "version": "@aws-sdk/client-s3 3", "rol": "URL prefirmadas V4" },
     { "componente": "Cómputo", "tecnologia": "Cloud Run", "version": "gen2", "rol": "Contenedores OCI multi-arquitectura" },
     { "componente": "Eventos (objetivo)", "tecnologia": "Confluent Cloud Kafka + Schema Registry", "version": "Kafka 3.x", "rol": "CloudEvents 1.0" }

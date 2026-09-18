@@ -8,7 +8,7 @@ Arquitectura del operador **Mi Carpeta Segura**: historias de usuario, microserv
 |---|---|
 | Versión | 1.0 · 20 sep 2026 |
 | Equipo | Sergio Junca, Juan José Henao, Samuel Cadavid |
-| Docente | Fabián Pinzón |
+| Docente | Danny Andrés Salcedo Saldaña |
 | Historias | 12 · 4 implementadas |
 | Microservicios | 11 · 4 implementados |
 | Decisiones | 12 en plantilla UAM |
@@ -25,7 +25,7 @@ Este documento fija la arquitectura del operador **Mi Carpeta Segura** y demuest
 ## 1.1 Alcance
 
 - **Arquitectura objetivo:** los once microservicios, el bus de eventos y la plataforma multi-región que exige la escala del país (RNF-08).
-- **Prototipo de la entrega 2:** registro, ingreso, carga de documento temporal y autenticación vía GovCarpeta, desplegados en Docker Compose y en Cloud Run.
+- **Prototipo de la entrega 2:** registro, ingreso, carga de documento temporal y autenticación vía GovCarpeta, desplegados en Docker Compose local; el despliegue en Cloud Run está planeado con las mismas imágenes.
 - **Fuera del alcance:** transferencia entre operadores, notificaciones, analítica y Premium. Quedan diseñados, no implementados.
 
 ## 1.2 Glosario
@@ -430,16 +430,18 @@ La tabla sale del análisis de granularidad del SRS (*4.3 de A1): donde el vered
 | ID | Microservicio | Responsabilidad | Dominio · veredicto | API | Eventos | Datos | Estado |
 |---|---|---|---|---|---|---|---|
 | MS-01 | Identidad y acceso | Autentica a ciudadanos y servicios y emite los tokens que el resto valida. | RF-09 · Partir en dos | OIDC · Admin REST de Keycloak | Emite: sesión iniciada, cuenta bloqueada | PostgreSQL keycloak | Implementado |
-| MS-02 | Auditoría | Guarda de forma inalterable quién hizo qué sobre cada carpeta. | RF-09 · Partir en dos | GET /accesos | Consume: todos los eventos de acceso | Bucket WORM + BigQuery | Diseñado |
+| MS-02 | Auditoría | Guarda de forma inalterable quién hizo qué sobre cada carpeta. | RF-09 · Partir en dos | GET /accesos | Consume: todos los eventos de acceso | MongoDB · colección de auditoría solo-append | Diseñado |
 | MS-03 | Afiliación | Registra ciudadanos garantizando afiliación única contra el centralizador. | RF-01 · Aislar | POST /ciudadanos | Emite: ciudadano afiliado | PostgreSQL afiliacion | Implementado |
 | MS-04 | Custodia documental | Guarda el contenido de los documentos y controla quién puede leerlo o escribirlo. | RF-02 · Partir en dos | POST /documentos · confirmacion · autenticacion | Emite: documento cargado, documento autenticado | PostgreSQL custodia + almacén S3 | Implementado |
-| MS-05 | Índice de carpeta | Sirve las consultas de la carpeta separadas de las escrituras de contenido. | RF-02 · Partir en dos | GET /carpeta | Consume: documento cargado, recibido, autenticado | Réplica de lectura + caché | Diseñado. En el prototipo la lista la sirve MS-04. Se separa si las lecturas superan 100 por escritura o el p95 pasa de 2 s (RNF-04). |
+| MS-05 | Índice de carpeta | Sirve las consultas de la carpeta separadas de las escrituras de contenido. | RF-02 · Partir en dos | GET /carpeta | Consume: documento cargado, recibido, autenticado | MongoDB · índice de carpeta | Diseñado. En el prototipo la lista la sirve MS-04. Se separa si las lecturas superan 100 por escritura o el p95 pasa de 2 s (RNF-04). |
 | MS-06 | Autorizaciones | Decide si un documento puede salir hacia un tercero según el consentimiento del titular. | RF-04 · Aislar | POST /autorizaciones · DELETE /autorizaciones/{id} | Emite: autorización concedida, revocada | PostgreSQL autorizaciones | Diseñado |
 | MS-07 | Interoperabilidad | Envía y recibe documentos de otros operadores y entidades con reintento idempotente. | RF-03 · Aislar | POST /transferencias | Emite: documento recibido | PostgreSQL bandeja de salida | Diseñado |
 | MS-08 | Pasarela del centralizador | Traduce el contrato de GovCarpeta a un modelo propio y aísla sus fallos. | RF-06 · Fuera del alcance | GET/POST /centralizador/ciudadanos · PUT /centralizador/documentos/autenticacion | Ninguno | Sin base de datos | Implementado |
-| MS-09 | Notificaciones | Avisa al ciudadano por el canal que prefiera. | RF-05 · Mantener unido | Sin API síncrona | Consume: documento recibido, ciudadano afiliado | Preferencias en Firestore | Diseñado. Función serverless: tráfico esporádico y procesos cortos, como indicó el profesor el 12 de septiembre. |
-| MS-10 | Analítica | Consolida metadatos anonimizados para los tableros del Estado. | RF-08 · Aislar | GET /tableros | Consume: metadatos anonimizados | BigQuery en proyecto aparte | Diseñado. Nunca comparte motor con la base transaccional. |
+| MS-09 | Notificaciones | Avisa al ciudadano por el canal que prefiera. | RF-05 · Mantener unido | Sin API síncrona | Consume: documento recibido, ciudadano afiliado | MongoDB · preferencias de notificación | Diseñado. Función serverless: tráfico esporádico y procesos cortos, como indicó el profesor el 12 de septiembre. |
+| MS-10 | Analítica | Consolida metadatos anonimizados para los tableros del Estado. | RF-08 · Aislar | GET /tableros | Consume: metadatos anonimizados | MongoDB · colecciones analíticas anonimizadas en proyecto aparte | Diseñado. Nunca comparte motor con la base transaccional. |
 | MS-11 | Premium | Gestiona el catálogo, los casos PQRS y la medición de uso de las empresas. | RF-07 · Aislar | POST /casos | Emite: uso medido | PostgreSQL premium | Diseñado |
+
+La persistencia sigue una regla única: **PostgreSQL** donde hace falta transacción y consistencia fuerte (afiliación, cuota y estados de documentos, autorizaciones, bandeja de salida, Premium e identidad), y **MongoDB** donde el dato es un documento de metadatos que se lee mucho más de lo que se escribe y cuyo esquema va a crecer (índice de carpeta, auditoría, preferencias de notificación y analítica). Los binarios nunca van en base de datos: viven en el almacén de objetos. Ningún servicio comparte base con otro (RD-11), y ambos motores corren como servicio gestionado en la nube.
 
 ## 3.2 Componentes lógicos y 3.3 técnicos
 
@@ -495,7 +497,7 @@ Trazabilidad: RD-02, RD-05, RD-06, RD-08, RNF-10
 
 ### 3.3.2 Componentes técnicos · plataforma objetivo
 
-La plataforma para todo el país: borde global, eventos gestionados, datos en alta disponibilidad y analítica separada.
+La plataforma para todo el país: borde global, Kafka gestionado como bus de eventos, datos en alta disponibilidad y analítica separada.
 
 ![Componentes técnicos · plataforma objetivo](../../assignment2/diagramas/tecnico-objetivo.png)
 
@@ -505,7 +507,7 @@ La plataforma para todo el país: borde global, eventos gestionados, datos en al
 - 2 · Los servicios guardan en Cloud SQL HA y en Cloud Storage dual-region.
 - 3 · Cada hecho de negocio sale a Kafka como CloudEvent.
 - 4 · Las funciones de notificación consumen sin tocar el camino crítico.
-- 5 · BigQuery recibe metadatos para la analítica del Estado.
+- 5 · MongoDB recibe metadatos anonimizados para la analítica del Estado.
 
 Trazabilidad: RNF-01, RNF-07, RNF-08, RNF-23, RNF-30
 
@@ -517,7 +519,8 @@ Trazabilidad: RNF-01, RNF-07, RNF-08, RNF-23, RNF-30
 | MS-01 Identidad | Keycloak | 26.x | Proveedor OIDC, usuarios, bloqueo por fuerza bruta |
 | MS-03 · MS-04 · MS-08 | Node.js + Express | Node 22 LTS · Express 5 | Servicios REST sin estado |
 | Validación de tokens | jose | 5.x | JWT RS256 con JWKS en caché |
-| Persistencia | PostgreSQL + pg | 16 · pg 8 | Una base por servicio |
+| Persistencia transaccional | PostgreSQL + pg | 16 · pg 8 | Una base por servicio |
+| Persistencia de metadatos (objetivo) | MongoDB gestionado | Servicio gestionado | Índice de carpeta, auditoría, preferencias y analítica |
 | Almacén de objetos | MinIO local · Cloud Storage con HMAC | @aws-sdk/client-s3 3 | URL prefirmadas V4 |
 | Cómputo | Cloud Run | gen2 | Contenedores OCI multi-arquitectura |
 | Eventos (objetivo) | Confluent Cloud Kafka + Schema Registry | Kafka 3.x | CloudEvents 1.0 |
@@ -615,16 +618,17 @@ Trazabilidad: RD-01, RD-04, RD-06, RD-07, RNF-29
 
 ### 5.2 Despliegue de la plataforma objetivo
 
-Borde global con Cloud Armor, cómputo mixto, datos en alta disponibilidad y Kafka gestionado.
+Borde global con Cloud Armor, cómputo mixto, PostgreSQL y MongoDB gestionados y Kafka gestionado como bus de eventos.
 
 ![Despliegue de la plataforma objetivo](../../assignment2/diagramas/despliegue-objetivo.png)
 
 > Los certificados viven en un bucket con Bucket Lock: ni un administrador puede borrarlos (RNF-02, RNF-13).
 
 - 1 · El balanceador global reparte hacia Cloud Run y Keycloak.
-- 2 · Los datos van a Cloud SQL HA y a Cloud Storage dual-region.
+- 2 · Los datos van a PostgreSQL y MongoDB gestionados y a Cloud Storage dual-region.
 - 3 · Los servicios publican CloudEvents en Kafka.
 - 4 · Los consumidores en GKE procesan los eventos.
+- 5 · Un conector gestionado lleva los metadatos anonimizados de Kafka a MongoDB.
 
 Trazabilidad: RNF-01, RNF-02, RNF-08, RNF-23, RNF-30
 
@@ -641,7 +645,7 @@ Trazabilidad: RNF-01, RNF-02, RNF-08, RNF-23, RNF-30
 | Servicios | Cloud SQL | PostgreSQL wire vía Cloud SQL Auth Proxy | SQL | IAM de la cuenta de servicio | Síncrono | Prototipo |
 | custodia | Cloud Storage | HTTPS · API XML S3 V4 | Binario | Clave HMAC en Secret Manager | Síncrono | Prototipo |
 | Servicios | Kafka | Kafka SASL/SSL | CloudEvents 1.0 JSON con esquema registrado | API key por servicio | Asíncrono | Objetivo |
-| Kafka | BigQuery | Conector gestionado | Avro · filas anonimizadas | Cuenta de servicio | Asíncrono | Objetivo |
+| Kafka | MongoDB analítico | Conector gestionado (sink) | JSON anonimizado | Cuenta de servicio | Asíncrono | Objetivo |
 
 # 06 Decisiones de arquitectura
 
@@ -686,8 +690,8 @@ Cada decisión sigue la plantilla *Architectural Decision* de UAM. Los criterios
 | Servicios sin estado | Nube pública · Cloud Run | Escala por peticiones y a cero (RD-02, RD-03). |
 | Custodia perpetua | Nube pública · dual-region con Bucket Lock | Durabilidad sin segundo centro propio (RNF-02). |
 | Identidad y llaves | Nube pública · Secret Manager y KMS | Rotación y auditoría gestionadas. |
-| Auditoría | Nube pública · bucket WORM | Inalterable por diseño (RNF-14). |
-| Analítica | Nube pública · proyecto separado | Aislada del OLTP (RF-08). |
+| Auditoría | Nube pública · MongoDB solo-append | Solo se agrega, nunca se edita ni se borra (RNF-14). |
+| Analítica | Nube pública · MongoDB en proyecto separado | Aislada del OLTP (RF-08). |
 | Integraciones | Nube pública · pasarela | GovCarpeta ya vive en nube pública. |
 | Edge | No aplica | No hay requisito de tiempo real (RI-02). |
 
@@ -797,7 +801,7 @@ Cada decisión sigue la plantilla *Architectural Decision* de UAM. Los criterios
 
 ### AD-04 · Ubicación de datos y custodia
 
-**Decisión.** Contenido en **Cloud Storage** y metadatos en **Cloud SQL PostgreSQL**. En el objetivo, los certificados van a un bucket dual-region con **Bucket Lock**; los temporales, a un bucket borrable.
+**Decisión.** Contenido en **Cloud Storage**, metadatos transaccionales en **Cloud SQL PostgreSQL** y metadatos de consulta y auditoría en **MongoDB gestionado**. En el objetivo, los certificados van a un bucket dual-region con **Bucket Lock**; los temporales, a un bucket borrable.
 
 **Impactos e implicaciones**
 
@@ -969,7 +973,7 @@ Cada decisión sigue la plantilla *Architectural Decision* de UAM. Los criterios
 
 ### AD-08 · Persistencia
 
-**Decisión.** **PostgreSQL 16, una base por servicio**, y almacén de objetos por **API S3**: MinIO en local y Cloud Storage con claves HMAC en nube.
+**Decisión.** **PostgreSQL 16** para lo transaccional y **MongoDB** para metadatos de consulta, auditoría y analítica, con una base por servicio, y almacén de objetos por **API S3**: MinIO en local y Cloud Storage con claves HMAC en nube.
 
 **Impactos e implicaciones**
 
@@ -978,9 +982,9 @@ Cada decisión sigue la plantilla *Architectural Decision* de UAM. Los criterios
 
 **Problema.** Elegir motor de datos y cómo se reparte entre servicios.
 
-**Contexto.** Cuota y estados de documentos necesitan transacciones. Cloud Storage acepta URL prefirmadas AWS V4 con HMAC.
+**Contexto.** Cuota y estados de documentos necesitan transacciones. El índice de carpeta, la auditoría, las preferencias y la analítica son documentos de metadatos que se leen mucho más de lo que se escriben y cuyo esquema va a crecer. Cloud Storage acepta URL prefirmadas AWS V4 con HMAC.
 
-**Alcance.** MS-03, MS-04 y Keycloak.
+**Alcance.** Los once microservicios y Keycloak. En el prototipo, MS-03, MS-04 y Keycloak, que solo usan PostgreSQL.
 
 **Restricciones**
 
@@ -990,23 +994,24 @@ Cada decisión sigue la plantilla *Architectural Decision* de UAM. Los criterios
 **Supuestos**
 
 - Una instancia Cloud SQL con tres bases basta para el prototipo.
+- MongoDB entra con los servicios diseñados (MS-02, MS-05, MS-09 y MS-10); el prototipo no lo necesita.
 
-**Arquitectura de la solución.** Bases `afiliacion`, `custodia` y `keycloak` con usuarios distintos; bucket privado con CORS para el portal.
+**Arquitectura de la solución.** Bases PostgreSQL `afiliacion`, `custodia` y `keycloak` con usuarios distintos; bases MongoDB por servicio para auditoría, índice de carpeta, notificaciones y analítica; bucket privado con CORS para el portal.
 
 **Análisis comparativo**
 
-| Criterio | PostgreSQL por servicio + S3 (elegida) | MongoDB compartido | Firestore + Cloud Storage |
+| Criterio | PostgreSQL + MongoDB por servicio + S3 (elegida) | Solo PostgreSQL | Solo MongoDB |
 |---|---|---|---|
-| RNF-06 Consistencia | **Cumple.** Transacciones para cuota y estados. | **Parcial.** Transacciones multi-documento con costo. | **Parcial.** Transacciones limitadas. |
-| RNF-26 Modificabilidad | **Cumple.** Migraciones por servicio. | **Parcial.** Esquema compartido que acopla. | **Cumple.** Sin esquema rígido. |
-| RNF-27 Libertad tecnológica | **Cumple.** MinIO en local y GCS en nube con el mismo SDK. | **Cumple.** Corre en cualquier nube. | **No cumple.** Solo GCP. |
-| Coste | **Parcial.** Cloud SQL tiene costo base. | **Parcial.** Clúster gestionado de pago. | **Cumple.** Pago por operación. |
+| RNF-06 Consistencia | **Cumple.** Transacciones para cuota y estados. | **Cumple.** Transacciones en todo. | **Parcial.** Transacciones multi-documento con costo. |
+| RNF-26 Modificabilidad | **Cumple.** Migraciones por servicio y esquema flexible donde el dato crece. | **Parcial.** Cada cambio de metadatos exige migración. | **Cumple.** Esquema flexible. |
+| RNF-27 Libertad tecnológica | **Cumple.** Ambos motores y la API S3 corren en cualquier nube. | **Cumple.** Corre en cualquier nube. | **Cumple.** Corre en cualquier nube. |
+| Coste | **Parcial.** Dos motores gestionados con costo base. | **Cumple.** Un solo motor que operar. | **Cumple.** Un solo motor que operar. |
 
-**Justificación.** PostgreSQL da transacciones y aislamiento por base; la API S3 evita escribir dos adaptadores de almacén.
+**Justificación.** Un solo motor obliga a renunciar a las transacciones o a la flexibilidad. PostgreSQL da transacciones y aislamiento por base donde la consistencia manda; MongoDB absorbe los metadatos que crecen sin migraciones; la API S3 evita escribir dos adaptadores de almacén.
 
 **Consenso.** Acordado por el equipo.
 
-**Disenso.** Firestore reduce costo fijo; se rechazó por dependencia del proveedor.
+**Disenso.** Solo PostgreSQL reduce la operación a un motor; se rechazó porque los metadatos de consulta y la analítica cambian de forma sin pasar por migraciones.
 
 **Decisiones relacionadas:** AD-04, AD-05
 
@@ -1207,12 +1212,24 @@ Cuatro operaciones implementadas de extremo a extremo contra GovCarpeta real. El
 
 | Verificación | Resultado |
 |---|---|
-| Pruebas unitarias | 17 de 17 en verde (pasarela, afiliación, custodia) |
+| Pruebas unitarias | 17 de 17 en verde: 5 en pasarela, 7 en afiliación y 5 en custodia. Reejecutadas con `node --test` el 17 de septiembre de 2026, sin fallos. |
 | e2e local | 7 de 7 en verde contra GovCarpeta real: registro, ingreso, carga, autenticación y 3 alternos; 0 violaciones axe |
 | Despliegue en Cloud Run | Planeado: por ahora el prototipo corre solo en Docker Compose local |
 | Registro de Mi Carpeta Segura en GovCarpeta | Registrado el 14 sep 2026 (operatorId 6aa8afa3bcc6df0002eb66e5) |
 
-## 7.4 Fuera del prototipo
+## 7.4 Evidencia visual
+
+Capturas del operador ejecutando las cuatro operaciones, tomadas por la prueba e2e contra GovCarpeta real. La cuarta muestra la respuesta textual del centralizador al autenticar el documento.
+
+![1 · Registro y afiliación (HU-01)](../public/arquitectura/evidencias/01-registro.png)
+
+![2 · Ingreso al operador (HU-02)](../public/arquitectura/evidencias/02-login.png)
+
+![3 · Carga de documento (HU-03)](../public/arquitectura/evidencias/03-carga.png)
+
+![4 · Autenticación vía GovCarpeta (HU-04)](../public/arquitectura/evidencias/04-autenticacion.png)
+
+## 7.5 Fuera del prototipo
 
 - Transferencia entre operadores (RF-03) y publicación de transferAPIURL.
 - Kafka, notificaciones, analítica y Premium: diseñados en *3 y *6.

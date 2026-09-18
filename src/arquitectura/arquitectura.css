@@ -46,3 +46,10 @@ ul.a2-alt-p { margin: var(--s-xxs) 0; padding-left: var(--s-md); list-style: non
 .dd .uml rect { fill: var(--surface); stroke: var(--ink-faint); stroke-width: .8 }
 .dd .op { fill: var(--ink-faint-text); font-family: var(--font-mono); font-size: 9px; text-anchor: middle }
 .dd .lft { text-anchor: start }
+
+/* *7.4 Evidencia visual: capturas en cuadrícula de dos, una en móvil */
+.a2-evidencias { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-md); margin-block: var(--s-md) }
+.a2-evidencias figure { margin: 0; background: var(--surface); border: 1px solid var(--hairline); border-radius: var(--r-lg); box-shadow: var(--e-1); overflow: hidden }
+.a2-evidencias img { display: block; width: 100%; height: auto; border-bottom: 1px solid var(--hairline) }
+.a2-evidencias figcaption { padding: var(--s-xs) var(--s-sm); font-size: 14px; font-weight: 600 }
+@media (max-width: 640px) { .a2-evidencias { grid-template-columns: 1fr } }
