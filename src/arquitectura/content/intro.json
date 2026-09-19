@@ -68,5 +68,40 @@
       "a2": "Acuerdo entre los equipos del curso: acuse asíncrono. El destino llama a /api/transferCitizenConfirm del origen con req_status 1 o 0, y el origen solo borra con 1 (HU-09, HU-13, *4.5)."
     }
   ],
+  "contexto": {
+    "id": "contexto-sistema", "num": "1.4", "tipo": "componentes", "titulo": "Contexto del sistema",
+    "introduccion": "Vista <i>System Context</i> de UAM: quién usa Mi Carpeta Segura a la izquierda, con qué sistemas se integra a la derecha. Las flechas llevan los datos que viajan.",
+    "cierre": "El contenido de los documentos solo viaja entre operadores y hacia el ciudadano; a GovCarpeta solo llegan datos de afiliación y URLs (RI-01).",
+    "realiza": "RF-01, RF-03, RF-06, RF-07, RF-08, RI-01",
+    "iconos": false,
+    "leyenda": [["ln-m", "Datos que viajan"], ["ln-a", "Tramo crítico"], ["n-ext", "Actor o sistema externo"]],
+    "w": 1056, "h": 560,
+    "nodos": [
+      { "id": "ciu", "nombre": "Ciudadano", "sub": "persona", "x": 40, "y": 104, "externo": true },
+      { "id": "emp", "nombre": "Empresa Premium", "sub": "cliente", "x": 40, "y": 224, "externo": true },
+      { "id": "ana", "nombre": "Analista del Estado", "sub": "entidad pública", "x": 40, "y": 344, "externo": true },
+      { "id": "sis", "nombre": "Mi Carpeta Segura", "sub": "operador", "x": 448, "y": 40, "w": 192, "h": 448, "acento": true },
+      { "id": "gov", "nombre": "GovCarpeta", "sub": "centralizador MinTIC", "x": 856, "y": 40, "externo": true },
+      { "id": "ops", "nombre": "Otros operadores", "sub": "federación", "x": 856, "y": 168, "externo": true },
+      { "id": "ent", "nombre": "Entidades emisoras", "sub": "MEN · universidades", "x": 856, "y": 296, "externo": true },
+      { "id": "reg", "nombre": "Registraduría", "sub": "simulada · B-06", "x": 856, "y": 424, "externo": true }
+    ],
+    "flechas": [
+      { "de": "ciu", "a": "sis", "datos": "DOCUMENTOS · SOLICITUDES", "st": 1 },
+      { "de": "emp", "a": "sis", "datos": "CASOS PQRS · PETICIONES", "st": 1 },
+      { "de": "sis", "a": "ana", "datos": "METADATOS ANONIMIZADOS", "st": 1 },
+      { "de": "sis", "a": "gov", "datos": "AFILIACIÓN · URL DE DOCUMENTO", "acento": true, "st": 2 },
+      { "de": "sis", "a": "reg", "datos": "IDENTIDAD", "st": 2 },
+      { "de": "sis", "a": "ops", "datos": "CIUDADANO · URLS · CONFIRMAPI", "puntos": [[640, 184], [856, 184]], "st": 3 },
+      { "de": "ops", "a": "sis", "datos": "CONFIRMACIÓN REQ_STATUS", "puntos": [[856, 216], [640, 216]], "st": 3 },
+      { "de": "ent", "a": "sis", "datos": "DOCUMENTOS EMITIDOS", "st": 4 }
+    ],
+    "pasos": [
+      "1 · Ciudadanos, empresas y analistas son los actores humanos.",
+      "2 · GovCarpeta valida y registra la afiliación; la Registraduría confirma identidad.",
+      "3 · Con otros operadores se trasladan ciudadanos con confirmación.",
+      "4 · Las entidades emisoras envían documentos firmados."
+    ]
+  },
   "congelado": "El SRS queda congelado en v1.0. Este documento cita sus identificadores y no los cambia: si una decisión exigiera tocar un requerimiento, entraría por el proceso de cambios del SRS (*5 de A1)."
 }

@@ -18,7 +18,7 @@ Arquitectura del operador **Mi Carpeta Segura**: historias de usuario, microserv
 
 # 01 Introducción y trazabilidad
 
-Qué describe este documento, qué hereda del SRS y cómo cambian los supuestos abiertos de la entrega 1.
+Qué describe este documento, qué hereda del SRS y cómo cambian los supuestos abiertos de la entrega 1 y el contexto del sistema.
 
 Este documento fija la arquitectura del operador **Mi Carpeta Segura** y demuestra que funciona implementando cuatro operaciones reales contra el centralizador GovCarpeta. El SRS dijo *qué* debe hacer el sistema; aquí se decide *cómo* se reparte en piezas, dónde corren y por qué.
 
@@ -52,6 +52,21 @@ Este documento fija la arquitectura del operador **Mi Carpeta Segura** y demuest
 | B-02 | No se sabía qué significa endPointConfirm: 2PC, saga o un simple ACK. | Acuerdo entre los equipos del curso: acuse asíncrono. El destino llama a /api/transferCitizenConfirm del origen con req_status 1 o 0, y el origen solo borra con 1 (HU-09, HU-13, *4.5). |
 
 El SRS queda congelado en v1.0. Este documento cita sus identificadores y no los cambia: si una decisión exigiera tocar un requerimiento, entraría por el proceso de cambios del SRS (*5 de A1).
+
+## 1.4 Contexto del sistema
+
+Vista *System Context* de UAM: quién usa Mi Carpeta Segura a la izquierda, con qué sistemas se integra a la derecha. Las flechas llevan los datos que viajan.
+
+![Contexto del sistema](../../assignment2/diagramas/contexto-sistema.png)
+
+> El contenido de los documentos solo viaja entre operadores y hacia el ciudadano; a GovCarpeta solo llegan datos de afiliación y URLs (RI-01).
+
+- 1 · Ciudadanos, empresas y analistas son los actores humanos.
+- 2 · GovCarpeta valida y registra la afiliación; la Registraduría confirma identidad.
+- 3 · Con otros operadores se trasladan ciudadanos con confirmación.
+- 4 · Las entidades emisoras envían documentos firmados.
+
+Trazabilidad: RF-01, RF-03, RF-06, RF-07, RF-08, RI-01
 
 # 02 Historias de usuario
 
@@ -457,7 +472,7 @@ Realiza: RF-01.7, RF-01.8, RF-03.1, RF-03.2, RF-03.5, RF-03.8, RI-01
 
 # 03 Microservicios y componentes
 
-Once microservicios que salen del análisis de granularidad del SRS, en dos vistas lógicas y dos técnicas.
+Once microservicios que salen del análisis de granularidad del SRS, en dos vistas lógicas, dos técnicas y el modelo de entidades.
 
 ## 3.1 Microservicios y responsabilidades
 
@@ -483,7 +498,7 @@ La persistencia sigue una regla única: **PostgreSQL** donde hace falta transacc
 
 Dos vistas lógicas dicen qué piezas hay y qué se piden entre sí, sin tecnología. Dos vistas técnicas dicen con qué están hechas. Las flechas son dependencias: van de quien llama a quien responde. El <a href="mapa-tecnico.html">mapa técnico explorable</a> recorre las cuatro operaciones y el despliegue; los controles del visor están en inglés porque archify solo ofrece inglés y chino.
 
-### 3.2.1 Componentes lógicos · núcleo
+0 3.2.1 Componentes lógicos · núcleo
 
 Las piezas que atienden al ciudadano en las cuatro operaciones implementadas.
 
@@ -499,7 +514,7 @@ Las piezas que atienden al ciudadano en las cuatro operaciones implementadas.
 
 Trazabilidad: RF-01, RF-02, RF-06, RF-09, RD-11, RD-12
 
-### 3.2.2 Componentes lógicos · federación y valor
+1 3.2.2 Componentes lógicos · federación y valor
 
 Las piezas diseñadas que hablan con otros operadores, con entidades y con el Estado. Se comunican por eventos.
 
@@ -515,7 +530,7 @@ Las piezas diseñadas que hablan con otros operadores, con entidades y con el Es
 
 Trazabilidad: RF-03, RF-04, RF-05, RF-07, RF-08, RNF-07
 
-### 3.3.1 Componentes técnicos · prototipo
+2 3.3.1 Componentes técnicos · prototipo
 
 Lo que corre hoy: una SPA, Keycloak y tres servicios Express, con PostgreSQL y un almacén compatible con S3.
 
@@ -531,7 +546,7 @@ Lo que corre hoy: una SPA, Keycloak y tres servicios Express, con PostgreSQL y u
 
 Trazabilidad: RD-02, RD-05, RD-06, RD-08, RNF-10
 
-### 3.3.2 Componentes técnicos · plataforma objetivo
+3 3.3.2 Componentes técnicos · plataforma objetivo
 
 La plataforma para todo el país: borde global, Kafka gestionado como bus de eventos, datos en alta disponibilidad y analítica separada.
 
@@ -561,13 +576,28 @@ Trazabilidad: RNF-01, RNF-07, RNF-08, RNF-23, RNF-30
 | Cómputo | Cloud Run | gen2 | Contenedores OCI multi-arquitectura |
 | Eventos (objetivo) | Confluent Cloud Kafka + Schema Registry | Kafka 3.x | CloudEvents 1.0 |
 
+## 3.4 Modelo de entidades
+
+Vista *Technical Entities* de UAM: las entidades persistentes, qué microservicio es dueño de cada una y su cardinalidad. Ninguna relación cruza bases de datos por clave foránea: entre servicios se referencian por identificador (RD-11).
+
+![Modelo de entidades](../../assignment2/diagramas/modelo-entidades.png)
+
+> Ciudadano y Documento son las dos entidades implementadas: tablas `ciudadanos` de afiliación y `documentos` de custodia. El binario vive en el almacén, nunca en la base.
+
+- 1 · Cada ciudadano tiene una cuenta institucional en Keycloak.
+- 2 · El ciudadano es titular de sus documentos; cada documento apunta a un binario del almacén.
+- 3 · Autorizaciones, índice y auditoría referencian al documento por identificador.
+- 4 · Un traslado une al ciudadano con el operador destino del directorio de GovCarpeta.
+
+Trazabilidad: RF-01, RF-02, RF-03, RF-04, RF-09, RD-11
+
 # 04 Secuencias
 
 Las cuatro operaciones implementadas y el traslado entre operadores, mensaje a mensaje. Cada mensaje dice qué datos viajan y con qué operación del contrato.
 
 Cinco secuencias: una por operación implementada y la del traslado entre operadores, que está diseñada. El mismo JSON dibuja el diagrama del sitio, el PNG del documento y el video. Cada mensaje lleva arriba los datos que viajan y debajo la operación del contrato.
 
-### 4.1 Registro y afiliación
+0 4.1 Registro y afiliación
 
 La afiliación única exige consistencia fuerte con el centralizador. Por eso el usuario nace deshabilitado y solo se habilita cuando GovCarpeta confirma.
 
@@ -583,7 +613,7 @@ La afiliación única exige consistencia fuerte con el centralizador. Por eso el
 
 Trazabilidad: HU-01
 
-### 4.2 Ingreso con OIDC y PKCE
+1 4.2 Ingreso con OIDC y PKCE
 
 El portal es una aplicación pública: no puede guardar secretos. PKCE hace que un código robado no sirva sin el verificador que solo tiene el navegador que lo pidió.
 
@@ -599,7 +629,7 @@ El portal es una aplicación pública: no puede guardar secretos. PKCE hace que 
 
 Trazabilidad: HU-02
 
-### 4.3 Carga de documento temporal
+2 4.3 Carga de documento temporal
 
 Custodia autoriza la subida pero no la transporta. El navegador escribe directo en el almacén con una URL que caduca en 5 minutos.
 
@@ -615,7 +645,7 @@ Custodia autoriza la subida pero no la transporta. El navegador escribe directo 
 
 Trazabilidad: HU-03
 
-### 4.4 Autenticación vía GovCarpeta
+3 4.4 Autenticación vía GovCarpeta
 
 El centralizador autentica documentos que no custodia. Recibe una URL de lectura de 15 minutos: puede ir a buscar el documento, pero el contenido nunca viaja por él.
 
@@ -631,7 +661,7 @@ El centralizador autentica documentos que no custodia. Recibe una URL de lectura
 
 Trazabilidad: HU-04
 
-### 4.5 Traslado entre operadores
+4 4.5 Traslado entre operadores
 
 Contrato acordado entre los equipos del curso. El origen no borra nada hasta que el destino confirma: así no se pierde un documento si el destino falla a mitad de la descarga. Diseñado, no implementado.
 
@@ -653,7 +683,7 @@ Dónde corre cada pieza, con qué tecnología, por qué protocolo y en qué form
 
 Hoy el prototipo corre en Docker Compose local y el documento se publica en GitHub Pages. El despliegue 5.1 en GCP `us-east1` es el siguiente paso: usa las mismas imágenes y solo cambia la configuración. La plataforma objetivo añade borde global, eventos y alta disponibilidad. La tabla de conectores cierra lo que los diagramas no alcanzan a rotular.
 
-### 5.1 Despliegue del prototipo
+0 5.1 Despliegue del prototipo
 
 Tres servicios Node y Keycloak en Cloud Run, datos en Cloud SQL y Cloud Storage. Las mismas imágenes corren en Docker Compose.
 
@@ -668,7 +698,7 @@ Tres servicios Node y Keycloak en Cloud Run, datos en Cloud SQL y Cloud Storage.
 
 Trazabilidad: RD-01, RD-04, RD-06, RD-07, RNF-29
 
-### 5.2 Despliegue de la plataforma objetivo
+1 5.2 Despliegue de la plataforma objetivo
 
 Borde global con Cloud Armor, cómputo mixto, PostgreSQL y MongoDB gestionados y Kafka gestionado como bus de eventos.
 

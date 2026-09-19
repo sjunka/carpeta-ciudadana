@@ -25,6 +25,7 @@ mkdirSync(SALIDA, { recursive: true })
 const historias = leer('historias.json')
 const diagramas = [
   { ...historias.mapa, num: '2.1' },
+  leer('intro.json').contexto,
   ...leer('componentes.json').diagramas,
   ...leer('secuencias.json').secuencias,
   ...leer('despliegue.json').diagramas,

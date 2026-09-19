@@ -18,9 +18,9 @@
     { "titulo": "Base", "valor": "SRS v1.0 congelado", "tono": "ok" }
   ],
   "secciones": [
-    { "id": "intro", "num": "01", "nav": "Introducción", "titulo": "Introducción y trazabilidad", "intro": "Qué describe este documento, qué hereda del SRS y cómo cambian los supuestos abiertos de la entrega 1." },
+    { "id": "intro", "num": "01", "nav": "Introducción", "titulo": "Introducción y trazabilidad", "intro": "Qué describe este documento, qué hereda del SRS y cómo cambian los supuestos abiertos de la entrega 1 y el contexto del sistema." },
     { "id": "hu", "num": "02", "nav": "Historias", "titulo": "Historias de usuario", "intro": "Trece historias con escenario principal y alternos. Las cuatro primeras están implementadas y cada criterio tiene su prueba." },
-    { "id": "ms", "num": "03", "nav": "Componentes", "titulo": "Microservicios y componentes", "intro": "Once microservicios que salen del análisis de granularidad del SRS, en dos vistas lógicas y dos técnicas." },
+    { "id": "ms", "num": "03", "nav": "Componentes", "titulo": "Microservicios y componentes", "intro": "Once microservicios que salen del análisis de granularidad del SRS, en dos vistas lógicas, dos técnicas y el modelo de entidades." },
     { "id": "seq", "num": "04", "nav": "Secuencias", "titulo": "Secuencias", "intro": "Las cuatro operaciones implementadas y el traslado entre operadores, mensaje a mensaje. Cada mensaje dice qué datos viajan y con qué operación del contrato." },
     { "id": "dep", "num": "05", "nav": "Despliegue", "titulo": "Despliegue", "intro": "Dónde corre cada pieza, con qué tecnología, por qué protocolo y en qué formato. Primero el prototipo real, después la plataforma objetivo." },
     { "id": "ad", "num": "06", "nav": "Decisiones", "titulo": "Decisiones de arquitectura", "intro": "Doce decisiones con la plantilla <i>Architectural Decision</i> de UAM: cuatro de despliegue y ocho de selección de tecnologías." },
