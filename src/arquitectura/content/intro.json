@@ -60,7 +60,12 @@
     {
       "ref": "B-16",
       "a1": "54 de 70 operadores no publican transferAPIURL.",
-      "a2": "No publicamos transferAPIURL hasta implementar RF-03."
+      "a2": "No publicamos transferAPIURL hasta implementar RF-03. El traslado solo se ofrece hacia operadores que la publican (HU-13)."
+    },
+    {
+      "ref": "B-02",
+      "a1": "No se sabía qué significa endPointConfirm: 2PC, saga o un simple ACK.",
+      "a2": "Acuerdo entre los equipos del curso: acuse asíncrono. El destino llama a /api/transferCitizenConfirm del origen con req_status 1 o 0, y el origen solo borra con 1 (HU-09, HU-13, *4.5)."
     }
   ],
   "congelado": "El SRS queda congelado en v1.0. Este documento cita sus identificadores y no los cambia: si una decisión exigiera tocar un requerimiento, entraría por el proceso de cambios del SRS (*5 de A1)."

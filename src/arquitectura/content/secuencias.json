@@ -1,5 +1,5 @@
 {
-  "intro": "Cuatro secuencias, una por operación implementada. El mismo JSON dibuja el diagrama del sitio, el PNG del documento y el video. Cada mensaje lleva arriba los datos que viajan y debajo la operación del contrato.",
+  "intro": "Cinco secuencias: una por operación implementada y la del traslado entre operadores, que está diseñada. El mismo JSON dibuja el diagrama del sitio, el PNG del documento y el video. Cada mensaje lleva arriba los datos que viajan y debajo la operación del contrato.",
   "secuencias": [
     {
       "id": "secuencia-registro", "num": "4.1", "tipo": "secuencia", "titulo": "Registro y afiliación", "hu": "HU-01",
@@ -123,6 +123,38 @@
         "3 · Al centralizador viaja la URL, nunca el contenido.",
         "4 · La pasarela normaliza la respuesta en prosa.",
         "5 · El documento queda autenticado por el centralizador."
+      ]
+    },
+    {
+      "id": "secuencia-traslado", "num": "4.5", "tipo": "secuencia", "titulo": "Traslado entre operadores", "hu": "HU-13",
+      "introduccion": "Contrato acordado entre los equipos del curso. El origen no borra nada hasta que el destino confirma: así no se pierde un documento si el destino falla a mitad de la descarga. Diseñado, no implementado.",
+      "cierre": "Entre la baja del paso 1 y el alta del paso 4 el ciudadano no tiene operador en GovCarpeta: nunca queda en dos a la vez (RI-03), a cambio de una ventana sin afiliación. Con req_status 0 el origen conserva la carpeta.",
+      "lineas": [
+        { "id": "ori", "nombre": "Mi Carpeta Segura", "sub": "MS-07 · origen", "contrato": "interoperabilidad", "propio": true },
+        { "id": "alm", "nombre": "Almacén origen", "sub": "Cloud Storage", "propio": true },
+        { "id": "gov", "nombre": "GovCarpeta", "sub": "centralizador" },
+        { "id": "des", "nombre": "Operador destino", "sub": "otro equipo", "contrato": "interoperabilidad" }
+      ],
+      "mensajes": [
+        { "de": "ori", "a": "gov", "datos": "ID · OPERADOR", "op": "DELETE /apis/unregisterCitizen", "paso": 1 },
+        { "de": "gov", "a": "ori", "datos": "BAJA CONFIRMADA", "op": "201 Deleted", "paso": 1 },
+        { "de": "ori", "a": "ori", "datos": "URL GET POR DOCUMENTO", "op": "getSignedUrl()", "paso": 2 },
+        { "de": "ori", "a": "des", "datos": "ID · NOMBRE · CORREO · URLS · CONFIRMAPI", "op": "POST /api/transferCitizen", "paso": 2, "acento": true },
+        { "de": "des", "a": "ori", "datos": "TRASLADO RECIBIDO", "op": "200 OK", "paso": 2 },
+        { "de": "des", "a": "alm", "datos": "URL PREFIRMADA", "op": "GET urlDocuments", "paso": 3 },
+        { "de": "alm", "a": "des", "datos": "BINARIO DEL DOCUMENTO", "op": "200 application/pdf", "paso": 3 },
+        { "de": "des", "a": "gov", "datos": "ID · NOMBRE · CORREO · OPERADOR", "op": "POST /apis/registerCitizen", "paso": 4 },
+        { "de": "gov", "a": "des", "datos": "ALTA CONFIRMADA", "op": "201 Created", "paso": 4 },
+        { "de": "des", "a": "ori", "datos": "ID · REQ_STATUS 1", "op": "POST /api/transferCitizenConfirm", "paso": 5, "acento": true },
+        { "de": "ori", "a": "des", "datos": "CONFIRMACIÓN REGISTRADA", "op": "200 OK", "paso": 5 },
+        { "de": "ori", "a": "alm", "datos": "CARPETA DEL CIUDADANO", "op": "borrar base y objetos", "paso": 5 }
+      ],
+      "pasos": [
+        "1 · El origen pide a GovCarpeta la baja del ciudadano.",
+        "2 · El origen firma URLs de lectura y llama a transferCitizen con su confirmAPI.",
+        "3 · El destino descarga cada documento a su propio almacén.",
+        "4 · El destino registra al ciudadano en GovCarpeta.",
+        "5 · El destino confirma con req_status 1 y solo entonces el origen borra."
       ]
     }
   ]

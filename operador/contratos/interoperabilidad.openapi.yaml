@@ -1,0 +1,49 @@
+openapi: 3.1.0
+info:
+  title: Interoperabilidad entre operadores (MS-07)
+  version: 0.1.0
+  description: >
+    Contrato de traslado acordado entre los equipos del curso. Todo operador expone las dos
+    rutas; el origen llama a transferCitizen del destino y el destino responde en la confirmAPI
+    que el origen le envía. El origen solo borra datos y documentos con req_status 1. Diseñado,
+    no implementado.
+paths:
+  /api/transferCitizen:
+    post:
+      summary: Recibe un ciudadano trasladado desde otro operador
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [id, citizenName, citizenEmail, urlDocuments, confirmAPI]
+              properties:
+                id: { type: integer, example: 1032236578 }
+                citizenName: { type: string }
+                citizenEmail: { type: string, format: email }
+                urlDocuments:
+                  type: object
+                  description: Documento → lista de URLs de lectura (prefirmadas en nuestro caso).
+                  additionalProperties: { type: array, items: { type: string, format: uri } }
+                confirmAPI:
+                  type: string
+                  format: uri
+                  example: https://operador-origen/api/transferCitizenConfirm
+      responses:
+        '200': { description: Traslado recibido; la confirmación llega después por confirmAPI }
+  /api/transferCitizenConfirm:
+    post:
+      summary: Recibe del destino el resultado del traslado
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [id, req_status]
+              properties:
+                id: { type: integer, example: 1032236578 }
+                req_status: { type: integer, enum: [0, 1], description: 1 éxito, 0 fracaso }
+      responses:
+        '200': { description: Confirmación registrada }

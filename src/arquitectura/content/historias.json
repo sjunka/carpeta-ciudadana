@@ -6,14 +6,14 @@
     "titulo": "Mapa de historias del ciudadano",
     "corte": "PROTOTIPO ENTREGA 2",
     "actividades": [
-      { "nombre": "Afiliarse", "historias": ["HU-01", "HU-09"] },
+      { "nombre": "Afiliarse", "historias": ["HU-01", "HU-09", "HU-13"] },
       { "nombre": "Ingresar y vigilar", "historias": ["HU-02", "HU-11"] },
       { "nombre": "Guardar documentos", "historias": ["HU-03", "HU-04", "HU-05", "HU-06"] },
       { "nombre": "Compartir", "historias": ["HU-07", "HU-08"] },
       { "nombre": "Servicios de valor", "historias": ["HU-10", "HU-12"] }
     ],
     "pasos": [
-      "1 · Afiliarse: registro implementado; traslado de operador diseñado.",
+      "1 · Afiliarse: registro implementado; traslado de entrada y de salida diseñados.",
       "2 · Ingresar: login implementado; consulta de accesos diseñada.",
       "3 · Guardar: carga y autenticación implementadas; recepción y descarga diseñadas.",
       "4 · Compartir: autorización y envío a no afiliadas, diseñadas.",
@@ -174,15 +174,16 @@
     {
       "id": "HU-09", "titulo": "Traslado de operador", "estado": "Diseñada",
       "rol": "ciudadano afiliado a otro operador", "accion": "trasladar mi carpeta a Mi Carpeta Segura", "beneficio": "cambiar de proveedor sin perder documentos",
-      "realiza": "RF-01.7, RF-01.8, RI-03, RNF-22",
-      "criterios": ["Durante el traslado el ciudadano nunca queda afiliado a dos operadores.", "Todos los documentos llegan con su firma."],
+      "realiza": "RF-01.8, RF-03.3, RF-03.5, RF-03.8, RI-03, RNF-22",
+      "criterios": ["Durante el traslado el ciudadano nunca queda afiliado a dos operadores.", "Mi Carpeta Segura llama a la confirmAPI del origen solo cuando todos los documentos están en su almacén y el ciudadano quedó registrado en GovCarpeta.", "La confirmación lleva el id del ciudadano y req_status 1 si todo llegó, 0 si falló."],
       "principal": [
-        { "quien": "Ciudadano", "paso": "Solicita el traslado desde el portal." },
-        { "quien": "Sistema", "paso": "Pide al operador origen la carpeta completa." },
-        { "quien": "Sistema", "paso": "Recibe y verifica los documentos." },
-        { "quien": "Sistema", "paso": "Cambia la afiliación en GovCarpeta y confirma al origen." }
+        { "quien": "Ciudadano", "paso": "Pide el traslado a Mi Carpeta Segura en el portal de su operador actual." },
+        { "quien": "Sistema", "paso": "Recibe POST /api/transferCitizen con id, nombre, correo, URLs de los documentos y confirmAPI." },
+        { "quien": "Sistema", "paso": "Descarga cada documento de su URL y lo guarda en su almacén." },
+        { "quien": "Sistema", "paso": "Registra al ciudadano en GovCarpeta con Mi Carpeta Segura como operador." },
+        { "quien": "Sistema", "paso": "Llama a la confirmAPI del origen con req_status 1." }
       ],
-      "alternos": [{ "titulo": "Operador origen sin transferAPIURL", "pasos": ["2a. El operador origen no publica dirección (B-16).", "2b. El traslado queda pendiente y se informa al ciudadano."] }]
+      "alternos": [{ "titulo": "Descarga incompleta", "pasos": ["3a. Una URL falla después de los reintentos (RF-03.5).", "3b. El sistema descarta lo descargado y llama a la confirmAPI con req_status 0: el origen conserva la carpeta."] }]
     },
     {
       "id": "HU-10", "titulo": "Caso PQRS Premium", "estado": "Diseñada",
@@ -220,6 +221,24 @@
         { "quien": "Analista", "paso": "Filtra por región y año." }
       ],
       "alternos": [{ "titulo": "Grupo demasiado pequeño", "pasos": ["2a. El filtro deja menos de 10 personas.", "2b. El sistema suprime el valor para evitar reidentificación."] }]
+    },
+    {
+      "id": "HU-13", "titulo": "Traslado a otro operador", "estado": "Diseñada",
+      "rol": "ciudadano afiliado a Mi Carpeta Segura", "accion": "trasladarme a otro operador", "beneficio": "cambiar de proveedor sin perder mis documentos",
+      "realiza": "RF-01.7, RF-01.8, RF-03.1, RF-03.2, RF-03.5, RF-03.8, RI-01",
+      "criterios": ["Mi Carpeta Segura borra datos y documentos del ciudadano solo después de recibir req_status 1 en transferCitizenConfirm.", "El destino recibe URLs prefirmadas de solo lectura, nunca credenciales del almacén.", "Mientras espera la confirmación, la carpeta queda en solo lectura."],
+      "principal": [
+        { "quien": "Ciudadano", "paso": "Elige el operador destino y confirma el traslado." },
+        { "quien": "Sistema", "paso": "Busca la transferAPIURL del destino en getOperators." },
+        { "quien": "Sistema", "paso": "Pide a GovCarpeta que desafilie al ciudadano con unregisterCitizen." },
+        { "quien": "Sistema", "paso": "Envía a transferCitizen del destino id, nombre, correo, URLs de los documentos y su confirmAPI." },
+        { "quien": "Sistema", "paso": "Espera la confirmación del destino." },
+        { "quien": "Sistema", "paso": "Con req_status 1, borra al ciudadano de la base y sus documentos del almacén." }
+      ],
+      "alternos": [
+        { "titulo": "Destino sin transferAPIURL", "pasos": ["2a. El destino no publica dirección de traslado (B-16).", "2b. El traslado no empieza y se informa al ciudadano."] },
+        { "titulo": "Destino rechaza la recepción", "pasos": ["6a. Llega req_status 0.", "6b. El sistema conserva la carpeta, avisa al ciudadano y escala: el ciudadano quedó sin operador en GovCarpeta hasta resolverlo (B-02)."] }
+      ]
     }
   ]
 }
