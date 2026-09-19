@@ -1,5 +1,5 @@
 # Mi Carpeta Segura en local: docker compose up -d --build
-# Keycloak 8081 · afiliación 8082 · custodia 8083 (también /api/transferCitizen) · pasarela 8084 · MinIO 9000 (consola 9001)
+# Keycloak 8081 · afiliación 8082 · custodia 8083 · pasarela 8084 · MinIO 9000 (consola 9001)
 name: mcs
 
 x-node: &node
@@ -99,7 +99,6 @@ services:
       PASARELA_URL: http://pasarela:8080
       KEYCLOAK_URL: http://keycloak:8080
       KEYCLOAK_SECRETO: ${KC_AFILIACION_SECRETO}
-      CLAVE_INTERNA: ${CLAVE_INTERNA}
     ports: ["8082:8080"]
 
   custodia:
@@ -121,13 +120,6 @@ services:
       S3_BUCKET: mcs-documentos
       S3_ACCESS_KEY: ${S3_ACCESS_KEY}
       S3_SECRET_KEY: ${S3_SECRET_KEY}
-      # Traslado entre operadores (MS-07 dentro de custodia en el prototipo).
-      AFILIACION_URL: http://afiliacion:8080
-      CLAVE_INTERNA: ${CLAVE_INTERNA}
-      OPERADOR_ID: ${OPERADOR_ID}
-      OPERADOR_NOMBRE: Mi Carpeta Segura
-      URL_PUBLICA: ${URL_PUBLICA:-http://localhost:8083}
-      URL_SOLO_HTTPS: "false"
     ports: ["8083:8080"]
 
 volumes:

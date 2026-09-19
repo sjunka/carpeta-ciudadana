@@ -22,14 +22,6 @@ paths:
                   afiliado: { type: boolean }
                   operador: { type: [string, 'null'] }
         '503': { $ref: '#/components/responses/Problema' }
-    delete:
-      summary: Da de baja al ciudadano en el centralizador (unregisterCitizen) para trasladarlo
-      parameters:
-        - { name: id, in: path, required: true, schema: { type: string, pattern: '^[0-9]{6,10}$' } }
-      responses:
-        '204': { description: Ciudadano libre en GovCarpeta }
-        '502': { $ref: '#/components/responses/Problema' }
-        '503': { $ref: '#/components/responses/Problema' }
   /centralizador/ciudadanos:
     post:
       summary: Registra al ciudadano (registerCitizen)
@@ -49,23 +41,6 @@ paths:
         '201': { description: Registrado }
         '409': { $ref: '#/components/responses/Problema' }
         '502': { $ref: '#/components/responses/Problema' }
-        '503': { $ref: '#/components/responses/Problema' }
-  /centralizador/operadores:
-    get:
-      summary: Operadores que publican transferAPIURL (getOperators)
-      responses:
-        '200':
-          description: Directorio normalizado
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    id: { type: string }
-                    nombre: { type: string }
-                    transferAPIURL: { type: string, format: uri }
         '503': { $ref: '#/components/responses/Problema' }
   /centralizador/documentos/autenticacion:
     put:
