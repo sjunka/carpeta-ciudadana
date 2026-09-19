@@ -5,8 +5,11 @@ info:
   description: >
     Contrato de traslado acordado entre los equipos del curso. Todo operador expone las dos
     rutas; el origen llama a transferCitizen del destino y el destino responde en la confirmAPI
-    que el origen le envía. El origen solo borra datos y documentos con req_status 1. Diseñado,
-    no implementado.
+    que el origen le envía. El origen solo borra datos y documentos con req_status 1 y después de
+    comprobar en GovCarpeta que el ciudadano ya está con otro operador. En el prototipo lo sirve
+    custodia. Realiza HU-09 y HU-13. Rutas públicas: el acuerdo no define autenticación.
+servers:
+  - url: http://localhost:8083
 paths:
   /api/transferCitizen:
     post:
@@ -32,6 +35,8 @@ paths:
                   example: https://operador-origen/api/transferCitizenConfirm
       responses:
         '200': { description: Traslado recibido; la confirmación llega después por confirmAPI }
+        '400': { description: Body inválido }
+        '403': { description: El confirmAPI no pertenece a ningún operador del directorio de GovCarpeta }
   /api/transferCitizenConfirm:
     post:
       summary: Recibe del destino el resultado del traslado
@@ -46,4 +51,6 @@ paths:
                 id: { type: integer, example: 1032236578 }
                 req_status: { type: integer, enum: [0, 1], description: 1 éxito, 0 fracaso }
       responses:
-        '200': { description: Confirmación registrada }
+        '200': { description: Confirmación registrada; con 1 la carpeta se borra, con 0 se reafilia al ciudadano }
+        '404': { description: No hay traslado en curso para ese ciudadano }
+        '409': { description: GovCarpeta no muestra al ciudadano en otro operador; no se borra nada }

@@ -14,6 +14,7 @@ if (process.argv.includes('--migrar')) {
     estado text NOT NULL CHECK (estado IN ('pendiente', 'afiliado')),
     creado timestamptz NOT NULL DEFAULT now()
   )`)
+  await db.query('ALTER TABLE ciudadanos ADD COLUMN IF NOT EXISTS direccion text')
   console.log(JSON.stringify({ nivel: 'info', mensaje: 'migración de afiliacion aplicada' }))
   await db.end()
 } else {
@@ -25,6 +26,7 @@ if (process.argv.includes('--migrar')) {
       clientId: env.KEYCLOAK_CLIENTE ?? 'afiliacion-admin', clientSecret: env.KEYCLOAK_SECRETO,
     }),
     origenes: (env.ORIGENES ?? '').split(',').filter(Boolean),
+    claveInterna: env.CLAVE_INTERNA,
   })
   const puerto = env.PORT ?? 8082
   app.listen(puerto, () => console.log(JSON.stringify({ nivel: 'info', mensaje: `afiliacion en ${puerto}` })))

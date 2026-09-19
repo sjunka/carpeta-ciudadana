@@ -3,7 +3,7 @@
   "diagramas": [
     {
       "id": "logico-nucleo", "num": "3.2.1", "tipo": "componentes", "titulo": "Componentes lógicos · núcleo",
-      "introduccion": "Las piezas que atienden al ciudadano en las cuatro operaciones implementadas.",
+      "introduccion": "Las piezas que atienden al ciudadano en registro, ingreso, carga y autenticación.",
       "cierre": "Solo la pasarela habla con GovCarpeta: el resto del sistema no conoce su contrato.",
       "realiza": "RF-01, RF-02, RF-06, RF-09, RD-11, RD-12",
       "w": 1056, "h": 552,

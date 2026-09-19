@@ -29,5 +29,9 @@ export function crearPasarela({ url, audiencia }) {
     consultar: (cedula) => llamar('GET', `/centralizador/ciudadanos/${cedula}`),
     registrar: (c) => llamar('POST', '/centralizador/ciudadanos', c),
     autenticar: (d) => llamar('PUT', '/centralizador/documentos/autenticacion', d),
+    consultar: (cedula) => llamar('GET', `/centralizador/ciudadanos/${cedula}`),
+    registrar: (c) => llamar('POST', '/centralizador/ciudadanos', c),
+    desafiliar: (cedula) => llamar('DELETE', `/centralizador/ciudadanos/${cedula}`),
+    operadores: () => llamar('GET', '/centralizador/operadores'),
   }
 }

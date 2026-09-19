@@ -1,5 +1,5 @@
 {
-  "intro": "Cinco secuencias: una por operación implementada y la del traslado entre operadores, que está diseñada. El mismo JSON dibuja el diagrama del sitio, el PNG del documento y el video. Cada mensaje lleva arriba los datos que viajan y debajo la operación del contrato.",
+  "intro": "Cinco secuencias, una por operación implementada. El mismo JSON dibuja el diagrama del sitio, el PNG del documento y el video. Cada mensaje lleva arriba los datos que viajan y debajo la operación del contrato.",
   "secuencias": [
     {
       "id": "secuencia-registro", "num": "4.1", "tipo": "secuencia", "titulo": "Registro y afiliación", "hu": "HU-01",
@@ -127,8 +127,8 @@
     },
     {
       "id": "secuencia-traslado", "num": "4.5", "tipo": "secuencia", "titulo": "Traslado entre operadores", "hu": "HU-13",
-      "introduccion": "Contrato acordado entre los equipos del curso. El origen no borra nada hasta que el destino confirma: así no se pierde un documento si el destino falla a mitad de la descarga. Diseñado, no implementado.",
-      "cierre": "Entre la baja del paso 1 y el alta del paso 4 el ciudadano no tiene operador en GovCarpeta: nunca queda en dos a la vez (RI-03), a cambio de una ventana sin afiliación. Con req_status 0 el origen conserva la carpeta.",
+      "introduccion": "Contrato acordado entre los equipos del curso. El origen no borra nada hasta que el destino confirma: así no se pierde un documento si el destino falla a mitad de la descarga. En el prototipo lo sirve custodia.",
+      "cierre": "Entre la baja del paso 1 y el alta del paso 4 el ciudadano no tiene operador en GovCarpeta: nunca queda en dos a la vez (RI-03), a cambio de una ventana sin afiliación. Con req_status 0 el origen reafilia al ciudadano y conserva la carpeta; con 1, antes de borrar comprueba en GovCarpeta que ya está en otro operador.",
       "lineas": [
         { "id": "ori", "nombre": "Mi Carpeta Segura", "sub": "MS-07 · origen", "contrato": "interoperabilidad", "propio": true },
         { "id": "alm", "nombre": "Almacén origen", "sub": "Cloud Storage", "propio": true },

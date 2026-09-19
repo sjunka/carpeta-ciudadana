@@ -1,9 +1,9 @@
 {
-  "proposito": "Este documento fija la arquitectura del operador <b>Mi Carpeta Segura</b> y demuestra que funciona implementando cuatro operaciones reales contra el centralizador GovCarpeta. El SRS dijo <i>qué</i> debe hacer el sistema; aquí se decide <i>cómo</i> se reparte en piezas, dónde corren y por qué.",
+  "proposito": "Este documento fija la arquitectura del operador <b>Mi Carpeta Segura</b> y demuestra que funciona implementando cinco operaciones reales contra el centralizador GovCarpeta y los demás operadores. El SRS dijo <i>qué</i> debe hacer el sistema; aquí se decide <i>cómo</i> se reparte en piezas, dónde corren y por qué.",
   "alcance": [
     "<b>Arquitectura objetivo:</b> los once microservicios, el bus de eventos y la plataforma multi-región que exige la escala del país (RNF-08).",
-    "<b>Prototipo de la entrega 2:</b> registro, ingreso, carga de documento temporal y autenticación vía GovCarpeta, desplegados en Docker Compose local; el despliegue en Cloud Run está planeado con las mismas imágenes.",
-    "<b>Fuera del alcance:</b> transferencia entre operadores, notificaciones, analítica y Premium. Quedan diseñados, no implementados."
+    "<b>Prototipo de la entrega 2:</b> registro, ingreso, carga de documento temporal, autenticación vía GovCarpeta y traslado entre operadores, desplegados en Docker Compose local; el despliegue en Cloud Run está planeado con las mismas imágenes.",
+    "<b>Fuera del alcance:</b> recepción desde entidades emisoras, notificaciones, analítica y Premium. Quedan diseñados, no implementados."
   ],
   "glosario": [
     {
@@ -35,7 +35,7 @@
     {
       "ref": "B-12",
       "a1": "No se sabía si el entregable incluía implementar el operador.",
-      "a2": "Resuelto: la entrega 2 lo pide y cuatro operaciones quedan implementadas y probadas de extremo a extremo."
+      "a2": "Resuelto: la entrega 2 pide cuatro operaciones y quedan implementadas y probadas de extremo a extremo, más el traslado entre operadores."
     },
     {
       "ref": "B-03",
@@ -60,12 +60,12 @@
     {
       "ref": "B-16",
       "a1": "54 de 70 operadores no publican transferAPIURL.",
-      "a2": "No publicamos transferAPIURL hasta implementar RF-03. El traslado solo se ofrece hacia operadores que la publican (HU-13)."
+      "a2": "El traslado está implementado, pero la transferAPIURL se publica al desplegar en Cloud Run (<code>operador/infra/publicar-traslado.mjs</code>): en local nadie la alcanza. Solo se ofrece traslado hacia operadores que la publican (HU-13)."
     },
     {
       "ref": "B-02",
       "a1": "No se sabía qué significa endPointConfirm: 2PC, saga o un simple ACK.",
-      "a2": "Acuerdo entre los equipos del curso: acuse asíncrono. El destino llama a /api/transferCitizenConfirm del origen con req_status 1 o 0, y el origen solo borra con 1 (HU-09, HU-13, *4.5)."
+      "a2": "Acuerdo entre los equipos del curso: acuse asíncrono. El destino llama a /api/transferCitizenConfirm del origen con req_status 1 o 0. El origen solo borra con 1 y tras comprobar en GovCarpeta que el ciudadano ya está en otro operador (HU-09, HU-13, *4.5)."
     }
   ],
   "contexto": {

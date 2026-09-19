@@ -1,7 +1,7 @@
 {
   "sello": "Arquitectura · v1.0 · Assignment 2",
   "titulo": "Carpeta Ciudadana · Arquitectura",
-  "subtitulo": "Arquitectura del operador <b>Mi Carpeta Segura</b>: historias de usuario, microservicios, secuencias, despliegue y decisiones en plantilla UAM. Sale del SRS de la entrega 1, que no se modifica, e implementa cuatro operaciones contra GovCarpeta: registro, ingreso, carga y autenticación de documentos.",
+  "subtitulo": "Arquitectura del operador <b>Mi Carpeta Segura</b>: historias de usuario, microservicios, secuencias, despliegue y decisiones en plantilla UAM. Sale del SRS de la entrega 1, que no se modifica, e implementa cinco operaciones contra GovCarpeta: registro, ingreso, carga, autenticación de documentos y traslado entre operadores.",
   "favicon": "🗂️",
   "portada": {
     "archivo": "og-carpeta-ciudadana.jpg",
@@ -12,16 +12,16 @@
     { "titulo": "Versión", "valor": "1.0 · 20 sep 2026" },
     { "titulo": "Equipo", "valor": ["Sergio Junca", "Juan José Henao", "Samuel Cadavid"] },
     { "titulo": "Docente", "valor": "Danny Andrés Salcedo Saldaña" },
-    { "titulo": "Historias", "valor": "13 · 4 implementadas", "auto": "hu" },
-    { "titulo": "Microservicios", "valor": "11 · 4 implementados", "auto": "ms" },
+    { "titulo": "Historias", "valor": "13 · 6 implementadas", "auto": "hu" },
+    { "titulo": "Microservicios", "valor": "11 · 5 implementados", "auto": "ms" },
     { "titulo": "Decisiones", "valor": "12 en plantilla UAM", "auto": "ad" },
     { "titulo": "Base", "valor": "SRS v1.0 congelado", "tono": "ok" }
   ],
   "secciones": [
     { "id": "intro", "num": "01", "nav": "Introducción", "titulo": "Introducción y trazabilidad", "intro": "Qué describe este documento, qué hereda del SRS y cómo cambian los supuestos abiertos de la entrega 1 y el contexto del sistema." },
-    { "id": "hu", "num": "02", "nav": "Historias", "titulo": "Historias de usuario", "intro": "Trece historias con escenario principal y alternos. Las cuatro primeras están implementadas y cada criterio tiene su prueba." },
+    { "id": "hu", "num": "02", "nav": "Historias", "titulo": "Historias de usuario", "intro": "Trece historias con escenario principal y alternos. Seis están implementadas, las cuatro primeras más el traslado de entrada y de salida, y cada criterio tiene su prueba." },
     { "id": "ms", "num": "03", "nav": "Componentes", "titulo": "Microservicios y componentes", "intro": "Once microservicios que salen del análisis de granularidad del SRS, en dos vistas lógicas, dos técnicas y el modelo de entidades." },
-    { "id": "seq", "num": "04", "nav": "Secuencias", "titulo": "Secuencias", "intro": "Las cuatro operaciones implementadas y el traslado entre operadores, mensaje a mensaje. Cada mensaje dice qué datos viajan y con qué operación del contrato." },
+    { "id": "seq", "num": "04", "nav": "Secuencias", "titulo": "Secuencias", "intro": "Las cinco operaciones implementadas, mensaje a mensaje. Cada mensaje dice qué datos viajan y con qué operación del contrato." },
     { "id": "dep", "num": "05", "nav": "Despliegue", "titulo": "Despliegue", "intro": "Dónde corre cada pieza, con qué tecnología, por qué protocolo y en qué formato. Primero el prototipo real, después la plataforma objetivo." },
     { "id": "ad", "num": "06", "nav": "Decisiones", "titulo": "Decisiones de arquitectura", "intro": "Doce decisiones con la plantilla <i>Architectural Decision</i> de UAM: cuatro de despliegue y ocho de selección de tecnologías." },
     { "id": "imp", "num": "07", "nav": "Implementación", "titulo": "Implementación", "intro": "Qué se construyó, cómo se levanta y qué evidencia lo respalda." }

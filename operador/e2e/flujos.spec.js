@@ -144,3 +144,17 @@ test('HU-04 · autenticación vía GovCarpeta', async ({ page }) => {
   await sinViolaciones(page, 'autenticado')
   await page.screenshot({ path: `${EVIDENCIAS}04-autenticacion.png`, fullPage: true })
 })
+
+test('HU-13 · traslado: lista solo operadores que reciben y exige confirmación', async ({ page }) => {
+  await ingresar(page)
+  await page.getByRole('link', { name: 'Trasladar carpeta' }).click()
+  const destino = page.getByLabel('Operador destino')
+  await expect(destino.locator('option').nth(1)).toBeAttached()
+  await expect(destino.locator('option', { hasText: 'Mi Carpeta Segura' })).toHaveCount(0)
+  await sinViolaciones(page, 'traslado')
+  await page.screenshot({ path: `${EVIDENCIAS}05-traslado.png`, fullPage: true })
+  // Sin marcar la casilla no se envía nada: no se desafilia a nadie en GovCarpeta.
+  await destino.selectOption({ index: 1 })
+  await page.getByRole('button', { name: 'Trasladar mi carpeta' }).click()
+  await expect(page.getByText('Confirma que entiendes que tu carpeta se borrará')).toBeVisible()
+})

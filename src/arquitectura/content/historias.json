@@ -13,7 +13,7 @@
       { "nombre": "Servicios de valor", "historias": ["HU-10", "HU-12"] }
     ],
     "pasos": [
-      "1 · Afiliarse: registro implementado; traslado de entrada y de salida diseñados.",
+      "1 · Afiliarse: registro y traslado de entrada y de salida implementados.",
       "2 · Ingresar: login implementado; consulta de accesos diseñada.",
       "3 · Guardar: carga y autenticación implementadas; recepción y descarga diseñadas.",
       "4 · Compartir: autorización y envío a no afiliadas, diseñadas.",
@@ -172,7 +172,7 @@
       "alternos": [{ "titulo": "Confidencialidad en duda", "pasos": ["2a. El caso exige correo y la confidencialidad lo contradice (B-14).", "2b. Se envía solo el enlace y el contenido nunca va adjunto."] }]
     },
     {
-      "id": "HU-09", "titulo": "Traslado de operador", "estado": "Diseñada",
+      "id": "HU-09", "titulo": "Traslado de operador", "estado": "Implementada",
       "rol": "ciudadano afiliado a otro operador", "accion": "trasladar mi carpeta a Mi Carpeta Segura", "beneficio": "cambiar de proveedor sin perder documentos",
       "realiza": "RF-01.8, RF-03.3, RF-03.5, RF-03.8, RI-03, RNF-22",
       "criterios": ["Durante el traslado el ciudadano nunca queda afiliado a dos operadores.", "Mi Carpeta Segura llama a la confirmAPI del origen solo cuando todos los documentos están en su almacén y el ciudadano quedó registrado en GovCarpeta.", "La confirmación lleva el id del ciudadano y req_status 1 si todo llegó, 0 si falló."],
@@ -183,7 +183,11 @@
         { "quien": "Sistema", "paso": "Registra al ciudadano en GovCarpeta con Mi Carpeta Segura como operador." },
         { "quien": "Sistema", "paso": "Llama a la confirmAPI del origen con req_status 1." }
       ],
-      "alternos": [{ "titulo": "Descarga incompleta", "pasos": ["3a. Una URL falla después de los reintentos (RF-03.5).", "3b. El sistema descarta lo descargado y llama a la confirmAPI con req_status 0: el origen conserva la carpeta."] }]
+      "alternos": [
+        { "titulo": "Descarga incompleta", "pasos": ["3a. Una URL falla o pasa de 10 MB.", "3b. El sistema descarta lo descargado y llama a la confirmAPI con req_status 0: el origen conserva la carpeta."] },
+        { "titulo": "Remitente desconocido", "pasos": ["2a. La confirmAPI no pertenece a ningún operador del directorio de GovCarpeta.", "2b. El sistema responde 403 y no descarga nada."] }
+      ],
+      "prueba": "operador/servicios/custodia/test/traslado.test.js"
     },
     {
       "id": "HU-10", "titulo": "Caso PQRS Premium", "estado": "Diseñada",
@@ -223,7 +227,7 @@
       "alternos": [{ "titulo": "Grupo demasiado pequeño", "pasos": ["2a. El filtro deja menos de 10 personas.", "2b. El sistema suprime el valor para evitar reidentificación."] }]
     },
     {
-      "id": "HU-13", "titulo": "Traslado a otro operador", "estado": "Diseñada",
+      "id": "HU-13", "titulo": "Traslado a otro operador", "estado": "Implementada",
       "rol": "ciudadano afiliado a Mi Carpeta Segura", "accion": "trasladarme a otro operador", "beneficio": "cambiar de proveedor sin perder mis documentos",
       "realiza": "RF-01.7, RF-01.8, RF-03.1, RF-03.2, RF-03.5, RF-03.8, RI-01",
       "criterios": ["Mi Carpeta Segura borra datos y documentos del ciudadano solo después de recibir req_status 1 en transferCitizenConfirm.", "El destino recibe URLs prefirmadas de solo lectura, nunca credenciales del almacén.", "Mientras espera la confirmación, la carpeta queda en solo lectura."],
@@ -237,8 +241,10 @@
       ],
       "alternos": [
         { "titulo": "Destino sin transferAPIURL", "pasos": ["2a. El destino no publica dirección de traslado (B-16).", "2b. El traslado no empieza y se informa al ciudadano."] },
-        { "titulo": "Destino rechaza la recepción", "pasos": ["6a. Llega req_status 0.", "6b. El sistema conserva la carpeta, avisa al ciudadano y escala: el ciudadano quedó sin operador en GovCarpeta hasta resolverlo (B-02)."] }
-      ]
+        { "titulo": "Destino rechaza la recepción", "pasos": ["6a. Llega req_status 0, o transferCitizen falla.", "6b. El sistema reafilia al ciudadano en GovCarpeta y conserva la carpeta (B-02)."] },
+        { "titulo": "Confirmación no verificable", "pasos": ["6a. Llega req_status 1 pero GovCarpeta no muestra al ciudadano en otro operador.", "6b. El sistema responde 409 y no borra nada: la ruta es pública y no basta un POST para vaciar una carpeta."] }
+      ],
+      "prueba": "operador/servicios/custodia/test/traslado.test.js · operador/e2e/flujos.spec.js · HU-13"
     }
   ]
 }

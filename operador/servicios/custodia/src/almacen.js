@@ -12,8 +12,10 @@ export function crearAlmacen({ endpoint, endpointPublico = endpoint, region = 'a
   return {
     urlCarga: (clave, tipo) =>
       getSignedUrl(publico, new PutObjectCommand({ Bucket: bucket, Key: clave, ContentType: tipo }), { expiresIn: 300 }),
-    urlLectura: (clave) =>
-      getSignedUrl(publico, new GetObjectCommand({ Bucket: bucket, Key: clave }), { expiresIn: 900 }),
+    urlLectura: (clave, segundos = 900) =>
+      getSignedUrl(publico, new GetObjectCommand({ Bucket: bucket, Key: clave }), { expiresIn: segundos }),
+    guardar: (clave, cuerpo, tipo) =>
+      interno.send(new PutObjectCommand({ Bucket: bucket, Key: clave, Body: cuerpo, ContentType: tipo })),
     async cabecera(clave) {
       try {
         const h = await interno.send(new HeadObjectCommand({ Bucket: bucket, Key: clave }))

@@ -68,6 +68,19 @@ export function crearCliente({ base, fetch = globalThis.fetch, timeoutMs = 8000,
       if (status !== 201) throw new Rechazo(status, texto)
       return texto
     },
+    // unregisterCitizen: 201 = dado de baja, 204 = ya no estaba. Ambos dejan al ciudadano libre.
+    async desafiliar(ciudadano) {
+      const { status, texto } = await llamar('DELETE', '/apis/unregisterCitizen', ciudadano)
+      if (status !== 201 && status !== 204) throw new Rechazo(status, texto)
+    },
+    // getOperators trae _id aunque el Swagger diga OperatorId; solo sirven los que publican transferAPIURL.
+    async operadores() {
+      const { status, texto } = await llamar('GET', '/apis/getOperators', null, 3)
+      if (status !== 200) throw new Rechazo(status, texto)
+      return JSON.parse(texto)
+        .filter((o) => o.transferAPIURL?.trim())
+        .map((o) => ({ id: o._id ?? o.OperatorId, nombre: o.operatorName ?? o.OperatorName, transferAPIURL: o.transferAPIURL.trim() }))
+    },
     async autenticar(documento) {
       const { status, texto } = await llamar('PUT', '/apis/authenticateDocument', documento)
       if (status !== 200) throw new Rechazo(status, texto)
