@@ -91,13 +91,13 @@ function Svg({ d, w, h, children }) {
   )
 }
 
-function Nodo({ n }) {
+function Nodo({ n, icono = true }) {
   const c = caja(n)
   const cx = c.x + c.w / 2
   return (
     <g>
       <rect x={c.x} y={c.y} width={c.w} height={c.h} rx="4" className={n.externo ? 'n-ext' : `n-sys${n.acento ? ' n-ac' : ''}`} />
-      {!n.externo && (
+      {icono && !n.externo && (
         <g className="uml">
           <rect x={c.x + c.w - 22} y={c.y + 8} width="14" height="16" rx="1" />
           <rect x={c.x + c.w - 26} y={c.y + 11} width="8" height="4" />
@@ -114,11 +114,11 @@ function Componentes({ d }) {
   const porId = Object.fromEntries(d.nodos.map((n) => [n.id, n]))
   return (
     <Svg d={d} w={d.w} h={d.h}>
-      {d.nodos.map((n) => <Nodo key={n.id} n={n} />)}
+      {d.nodos.map((n) => <Nodo key={n.id} n={n} icono={d.iconos !== false} />)}
       {d.flechas.map((f, i) => (
         <Flecha key={i} id={d.id} puntos={puntosDe(f, porId)} lineas={[f.datos]} acento={f.acento} st={f.st} />
       ))}
-      <Leyenda y={d.h - 40} w={d.w} items={[['ln-m', 'Dependencia'], ['ln-a', 'Tramo crítico'], ['n-ext', 'Sistema externo']]} />
+      <Leyenda y={d.h - 40} w={d.w} items={d.leyenda ?? [['ln-m', 'Dependencia'], ['ln-a', 'Tramo crítico'], ['n-ext', 'Sistema externo']]} />
     </Svg>
   )
 }

@@ -130,7 +130,7 @@ function geometria(d, nodos, flechas) {
 }
 const acentos = (xs) => xs.filter((x) => x.acento).length
 
-for (const d of comp.diagramas) {
+for (const d of [A2('intro.json').contexto, ...comp.diagramas]) {
   if (d.nodos.length > 9) fallo(`${d.id}: ${d.nodos.length} nodos; máximo 9.`)
   if (d.flechas.length > 12) fallo(`${d.id}: ${d.flechas.length} flechas; máximo 12.`)
   if (acentos(d.nodos) + acentos(d.flechas) > 2) fallo(`${d.id}: acento en más de 2 elementos.`)
@@ -225,7 +225,7 @@ try {
   const faltan = [...ESQUELETO.map((id) => `id="${id}"`), 'class="dd"', 'class="ref"'].filter((m) => !html.includes(m))
   if (faltan.length) throw new Error(`le falta: ${faltan.join(', ')}`)
   console.log(`✓ A2 válida — ${historias.historias.length} HU · ${ms.filas.length} MS · ${decisiones.length} AD · ` +
-    `${comp.diagramas.length + seq.secuencias.length + dep.diagramas.length + 1} diagramas · página de ${(html.length / 1024).toFixed(0)} KB`)
+    `${comp.diagramas.length + seq.secuencias.length + dep.diagramas.length + 2} diagramas · página de ${(html.length / 1024).toFixed(0)} KB`)
 } catch (e) {
   console.error(`\n✗ La página A2 no renderiza: ${e.message}\n`)
   process.exitCode = 1

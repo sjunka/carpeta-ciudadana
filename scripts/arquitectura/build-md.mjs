@@ -29,8 +29,8 @@ const seccion = (id) => meta.secciones.find((s) => s.id === id)
 const h1 = (id) => `# ${seccion(id).num} ${seccion(id).titulo}\n\n${md(seccion(id).intro)}`
 
 function documento(img, ev) {
-  const figura = (d) =>
-    [`### ${d.num} ${d.titulo}`, d.introduccion && md(d.introduccion), `![${d.titulo}](${img}/${d.id}.png)`,
+  const figura = (d, h = '###') =>
+    [`${h} ${d.num} ${d.titulo}`, d.introduccion && md(d.introduccion), `![${d.titulo}](${img}/${d.id}.png)`,
       d.cierre && `> ${md(d.cierre)}`, lista(d.pasos), `Trazabilidad: ${d.realiza ?? d.hu}`].filter(Boolean).join('\n\n')
 
   const historia = (h) => [
@@ -68,7 +68,7 @@ function documento(img, ev) {
     h1('intro'), md(intro.proposito), `## 1.1 Alcance`, lista(intro.alcance),
     `## 1.2 Glosario`, tabla(['Término', 'Definición'], intro.glosario.map((g) => [g.termino, g.definicion])),
     `## 1.3 Qué hereda del SRS y qué cambia`, tabla(['Supuesto', 'En el SRS', 'En la arquitectura'], intro.herencia.map((h) => [h.ref, h.a1, h.a2])),
-    md(intro.congelado),
+    md(intro.congelado), figura(intro.contexto, '##'),
 
     h1('hu'), md(historias.intro), figura({ ...historias.mapa, num: '2.1', realiza: historias.historias.map((h) => h.id).join(', ') }),
     `## 2.2 Historias`, ...historias.historias.map(historia),
@@ -77,9 +77,10 @@ function documento(img, ev) {
     tabla(['ID', 'Microservicio', 'Responsabilidad', 'Dominio · veredicto', 'API', 'Eventos', 'Datos', 'Estado'],
       ms.filas.map((m) => [m.id, m.nombre, m.responsabilidad, `${m.dominio} · ${m.veredicto}`, m.api, m.eventos, m.datos, m.nota ? `${m.estado}. ${m.nota}` : m.estado])),
     md(ms.persistencia),
-    `## 3.2 Componentes lógicos y 3.3 técnicos`, md(comp.intro), ...comp.diagramas.map(figura),
+    `## 3.2 Componentes lógicos y 3.3 técnicos`, md(comp.intro), ...comp.diagramas.slice(0, 4).map(figura),
     `### 3.3.3 Tecnología y versión por componente`,
     tabla(['Componente', 'Tecnología', 'Versión', 'Rol'], comp.tecnologias.map((t) => [t.componente, t.tecnologia, t.version, t.rol])),
+    figura(comp.diagramas[4], '##'),
 
     h1('seq'), md(seq.intro), ...seq.secuencias.map(figura),
 

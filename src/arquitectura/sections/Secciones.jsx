@@ -74,6 +74,7 @@ export function SeccionIntro({ meta, comprimido }) {
         filas={intro.herencia}
       />
       <Rich as="p" className="pull" html={intro.congelado} />
+      <Figura d={intro.contexto} comprimido={comprimido} />
     </Section>
   )
 }
@@ -136,7 +137,7 @@ export function SeccionHistorias({ meta, comprimido }) {
 }
 
 export function SeccionMicroservicios({ meta, comprimido }) {
-  const [log1, log2, tec1, tec2] = componentes.diagramas
+  const [log1, log2, tec1, tec2, entidades] = componentes.diagramas
   return (
     <Section meta={meta} comprimido={comprimido}>
       <SubTitulo num="3.1" texto="Microservicios y responsabilidades" />
@@ -171,6 +172,7 @@ export function SeccionMicroservicios({ meta, comprimido }) {
           filas={componentes.tecnologias}
         />
       </Plegable>
+      <Figura d={entidades} comprimido={comprimido} />
     </Section>
   )
 }

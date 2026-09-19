@@ -143,6 +143,42 @@
         "4 · Las funciones de notificación consumen sin tocar el camino crítico.",
         "5 · MongoDB recibe metadatos anonimizados para la analítica del Estado."
       ]
+    },
+    {
+      "id": "modelo-entidades", "num": "3.4", "tipo": "componentes", "titulo": "Modelo de entidades",
+      "introduccion": "Vista <i>Technical Entities</i> de UAM: las entidades persistentes, qué microservicio es dueño de cada una y su cardinalidad. Ninguna relación cruza bases de datos por clave foránea: entre servicios se referencian por identificador (RD-11).",
+      "cierre": "Ciudadano y Documento son las dos entidades implementadas: tablas <code>ciudadanos</code> de afiliación y <code>documentos</code> de custodia. El binario vive en el almacén, nunca en la base.",
+      "realiza": "RF-01, RF-02, RF-03, RF-04, RF-09, RD-11",
+      "iconos": false,
+      "leyenda": [["ln-m", "Relación con cardinalidad"], ["ln-a", "Relación crítica"], ["n-ext", "Entidad externa"]],
+      "w": 1264, "h": 520,
+      "nodos": [
+        { "id": "cue", "nombre": "Cuenta", "sub": "MS-01 · Keycloak", "x": 40, "y": 64, "w": 176 },
+        { "id": "ciu", "nombre": "Ciudadano", "sub": "MS-03 · cédula · estado", "x": 376, "y": 64, "w": 176 },
+        { "id": "tra", "nombre": "Transferencia", "sub": "MS-07 · estado · confirmAPI", "x": 712, "y": 64, "w": 176 },
+        { "id": "ope", "nombre": "Operador", "sub": "GovCarpeta · transferAPIURL", "x": 1048, "y": 64, "w": 176, "externo": true },
+        { "id": "aut", "nombre": "Autorización", "sub": "MS-06 · tercero · vigencia", "x": 40, "y": 224, "w": 176 },
+        { "id": "doc", "nombre": "Documento", "sub": "MS-04 · título · SHA-256", "x": 376, "y": 224, "w": 176, "acento": true },
+        { "id": "obj", "nombre": "Objeto binario", "sub": "almacén S3 · clave", "x": 712, "y": 224, "w": 176 },
+        { "id": "idx", "nombre": "Entrada de índice", "sub": "MS-05 · MongoDB", "x": 376, "y": 384, "w": 176 },
+        { "id": "aud", "nombre": "Evento de auditoría", "sub": "MS-02 · solo-append", "x": 712, "y": 384, "w": 176 }
+      ],
+      "flechas": [
+        { "de": "ciu", "a": "cue", "datos": "1 · 1 CUENTA", "st": 1 },
+        { "de": "ciu", "a": "doc", "datos": "1 · 0..N DOCUMENTOS", "acento": true, "st": 2 },
+        { "de": "doc", "a": "obj", "datos": "1 · 1 BINARIO", "st": 2 },
+        { "de": "doc", "a": "aut", "datos": "0..N AUTORIZACIONES", "st": 3 },
+        { "de": "doc", "a": "idx", "datos": "1 · 1 ENTRADA", "st": 3 },
+        { "de": "doc", "a": "aud", "datos": "0..N EVENTOS", "puntos": [[552, 272], [632, 272], [632, 416], [712, 416]], "st": 3 },
+        { "de": "ciu", "a": "tra", "datos": "1 · 0..N TRASLADOS", "st": 4 },
+        { "de": "tra", "a": "ope", "datos": "N · 1 DESTINO", "st": 4 }
+      ],
+      "pasos": [
+        "1 · Cada ciudadano tiene una cuenta institucional en Keycloak.",
+        "2 · El ciudadano es titular de sus documentos; cada documento apunta a un binario del almacén.",
+        "3 · Autorizaciones, índice y auditoría referencian al documento por identificador.",
+        "4 · Un traslado une al ciudadano con el operador destino del directorio de GovCarpeta."
+      ]
     }
   ],
   "tecnologias": [
