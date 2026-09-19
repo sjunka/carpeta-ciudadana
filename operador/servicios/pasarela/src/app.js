@@ -39,18 +39,6 @@ export function crearApp({ cliente, operador, soloHttps = true }) {
     } catch (e) { next(e) }
   })
 
-  app.delete('/centralizador/ciudadanos/:id', async (req, res, next) => {
-    if (!/^[0-9]{6,10}$/.test(req.params.id)) return problema(res, 400, 'Identificación inválida')
-    try {
-      await cliente.desafiliar({ id: Number(req.params.id), operatorId: operador.id, operatorName: operador.nombre })
-      res.sendStatus(204)
-    } catch (e) { next(e) }
-  })
-
-  app.get('/centralizador/operadores', async (_req, res, next) => {
-    try { res.json(await cliente.operadores()) } catch (e) { next(e) }
-  })
-
   app.put('/centralizador/documentos/autenticacion', async (req, res, next) => {
     const { idCiudadano, url, titulo } = req.body ?? {}
     if (!/^[0-9]{6,10}$/.test(idCiudadano ?? '') || !urlValida(url, { soloHttps }) || !titulo || titulo.length > 120) {

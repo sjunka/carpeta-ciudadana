@@ -1,5 +1,5 @@
 {
-  "intro": "Cinco operaciones implementadas de extremo a extremo contra GovCarpeta real. El código vive en <code>operador/</code> del repositorio.",
+  "intro": "Cuatro operaciones implementadas de extremo a extremo contra GovCarpeta real. El código vive en <code>operador/</code> del repositorio.",
   "operaciones": [
     {
       "hu": "HU-01",
@@ -24,12 +24,6 @@
       "operacion": "Autenticación",
       "endpoints": "POST /documentos/{id}/autenticacion · pasarela PUT /centralizador/documentos/autenticacion",
       "prueba": "operador/e2e/flujos.spec.js · HU-04"
-    },
-    {
-      "hu": "HU-09 · HU-13",
-      "operacion": "Traslado entre operadores",
-      "endpoints": "POST /traslados · POST /api/transferCitizen · POST /api/transferCitizenConfirm · pasarela DELETE /centralizador/ciudadanos/{id} y GET /centralizador/operadores",
-      "prueba": "operador/servicios/custodia/test/traslado.test.js · operador/e2e/flujos.spec.js · HU-13"
     }
   ],
   "correr": [
@@ -41,11 +35,11 @@
   "estado": [
     {
       "item": "Pruebas unitarias",
-      "valor": "33 de 33 en verde: 7 en pasarela, 10 en afiliación y 16 en custodia, 11 de ellas del traslado. Reejecutadas con <code>node --test</code> el 19 de septiembre de 2026, sin fallos."
+      "valor": "17 de 17 en verde: 5 en pasarela, 7 en afiliación y 5 en custodia. Reejecutadas con <code>node --test</code> el 17 de septiembre de 2026, sin fallos."
     },
     {
       "item": "e2e local",
-      "valor": "8 de 8 en verde contra GovCarpeta real el 19 de septiembre de 2026: registro, ingreso, carga, autenticación, pantalla de traslado y 3 alternos; 0 violaciones axe"
+      "valor": "7 de 7 en verde contra GovCarpeta real: registro, ingreso, carga, autenticación y 3 alternos; 0 violaciones axe"
     },
     {
       "item": "Despliegue en Cloud Run",
@@ -57,18 +51,16 @@
     }
   ],
   "evidencia": {
-    "intro": "Capturas del operador ejecutando las operaciones, tomadas por la prueba e2e contra GovCarpeta real. La cuarta muestra la respuesta textual del centralizador al autenticar el documento.",
+    "intro": "Capturas del operador ejecutando las cuatro operaciones, tomadas por la prueba e2e contra GovCarpeta real. La cuarta muestra la respuesta textual del centralizador al autenticar el documento.",
     "capturas": [
       { "archivo": "01-registro.png", "titulo": "Registro y afiliación", "hu": "HU-01" },
       { "archivo": "02-login.png", "titulo": "Ingreso al operador", "hu": "HU-02" },
       { "archivo": "03-carga.png", "titulo": "Carga de documento", "hu": "HU-03" },
-      { "archivo": "04-autenticacion.png", "titulo": "Autenticación vía GovCarpeta", "hu": "HU-04" },
-      { "archivo": "05-traslado.png", "titulo": "Traslado a otro operador", "hu": "HU-13" }
+      { "archivo": "04-autenticacion.png", "titulo": "Autenticación vía GovCarpeta", "hu": "HU-04" }
     ]
   },
   "pendientes": [
-    "Publicar transferAPIURL en GovCarpeta al desplegar en Cloud Run; hasta entonces ningún operador nos alcanza.",
-    "Traslado de extremo a extremo con otro equipo: las pruebas lo cubren con dobles, falta un ensayo con un operador real.",
+    "Transferencia entre operadores (RF-03) y publicación de transferAPIURL.",
     "Kafka, notificaciones, analítica y Premium: diseñados en *3 y *6."
   ]
 }

@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { leerAfiliacion, crearBreaker, crearCliente, Indisponible, Rechazo } from '../src/govcarpeta.js'
+import { leerAfiliacion, crearBreaker, crearCliente, Indisponible } from '../src/govcarpeta.js'
 import { crearApp, urlValida } from '../src/app.js'
 
 test('204 significa libre; 200 extrae el operador aunque haya espacio final', () => {
@@ -40,22 +40,4 @@ test('rechaza contenido documental: cuerpo mayor a 2 KB da 413', async () => {
 test('un 500 del centralizador se traduce en Indisponible', async () => {
   const cliente = crearCliente({ base: 'http://x', fetch: async () => new Response('', { status: 500 }) })
   await assert.rejects(cliente.registrar({}), Indisponible)
-})
-
-test('operadores: solo los que publican transferAPIURL, con _id como id', async () => {
-  const lista = [
-    { _id: 'a1', operatorName: 'Uno', transferAPIURL: ' https://uno.co/api/transferCitizen ' },
-    { _id: 'b2', operatorName: 'Dos' },
-  ]
-  const cliente = crearCliente({ base: 'http://x', fetch: async () => new Response(JSON.stringify(lista)) })
-  assert.deepEqual(await cliente.operadores(), [{ id: 'a1', nombre: 'Uno', transferAPIURL: 'https://uno.co/api/transferCitizen' }])
-})
-
-test('desafiliar: 201 y 204 son éxito; 501 es rechazo', async () => {
-  for (const status of [201, 204]) {
-    const cliente = crearCliente({ base: 'http://x', fetch: async () => new Response(null, { status }) })
-    await cliente.desafiliar({ id: 1 })
-  }
-  const malo = crearCliente({ base: 'http://x', fetch: async () => new Response('', { status: 501 }) })
-  await assert.rejects(malo.desafiliar({ id: 1 }), Rechazo)
 })

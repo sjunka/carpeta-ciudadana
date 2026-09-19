@@ -7,11 +7,10 @@ import Registro from './vistas/Registro.jsx'
 import Carpeta from './vistas/Carpeta.jsx'
 import Subir from './vistas/Subir.jsx'
 import Detalle from './vistas/Detalle.jsx'
-import Traslado from './vistas/Traslado.jsx'
 
 const TEMA = { tema: { aClaro: 'Tema claro', aOscuro: 'Tema oscuro' } }
 
-// Sin router: la vista vive en el hash (#registro, #carpeta, #subir, #traslado, #documento/<id>).
+// Sin router: la vista vive en el hash (#registro, #carpeta, #subir, #documento/<id>).
 function useHash() {
   const [hash, setHash] = useState(window.location.hash.slice(1))
   useEffect(() => {
@@ -39,7 +38,7 @@ export default function App() {
   }, [])
 
   const [vista, id] = hash.split('/')
-  const protegida = ['carpeta', 'subir', 'traslado', 'documento'].includes(vista)
+  const protegida = ['carpeta', 'subir', 'documento'].includes(vista)
   if (protegida && usuario === null) sesion.signinRedirect({ state: `#${hash}` })
 
   let contenido
@@ -47,7 +46,6 @@ export default function App() {
   else if (vista === 'registro') contenido = <Registro />
   else if (vista === 'carpeta') contenido = <Carpeta />
   else if (vista === 'subir') contenido = <Subir />
-  else if (vista === 'traslado') contenido = <Traslado />
   else if (vista === 'documento') contenido = <Detalle id={id} />
   else contenido = <Inicio conectado={!!usuario} />
 

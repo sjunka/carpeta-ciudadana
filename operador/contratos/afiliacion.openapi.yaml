@@ -2,7 +2,7 @@ openapi: 3.1.0
 info:
   title: Afiliación (MS-03)
   version: 0.1.0
-  description: Registro de ciudadanos con afiliación única contra GovCarpeta. Realiza HU-01. Las rutas /internos solo las llama custodia para el traslado (HU-09, HU-13) y exigen la cabecera x-clave-interna.
+  description: Registro de ciudadanos con afiliación única contra GovCarpeta. Realiza HU-01.
 servers:
   - url: http://localhost:8082
 paths:
@@ -27,44 +27,6 @@ paths:
         '429': { $ref: '#/components/responses/Problema' }
         '502': { $ref: '#/components/responses/Problema' }
         '503': { $ref: '#/components/responses/Problema' }
-  /internos/ciudadanos:
-    post:
-      summary: Alta de un ciudadano recibido por traslado; lo registra en GovCarpeta
-      parameters:
-        - { name: x-clave-interna, in: header, required: true, schema: { type: string } }
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required: [cedula, nombre, correo]
-              properties:
-                cedula: { type: string, pattern: '^[0-9]{6,10}$' }
-                nombre: { type: string, maxLength: 120 }
-                correo: { type: string, format: email }
-      responses:
-        '201': { description: Afiliado; devuelve la cuenta institucional }
-        '401': { $ref: '#/components/responses/Problema' }
-        '502': { $ref: '#/components/responses/Problema' }
-  /internos/ciudadanos/{cedula}:
-    get:
-      summary: Datos del ciudadano para enviarlo a otro operador
-      parameters:
-        - { name: cedula, in: path, required: true, schema: { type: string } }
-        - { name: x-clave-interna, in: header, required: true, schema: { type: string } }
-      responses:
-        '200': { description: cedula, cuenta, nombre, correo y direccion }
-        '401': { $ref: '#/components/responses/Problema' }
-        '404': { $ref: '#/components/responses/Problema' }
-    delete:
-      summary: Baja local tras un traslado confirmado (usuario de Keycloak y fila)
-      parameters:
-        - { name: cedula, in: path, required: true, schema: { type: string } }
-        - { name: x-clave-interna, in: header, required: true, schema: { type: string } }
-      responses:
-        '204': { description: Borrado }
-        '401': { $ref: '#/components/responses/Problema' }
   /salud:
     get:
       summary: Chequeo de salud

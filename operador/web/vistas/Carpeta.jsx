@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { FilePlus2, FileText, FolderOpen, Send } from 'lucide-react'
+import { FilePlus2, FileText, FolderOpen } from 'lucide-react'
 import { listar } from '../api.js'
 import Aviso from './Aviso.jsx'
 import Estado from './Estado.jsx'
@@ -20,14 +20,9 @@ export default function Carpeta() {
           <h1 id="t-carpeta">Mi carpeta</h1>
           <p className="guia">{docs ? `${docs.length} de 20 documentos` : 'Tus documentos guardados'}</p>
         </div>
-        <div className="acciones">
-          <a className="btn secundario" href="#traslado">
-            <Send size={20} strokeWidth={1.75} aria-hidden="true" /> Trasladar carpeta
-          </a>
-          <a className="btn primario" href="#subir">
-            <FilePlus2 size={20} strokeWidth={1.75} aria-hidden="true" /> Subir documento
-          </a>
-        </div>
+        <a className="btn primario" href="#subir">
+          <FilePlus2 size={20} strokeWidth={1.75} aria-hidden="true" /> Subir documento
+        </a>
       </div>
       {error && <Aviso tipo="peligro" titulo="No pudimos abrir tu carpeta">{error}</Aviso>}
       {!docs && !error && <p className="cargando" role="status">Cargando tus documentos…</p>}

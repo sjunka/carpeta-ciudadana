@@ -488,7 +488,7 @@
         {
           "id": "AD-05",
           "titulo": "Estilo arquitectónico y comunicación",
-          "decision": "<b>Microservicios</b> según la granularidad del SRS. Las operaciones del prototipo son <b>REST síncrono</b>; en el objetivo los hechos de negocio viajan por <b>Kafka</b>.",
+          "decision": "<b>Microservicios</b> según la granularidad del SRS. Las cuatro operaciones del prototipo son <b>REST síncrono</b>; en el objetivo los hechos de negocio viajan por <b>Kafka</b>.",
           "impactos": [
             "Cada servicio se despliega y escala solo.",
             "Aparece consistencia eventual en avisos y analítica."
@@ -501,7 +501,7 @@
             "RD-11: sin base de datos compartida."
           ],
           "supuestos": [
-            "Kafka no es necesario para las operaciones implementadas: el traslado usa el acuse asíncrono que acordaron los operadores, no un bus."
+            "Kafka no es necesario para las cuatro operaciones implementadas."
           ],
           "solucion": "Llamadas REST con timeout donde el usuario espera respuesta; eventos CloudEvents donde basta con enterarse.",
           "criterios": [
@@ -578,7 +578,7 @@
               ]
             }
           ],
-          "justificacion": "La tolerancia a fallos con 70 operadores ajenos pesa más que la simplicidad del monolito. Kafka se deja fuera del prototipo porque ninguna de sus operaciones lo necesita.",
+          "justificacion": "La tolerancia a fallos con 70 operadores ajenos pesa más que la simplicidad del monolito. Kafka se deja fuera del prototipo porque ninguna de sus cuatro operaciones lo necesita.",
           "consenso": "Acordado por el equipo.",
           "disenso": "Monolito modular para el prototipo. Se descartó porque no demostraría la arquitectura que se entrega.",
           "relacionadas": [

@@ -34,20 +34,6 @@ export function crearKeycloak({ url, realm, clientId, clientSecret, fetch = glob
       if (r.status !== 201) throw new Error(`Keycloak crear usuario ${r.status}: ${await r.text()}`)
       return r.headers.get('location').split('/').pop()
     },
-    // Ciudadano recibido por traslado: habilitado, sin contraseña; la define al recuperar la cuenta.
-    async crearTrasladado({ cuenta, nombre, apellido, correoContacto, cedula }) {
-      const r = await llamar('POST', '/users', {
-        username: cuenta, email: cuenta, emailVerified: true, firstName: nombre, lastName: apellido,
-        enabled: true, requiredActions: ['UPDATE_PASSWORD'],
-        attributes: { cedula: [cedula], correoContacto: [correoContacto] },
-      })
-      if (r.status !== 201) throw new Error(`Keycloak crear usuario ${r.status}: ${await r.text()}`)
-      return r.headers.get('location').split('/').pop()
-    },
-    async buscar(username) {
-      const r = await llamar('GET', `/users?exact=true&username=${encodeURIComponent(username)}`)
-      return (await r.json())[0] ?? null
-    },
     async habilitar(id) {
       const r = await llamar('PUT', `/users/${id}`, { enabled: true })
       if (!r.ok) throw new Error(`Keycloak habilitar ${r.status}`)
