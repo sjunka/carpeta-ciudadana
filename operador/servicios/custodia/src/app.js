@@ -24,8 +24,9 @@ export function validarSolicitud({ titulo, tipo, tamano } = {}) {
   return null
 }
 
-// dependencias: db (query), verificar(token) → claims, almacen (urlCarga, urlLectura, cabecera, sha256, borrar), pasarela (autenticar)
-export function crearApp({ db, verificar, almacen, pasarela, origenes = [] }) {
+// dependencias: db (query), verificar(token) → claims, almacen (urlCarga, urlLectura, cabecera, sha256, borrar), pasarela (autenticar),
+// traslados (enviar, confirmar, recibir, operadoresDestino) de traslado.js
+export function crearApp({ db, verificar, almacen, pasarela, traslados, origenes = [] }) {
   const app = express()
   app.use((req, res, next) => {
     const o = req.headers.origin
@@ -34,6 +35,18 @@ export function crearApp({ db, verificar, almacen, pasarela, origenes = [] }) {
     }
     req.method === 'OPTIONS' ? res.sendStatus(204) : next()
   })
+  // Contrato entre operadores: público, sin sesión y con cuerpo mayor (lleva las URL de los documentos).
+  const conError = (fn) => async (req, res, next) => {
+    try { await fn(req, res) } catch (e) { e.titulo ? problema(res, e.status, e.titulo, e.message) : next(e) }
+  }
+  const cuerpoTraslado = express.json({ limit: '64kb' })
+  app.post('/api/transferCitizen', cuerpoTraslado, conError(async (req, res) => {
+    res.json((await traslados.recibir(req.body)).respuesta)
+  }))
+  app.post('/api/transferCitizenConfirm', cuerpoTraslado, conError(async (req, res) => {
+    res.json(await traslados.confirmar(req.body ?? {}))
+  }))
+
   app.use(express.json({ limit: '2kb' }))
 
   app.get('/salud', (_req, res) => res.json({ estado: 'ok' }))
@@ -71,6 +84,9 @@ export function crearApp({ db, verificar, almacen, pasarela, origenes = [] }) {
     const invalido = validarSolicitud(req.body)
     if (invalido) return problema(res, ...invalido)
     try {
+      const { rows: [t] } = await db.query(
+        `SELECT estado FROM traslados WHERE cedula = $1 AND sentido = 'saliente'`, [req.titular.cedula])
+      if (t?.estado === 'enviado') return problema(res, 409, 'Carpeta en traslado', 'Mientras el otro operador confirma, tu carpeta es de solo lectura')
       const { rows: [uso] } = await db.query(
         'SELECT count(*)::int AS n, coalesce(sum(tamano), 0)::bigint AS bytes FROM documentos WHERE titular = $1', [req.titular.cuenta])
       if (uso.n >= CUOTA.documentos || Number(uso.bytes) + req.body.tamano > CUOTA.bytes) {
@@ -122,6 +138,15 @@ export function crearApp({ db, verificar, almacen, pasarela, origenes = [] }) {
       res.json(aDocumento(rows[0]))
     } catch (e) { next(e) }
   })
+
+  app.get('/operadores', conError(async (_req, res) => {
+    res.json((await traslados.operadoresDestino()).map(({ id, nombre }) => ({ id, nombre })))
+  }))
+
+  app.post('/traslados', conError(async (req, res) => {
+    if (typeof req.body?.operadorId !== 'string') return problema(res, 400, 'Elige el operador destino')
+    res.status(202).json(await traslados.enviar(req.titular, req.body.operadorId))
+  }))
 
   app.use((err, _req, res, _next) => {
     log('error', err.message)

@@ -73,3 +73,8 @@ export async function subir({ titulo, archivo }, alAvanzar) {
 }
 
 export const autenticar = (id) => conSesion(`/documentos/${id}/autenticacion`, { method: 'POST' })
+
+export const operadores = () => conSesion('/operadores')
+
+export const trasladar = (operadorId) =>
+  conSesion('/traslados', { method: 'POST', body: JSON.stringify({ operadorId }) })
