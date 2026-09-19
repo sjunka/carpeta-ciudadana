@@ -9,7 +9,7 @@ Arquitectura del operador **Mi Carpeta Segura**: historias de usuario, microserv
 | Versión | 1.0 · 20 sep 2026 |
 | Equipo | Sergio Junca, Juan José Henao, Samuel Cadavid |
 | Docente | Danny Andrés Salcedo Saldaña |
-| Historias | 12 · 4 implementadas |
+| Historias | 13 · 4 implementadas |
 | Microservicios | 11 · 4 implementados |
 | Decisiones | 12 en plantilla UAM |
 | Base | SRS v1.0 congelado |
@@ -48,13 +48,14 @@ Este documento fija la arquitectura del operador **Mi Carpeta Segura** y demuest
 | B-06 | Registraduría y correo entrante: ¿integración real o simulada? | Se mantiene: la verificación de identidad es simulada y así lo dice HU-01. |
 | B-09 | Sin autenticación definida hacia el centralizador. | GovCarpeta no la exige; la pasarela queda sin acceso público y exige ID token de Google a quien la llama. |
 | B-10 | Sin compromiso de disponibilidad del centralizador. | Timeout, reintento y circuit breaker en la pasarela: si el centralizador cae, el registro queda pendiente y nunca se asume libre al ciudadano. |
-| B-16 | 54 de 70 operadores no publican transferAPIURL. | No publicamos transferAPIURL hasta implementar RF-03. |
+| B-16 | 54 de 70 operadores no publican transferAPIURL. | No publicamos transferAPIURL hasta implementar RF-03. El traslado solo se ofrece hacia operadores que la publican (HU-13). |
+| B-02 | No se sabía qué significa endPointConfirm: 2PC, saga o un simple ACK. | Acuerdo entre los equipos del curso: acuse asíncrono. El destino llama a /api/transferCitizenConfirm del origen con req_status 1 o 0, y el origen solo borra con 1 (HU-09, HU-13, *4.5). |
 
 El SRS queda congelado en v1.0. Este documento cita sus identificadores y no los cambia: si una decisión exigiera tocar un requerimiento, entraría por el proceso de cambios del SRS (*5 de A1).
 
 # 02 Historias de usuario
 
-Doce historias con escenario principal y alternos. Las cuatro primeras están implementadas y cada criterio tiene su prueba.
+Trece historias con escenario principal y alternos. Las cuatro primeras están implementadas y cada criterio tiene su prueba.
 
 Cada historia sigue el formato del ejemplo de la clase: quién, qué quiere y para qué, criterios verificables, escenario principal que alterna actor y sistema, y al menos un escenario alterno. El campo *Realiza* la ata a los requerimientos del SRS.
 
@@ -62,13 +63,13 @@ Cada historia sigue el formato del ejemplo de la clase: quién, qué quiere y pa
 
 ![Mapa de historias del ciudadano](../../assignment2/diagramas/mapa-historias.png)
 
-- 1 · Afiliarse: registro implementado; traslado de operador diseñado.
+- 1 · Afiliarse: registro implementado; traslado de entrada y de salida diseñados.
 - 2 · Ingresar: login implementado; consulta de accesos diseñada.
 - 3 · Guardar: carga y autenticación implementadas; recepción y descarga diseñadas.
 - 4 · Compartir: autorización y envío a no afiliadas, diseñadas.
 - 5 · Valor: PQRS Premium y analítica para el Estado, diseñadas.
 
-Trazabilidad: HU-01, HU-02, HU-03, HU-04, HU-05, HU-06, HU-07, HU-08, HU-09, HU-10, HU-11, HU-12
+Trazabilidad: HU-01, HU-02, HU-03, HU-04, HU-05, HU-06, HU-07, HU-08, HU-09, HU-10, HU-11, HU-12, HU-13
 
 ## 2.2 Historias
 
@@ -328,23 +329,25 @@ Realiza: RF-04.1, RF-04.2, RF-03.4
 **Criterios de aceptación**
 
 - Durante el traslado el ciudadano nunca queda afiliado a dos operadores.
-- Todos los documentos llegan con su firma.
+- Mi Carpeta Segura llama a la confirmAPI del origen solo cuando todos los documentos están en su almacén y el ciudadano quedó registrado en GovCarpeta.
+- La confirmación lleva el id del ciudadano y req_status 1 si todo llegó, 0 si falló.
 
 **Escenario principal**
 
-1. **Ciudadano:** Solicita el traslado desde el portal.
-2. **Sistema:** Pide al operador origen la carpeta completa.
-3. **Sistema:** Recibe y verifica los documentos.
-4. **Sistema:** Cambia la afiliación en GovCarpeta y confirma al origen.
+1. **Ciudadano:** Pide el traslado a Mi Carpeta Segura en el portal de su operador actual.
+2. **Sistema:** Recibe POST /api/transferCitizen con id, nombre, correo, URLs de los documentos y confirmAPI.
+3. **Sistema:** Descarga cada documento de su URL y lo guarda en su almacén.
+4. **Sistema:** Registra al ciudadano en GovCarpeta con Mi Carpeta Segura como operador.
+5. **Sistema:** Llama a la confirmAPI del origen con req_status 1.
 
 **Escenarios alternos**
 
-*Operador origen sin transferAPIURL*
+*Descarga incompleta*
 
-- 2a. El operador origen no publica dirección (B-16).
-- 2b. El traslado queda pendiente y se informa al ciudadano.
+- 3a. Una URL falla después de los reintentos (RF-03.5).
+- 3b. El sistema descarta lo descargado y llama a la confirmAPI con req_status 0: el origen conserva la carpeta.
 
-Realiza: RF-01.7, RF-01.8, RI-03, RNF-22
+Realiza: RF-01.8, RF-03.3, RF-03.5, RF-03.8, RI-03, RNF-22
 
 ### HU-10 · Caso PQRS Premium (Diseñada)
 
@@ -419,6 +422,39 @@ Realiza: RF-09.5, RF-09.4, RNF-14
 
 Realiza: RF-08.1, RF-08.2, RF-08.6, RNF-15
 
+### HU-13 · Traslado a otro operador (Diseñada)
+
+**Como** ciudadano afiliado a Mi Carpeta Segura, **quiero** trasladarme a otro operador **para** cambiar de proveedor sin perder mis documentos.
+
+**Criterios de aceptación**
+
+- Mi Carpeta Segura borra datos y documentos del ciudadano solo después de recibir req_status 1 en transferCitizenConfirm.
+- El destino recibe URLs prefirmadas de solo lectura, nunca credenciales del almacén.
+- Mientras espera la confirmación, la carpeta queda en solo lectura.
+
+**Escenario principal**
+
+1. **Ciudadano:** Elige el operador destino y confirma el traslado.
+2. **Sistema:** Busca la transferAPIURL del destino en getOperators.
+3. **Sistema:** Pide a GovCarpeta que desafilie al ciudadano con unregisterCitizen.
+4. **Sistema:** Envía a transferCitizen del destino id, nombre, correo, URLs de los documentos y su confirmAPI.
+5. **Sistema:** Espera la confirmación del destino.
+6. **Sistema:** Con req_status 1, borra al ciudadano de la base y sus documentos del almacén.
+
+**Escenarios alternos**
+
+*Destino sin transferAPIURL*
+
+- 2a. El destino no publica dirección de traslado (B-16).
+- 2b. El traslado no empieza y se informa al ciudadano.
+
+*Destino rechaza la recepción*
+
+- 6a. Llega req_status 0.
+- 6b. El sistema conserva la carpeta, avisa al ciudadano y escala: el ciudadano quedó sin operador en GovCarpeta hasta resolverlo (B-02).
+
+Realiza: RF-01.7, RF-01.8, RF-03.1, RF-03.2, RF-03.5, RF-03.8, RI-01
+
 # 03 Microservicios y componentes
 
 Once microservicios que salen del análisis de granularidad del SRS, en dos vistas lógicas y dos técnicas.
@@ -435,7 +471,7 @@ La tabla sale del análisis de granularidad del SRS (*4.3 de A1): donde el vered
 | MS-04 | Custodia documental | Guarda el contenido de los documentos y controla quién puede leerlo o escribirlo. | RF-02 · Partir en dos | POST /documentos · confirmacion · autenticacion | Emite: documento cargado, documento autenticado | PostgreSQL custodia + almacén S3 | Implementado |
 | MS-05 | Índice de carpeta | Sirve las consultas de la carpeta separadas de las escrituras de contenido. | RF-02 · Partir en dos | GET /carpeta | Consume: documento cargado, recibido, autenticado | MongoDB · índice de carpeta | Diseñado. En el prototipo la lista la sirve MS-04. Se separa si las lecturas superan 100 por escritura o el p95 pasa de 2 s (RNF-04). |
 | MS-06 | Autorizaciones | Decide si un documento puede salir hacia un tercero según el consentimiento del titular. | RF-04 · Aislar | POST /autorizaciones · DELETE /autorizaciones/{id} | Emite: autorización concedida, revocada | PostgreSQL autorizaciones | Diseñado |
-| MS-07 | Interoperabilidad | Envía y recibe documentos de otros operadores y entidades con reintento idempotente. | RF-03 · Aislar | POST /transferencias | Emite: documento recibido | PostgreSQL bandeja de salida | Diseñado |
+| MS-07 | Interoperabilidad | Envía y recibe documentos de otros operadores y entidades con reintento idempotente. | RF-03 · Aislar | POST /api/transferCitizen · POST /api/transferCitizenConfirm | Emite: documento recibido, ciudadano trasladado | PostgreSQL bandeja de salida | Diseñado |
 | MS-08 | Pasarela del centralizador | Traduce el contrato de GovCarpeta a un modelo propio y aísla sus fallos. | RF-06 · Fuera del alcance | GET/POST /centralizador/ciudadanos · PUT /centralizador/documentos/autenticacion | Ninguno | Sin base de datos | Implementado |
 | MS-09 | Notificaciones | Avisa al ciudadano por el canal que prefiera. | RF-05 · Mantener unido | Sin API síncrona | Consume: documento recibido, ciudadano afiliado | MongoDB · preferencias de notificación | Diseñado. Función serverless: tráfico esporádico y procesos cortos, como indicó el profesor el 12 de septiembre. |
 | MS-10 | Analítica | Consolida metadatos anonimizados para los tableros del Estado. | RF-08 · Aislar | GET /tableros | Consume: metadatos anonimizados | MongoDB · colecciones analíticas anonimizadas en proyecto aparte | Diseñado. Nunca comparte motor con la base transaccional. |
@@ -527,9 +563,9 @@ Trazabilidad: RNF-01, RNF-07, RNF-08, RNF-23, RNF-30
 
 # 04 Secuencias
 
-Las cuatro operaciones implementadas, mensaje a mensaje. Cada mensaje dice qué datos viajan y con qué operación del contrato.
+Las cuatro operaciones implementadas y el traslado entre operadores, mensaje a mensaje. Cada mensaje dice qué datos viajan y con qué operación del contrato.
 
-Cuatro secuencias, una por operación implementada. El mismo JSON dibuja el diagrama del sitio, el PNG del documento y el video. Cada mensaje lleva arriba los datos que viajan y debajo la operación del contrato.
+Cinco secuencias: una por operación implementada y la del traslado entre operadores, que está diseñada. El mismo JSON dibuja el diagrama del sitio, el PNG del documento y el video. Cada mensaje lleva arriba los datos que viajan y debajo la operación del contrato.
 
 ### 4.1 Registro y afiliación
 
@@ -595,6 +631,22 @@ El centralizador autentica documentos que no custodia. Recibe una URL de lectura
 
 Trazabilidad: HU-04
 
+### 4.5 Traslado entre operadores
+
+Contrato acordado entre los equipos del curso. El origen no borra nada hasta que el destino confirma: así no se pierde un documento si el destino falla a mitad de la descarga. Diseñado, no implementado.
+
+![Traslado entre operadores](../../assignment2/diagramas/secuencia-traslado.png)
+
+> Entre la baja del paso 1 y el alta del paso 4 el ciudadano no tiene operador en GovCarpeta: nunca queda en dos a la vez (RI-03), a cambio de una ventana sin afiliación. Con req_status 0 el origen conserva la carpeta.
+
+- 1 · El origen pide a GovCarpeta la baja del ciudadano.
+- 2 · El origen firma URLs de lectura y llama a transferCitizen con su confirmAPI.
+- 3 · El destino descarga cada documento a su propio almacén.
+- 4 · El destino registra al ciudadano en GovCarpeta.
+- 5 · El destino confirma con req_status 1 y solo entonces el origen borra.
+
+Trazabilidad: HU-13
+
 # 05 Despliegue
 
 Dónde corre cada pieza, con qué tecnología, por qué protocolo y en qué formato. Primero el prototipo real, después la plataforma objetivo.
@@ -644,6 +696,7 @@ Trazabilidad: RNF-01, RNF-02, RNF-08, RNF-23, RNF-30
 | pasarela | GovCarpeta | HTTPS · REST | JSON de entrada · texto en prosa de salida | Ninguna (el contrato no la exige) | Síncrono | Prototipo |
 | Servicios | Cloud SQL | PostgreSQL wire vía Cloud SQL Auth Proxy | SQL | IAM de la cuenta de servicio | Síncrono | Prototipo |
 | custodia | Cloud Storage | HTTPS · API XML S3 V4 | Binario | Clave HMAC en Secret Manager | Síncrono | Prototipo |
+| interoperabilidad | Otros operadores | HTTPS · REST (/api/transferCitizen, /api/transferCitizenConfirm) | JSON | Ninguna en el acuerdo del curso; URLs de documentos prefirmadas | Síncrono con confirmación diferida | Objetivo |
 | Servicios | Kafka | Kafka SASL/SSL | CloudEvents 1.0 JSON con esquema registrado | API key por servicio | Asíncrono | Objetivo |
 | Kafka | MongoDB analítico | Conector gestionado (sink) | JSON anonimizado | Cuenta de servicio | Asíncrono | Objetivo |
 
@@ -1236,4 +1289,4 @@ Capturas del operador ejecutando las cuatro operaciones, tomadas por la prueba e
 
 ---
 
-Fuentes: SRS de Carpeta Ciudadana v1.0 (entrega 1); contrato Swagger de GovCarpeta, leído con GET el 14 de septiembre de 2026; plantilla *Architectural Decision* de Unified Architecture Method; documentación oficial de Keycloak 26, Cloud Run y Cloud Storage; material del curso *Arquitecturas Avanzadas de Software*.
+Fuentes: SRS de Carpeta Ciudadana v1.0 (entrega 1); contrato Swagger de GovCarpeta, leído con GET el 14 de septiembre de 2026; plantillas *Architectural Decision* y *Technical Perspective* de Unified Architecture Method (UAM V2.1.1); acuerdo de traslado entre operadores del curso (`transferCitizen` y `transferCitizenConfirm`); documentación oficial de Keycloak 26, Cloud Run y Cloud Storage; material del curso *Arquitecturas Avanzadas de Software*.
