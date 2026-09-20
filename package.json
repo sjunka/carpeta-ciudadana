@@ -11,7 +11,7 @@
     "check": "node scripts/check-content.mjs && node scripts/check-contrast.mjs && node scripts/check-contrast.mjs --tokens operador/web/tokens.css && node scripts/check-render.mjs && node scripts/arquitectura/check.mjs",
     "md": "node scripts/build-md.mjs && node scripts/build-diagrams.mjs && node scripts/build-png.mjs && node scripts/arquitectura/build-md.mjs && node scripts/arquitectura/build-diagramas.mjs",
     "pdf": "npm run md && node scripts/build-pdf.mjs && node scripts/build-pdf.mjs --fuente docs/arquitectura-assignment2.md --nombre arquitectura/arquitectura-carpeta-ciudadana.pdf --copia ../assignment2/arquitectura-carpeta-ciudadana.pdf",
-    "pdf:entrega": "node scripts/build-pdf.mjs --compacto --fuente docs/entrega2-carpeta-ciudadana.md --nombre arquitectura/entrega2-carpeta-ciudadana.pdf --copia ../assignment2/entrega2-carpeta-ciudadana.pdf"
+    "pdf:entrega": "node scripts/build-pdf.mjs --compacto --fuente docs/entrega2-carpeta-ciudadana.md --nombre arquitectura/entrega2-carpeta-ciudadana.pdf --copia ../assignment2/entrega2-carpeta-ciudadana.pdf && sed -e 's|../../assignment2/||g' -e 's|../public/arquitectura/evidencias/|evidencias/|g' docs/entrega2-carpeta-ciudadana.md > ../assignment2/entrega2-carpeta-ciudadana.md"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.3.4",
