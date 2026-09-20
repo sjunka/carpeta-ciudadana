@@ -148,7 +148,8 @@ export function SeccionMicroservicios({ meta, comprimido }) {
           { clave: 'id', cabecera: 'ID', ancho: '70px', celda: (m) => <R texto={m.id} /> },
           { clave: 'nombre', cabecera: 'Microservicio', ancho: '240px', celda: (m) => (<><b>{m.nombre}</b><span className="note">{m.responsabilidad}</span></>) },
           { clave: 'dominio', cabecera: 'Dominio · veredicto', ancho: '150px', celda: (m) => (<><R texto={m.dominio} /> · {m.veredicto}</>) },
-          { clave: 'api', cabecera: 'API y eventos', celda: (m) => (<><code>{m.api}</code><span className="note">{m.eventos}</span></>) },
+          { clave: 'historias', cabecera: 'Historias', ancho: '150px', celda: (m) => <R texto={m.historias} /> },
+          { clave: 'api', cabecera: 'Interfaces y eventos', celda: (m) => (<><code>{m.api}</code><span className="note">Requiere: {m.depende}</span><span className="note">{m.eventos}</span></>) },
           { clave: 'datos', cabecera: 'Datos propios', ancho: '150px' },
           { clave: 'estado', cabecera: 'Estado', ancho: '170px', celda: (m) => (<>{m.estado}{m.nota && <span className="note">{m.nota}</span>}</>) },
         ]}

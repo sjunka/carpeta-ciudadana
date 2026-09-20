@@ -5,7 +5,7 @@
 |  |  |
 |---|---|
 | **Documento** | Especificación de arquitectura del operador **Mi Carpeta Segura** |
-| **Versión** | 2.0 |
+| **Versión** | 2.1 |
 | **Fecha** | 20 de septiembre de 2026 |
 | **Autores** | Sergio Junca · Juan José Henao Aristizábal · Samuel Cadavid Zapata — Lead Software Engineers |
 | **Preparado para** | Arquitecturas Avanzadas de Software |
@@ -24,6 +24,7 @@ Estructura tomada del *Software Requirements Specification Template* del curso, 
 | 14 sep 2026 | 1.1 | Verificación en vivo del contrato de GovCarpeta y registro del operador ante el centralizador. | Equipo de arquitectura | Cierra los bloqueos B-09 y B-16. |
 | 18 sep 2026 | 2.0-rc | Arquitectura completa: historias, microservicios, componentes, secuencias, despliegue y doce decisiones en plantilla UAM. | Equipo de arquitectura | Documento extendido de 44 páginas. |
 | 20 sep 2026 | 2.0 | Documento de la entrega 2 en el esqueleto del template del curso, con las historias desarrolladas y las decisiones en plantilla UAM completa. | Equipo de arquitectura | Versión entregable. |
+| 20 sep 2026 | 2.1 | Cada microservicio declara las historias que realiza, la interfaz que ofrece y las que requiere. | Equipo de arquitectura | Atiende la indicación del docente sobre determinar con claridad los microservicios y sus responsabilidades. |
 
 ## Aprobación del documento
 
@@ -593,19 +594,35 @@ Realiza: RF-01.7, RF-01.8, RF-03.1, RF-03.2, RF-03.5, RF-03.8, RI-01
 
 La descomposición sale del análisis de granularidad del SRS (*3.8 de A1) y no se improvisa: donde el veredicto fue *Partir en dos* hay dos microservicios; donde fue *Aislar* o *Mantener unido*, uno; el centralizador, *Fuera del alcance*, solo tiene su pasarela.
 
-| ID | Microservicio | Responsabilidad | API | Datos propios | Estado |
-|---|---|---|---|---|---|
-| MS-01 | Identidad y acceso | Autentica a ciudadanos y servicios y emite los tokens que el resto valida. | OIDC · Admin REST de Keycloak | PostgreSQL `keycloak` | Implementado |
-| MS-02 | Auditoría | Guarda de forma inalterable quién hizo qué sobre cada carpeta. | `GET /accesos` | MongoDB, colección solo-append | Diseñado |
-| MS-03 | Afiliación | Registra ciudadanos garantizando afiliación única contra el centralizador. | `POST /ciudadanos` | PostgreSQL `afiliacion` | Implementado |
-| MS-04 | Custodia documental | Guarda el contenido de los documentos y controla quién puede leerlo o escribirlo. | `POST /documentos` · confirmación · autenticación | PostgreSQL `custodia` + almacén S3 | Implementado |
-| MS-05 | Índice de carpeta | Sirve las consultas de la carpeta separadas de las escrituras de contenido. | `GET /carpeta` | MongoDB, índice de carpeta | Diseñado |
-| MS-06 | Autorizaciones | Decide si un documento puede salir hacia un tercero según el consentimiento del titular. | `POST /autorizaciones` · `DELETE /autorizaciones/{id}` | PostgreSQL `autorizaciones` | Diseñado |
-| MS-07 | Interoperabilidad | Envía y recibe documentos de otros operadores y entidades con reintento idempotente. | `POST /api/transferCitizen` · `POST /api/transferCitizenConfirm` | PostgreSQL, bandeja de salida | Diseñado |
-| MS-08 | Pasarela del centralizador | Traduce el contrato de GovCarpeta a un modelo propio y aísla sus fallos. | `GET`/`POST /centralizador/ciudadanos` · `PUT /centralizador/documentos/autenticacion` | Sin base de datos | Implementado |
-| MS-09 | Notificaciones | Avisa al ciudadano por el canal que prefiera. | Sin API síncrona | MongoDB, preferencias | Diseñado |
-| MS-10 | Analítica | Consolida metadatos anonimizados para los tableros del Estado. | `GET /tableros` | MongoDB anonimizado, proyecto aparte | Diseñado |
-| MS-11 | Premium | Gestiona el catálogo, los casos PQRS y la medición de uso de las empresas. | `POST /casos` | PostgreSQL `premium` | Diseñado |
+| ID | Microservicio | Responsabilidad | Historias que realiza | Estado |
+|---|---|---|---|---|
+| MS-01 | Identidad y acceso | Autentica a ciudadanos y servicios y emite los tokens que el resto valida. | HU-01, HU-02, HU-09 | Implementado |
+| MS-02 | Auditoría | Guarda de forma inalterable quién hizo qué sobre cada carpeta. | HU-06, HU-11 | Diseñado |
+| MS-03 | Afiliación | Registra ciudadanos garantizando afiliación única contra el centralizador. | HU-01, HU-09, HU-13 | Implementado |
+| MS-04 | Custodia documental | Guarda el contenido de los documentos y controla quién puede leerlo o escribirlo. | HU-03, HU-04, HU-05, HU-06, HU-08, HU-13 | Implementado |
+| MS-05 | Índice de carpeta | Sirve las consultas de la carpeta separadas de las escrituras de contenido. | HU-05, HU-06 | Diseñado |
+| MS-06 | Autorizaciones | Decide si un documento puede salir hacia un tercero según el consentimiento del titular. | HU-07, HU-08, HU-10 | Diseñado |
+| MS-07 | Interoperabilidad | Envía y recibe documentos de otros operadores y entidades con reintento idempotente. | HU-05, HU-08, HU-09, HU-13 | Diseñado |
+| MS-08 | Pasarela del centralizador | Traduce el contrato de GovCarpeta a un modelo propio y aísla sus fallos. | HU-01, HU-04, HU-09, HU-13 | Implementado |
+| MS-09 | Notificaciones | Avisa al ciudadano por el canal que prefiera. | HU-05, HU-08 | Diseñado |
+| MS-10 | Analítica | Consolida metadatos anonimizados para los tableros del Estado. | HU-12 | Diseñado |
+| MS-11 | Premium | Gestiona el catálogo, los casos PQRS y la medición de uso de las empresas. | HU-10 | Diseñado |
+
+Cada microservicio se lee como un componente de UML: la **interfaz que ofrece** es lo que publica a los demás, y la **interfaz que requiere** es lo que espera encontrar. Las dos mitades, con los eventos y los datos propios de cada uno:
+
+| ID | Interfaz que ofrece | Interfaces que requiere | Eventos | Datos propios |
+|---|---|---|---|---|
+| MS-01 | OIDC · Admin REST de Keycloak | Ninguna | Emite: sesión iniciada, cuenta bloqueada | PostgreSQL `keycloak` |
+| MS-02 | `GET /accesos` | Bus de eventos | Consume: todos los eventos de acceso | MongoDB, colección solo-append |
+| MS-03 | `POST /ciudadanos` | MS-01, MS-08, Registraduría (simulada) | Emite: ciudadano afiliado | PostgreSQL `afiliacion` |
+| MS-04 | `POST /documentos` · confirmación · autenticación | MS-01, MS-06, MS-08, almacén de objetos | Emite: documento cargado, documento autenticado | PostgreSQL `custodia` + almacén S3 |
+| MS-05 | `GET /carpeta` | Bus de eventos | Consume: documento cargado, recibido, autenticado | MongoDB, índice de carpeta |
+| MS-06 | `POST /autorizaciones` · `DELETE /autorizaciones/{id}` | Ninguna | Emite: autorización concedida, revocada | PostgreSQL `autorizaciones` |
+| MS-07 | `POST /api/transferCitizen` · `POST /api/transferCitizenConfirm` | MS-04, MS-06, MS-08, operadores pares | Emite: documento recibido, ciudadano trasladado | PostgreSQL, bandeja de salida |
+| MS-08 | `GET`/`POST /centralizador/ciudadanos` · `PUT /centralizador/documentos/autenticacion` | GovCarpeta | Ninguno | Sin base de datos |
+| MS-09 | Sin API síncrona | Bus de eventos, proveedor de correo y SMS | Consume: documento recibido, ciudadano afiliado | MongoDB, preferencias |
+| MS-10 | `GET /tableros` | Bus de eventos | Consume: metadatos anonimizados | MongoDB anonimizado, proyecto aparte |
+| MS-11 | `POST /casos` | MS-06, bus de eventos | Emite: uso medido | PostgreSQL `premium` |
 
 ### 3.3.2 Componentes lógicos
 

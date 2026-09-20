@@ -295,7 +295,9 @@ Todo lo anterior es la parte A1 y no cambia. Lo que sigue aplica solo a `src/arq
 
 Responsabilidad en una frase; dominio A1 y veredicto de granularidad (*4.3 de A1) respetados:
 Partir en dos = 2 MS; Aislar o Mantener unido = 1 MS; Fuera del alcance = solo la pasarela ACL.
-Cada MS declara API, eventos, datos propios y estado.
+Cada MS declara las historias que realiza, la interfaz que ofrece, las interfaces que requiere,
+eventos, datos propios y estado. Ofrecer y requerir son las dos mitades de la notación de
+componente de UML, y toda HU la realiza al menos un MS.
 
 ## A2.5 Decisiones de arquitectura (plantilla UAM)
 
