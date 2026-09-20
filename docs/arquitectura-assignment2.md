@@ -472,7 +472,7 @@ Realiza: RF-01.7, RF-01.8, RF-03.1, RF-03.2, RF-03.5, RF-03.8, RI-01
 
 # 03 Microservicios y componentes
 
-Once microservicios que salen del análisis de granularidad del SRS, en dos vistas lógicas, dos técnicas y el modelo de entidades.
+Once microservicios que salen del análisis de granularidad del SRS, en dos vistas lógicas, el mapa de paquetes, dos vistas técnicas y el modelo de entidades.
 
 ## 3.1 Microservicios y responsabilidades
 
@@ -512,7 +512,7 @@ La persistencia sigue una regla única: **PostgreSQL** donde hace falta transacc
 
 ## 3.2 Componentes lógicos
 
-Dos vistas lógicas dicen qué piezas hay y qué se piden entre sí, sin tecnología. Dos vistas técnicas dicen con qué están hechas. Las flechas son dependencias: van de quien llama a quien responde. El <a href="mapa-tecnico.html">mapa técnico explorable</a> recorre las cuatro operaciones y el despliegue; los controles del visor están en inglés porque archify solo ofrece inglés y chino.
+Dos vistas lógicas dicen qué piezas hay y qué se piden entre sí, sin tecnología. Dos vistas técnicas dicen con qué están hechas. Las flechas son dependencias: van de quien llama a quien responde. El <a href="mapa-tecnico.html">mapa técnico explorable</a> recorre las cuatro operaciones y el despliegue; los controles del visor están en inglés porque archify solo ofrece inglés y chino. El mapa de paquetes cierra la vista lógica: agrupa los módulos que persiguen un mismo fin.
 
 ### 3.2.1 Componentes lógicos · núcleo
 
@@ -545,6 +545,22 @@ Las piezas diseñadas que hablan con otros operadores, con entidades y con el Es
 - 5 · Notificaciones y Analítica reaccionan sin estar en el camino crítico.
 
 Trazabilidad: RF-03, RF-04, RF-05, RF-07, RF-08, RNF-07
+
+### 3.2.3 Paquetes de la solución
+
+Los once microservicios se agrupan en siete paquetes, cada uno con un fin concreto. El paquete lleva la pestaña de UML y lista los módulos que reúne; las flechas son dependencias entre paquetes, no entre módulos.
+
+![Paquetes de la solución](../../assignment2/diagramas/paquetes-solucion.png)
+
+> Integración es el único paquete que toca el mundo exterior: si GovCarpeta cambia, solo cambia él.
+
+- 1 · El portal solo conoce tres paquetes: identidad, carpeta y federación.
+- 2 · Identidad afilia y da de baja al ciudadano a través de integración.
+- 3 · Carpeta pide la autenticación al centralizador y publica lo que guarda.
+- 4 · Federación toma el contenido de carpeta y avisa por el bus.
+- 5 · Valor y auditoría solo escuchan el bus: nadie los llama en el camino crítico.
+
+Trazabilidad: RF-01, RF-02, RF-03, RF-04, RF-06, RD-11, RD-12
 
 ## 3.3 Componentes técnicos
 

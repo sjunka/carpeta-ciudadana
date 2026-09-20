@@ -1,5 +1,5 @@
 {
-  "intro": "Dos vistas lógicas dicen qué piezas hay y qué se piden entre sí, sin tecnología. Dos vistas técnicas dicen con qué están hechas. Las flechas son dependencias: van de quien llama a quien responde. El <a href=\"mapa-tecnico.html\">mapa técnico explorable</a> recorre las cuatro operaciones y el despliegue; los controles del visor están en inglés porque archify solo ofrece inglés y chino.",
+  "intro": "Dos vistas lógicas dicen qué piezas hay y qué se piden entre sí, sin tecnología. Dos vistas técnicas dicen con qué están hechas. Las flechas son dependencias: van de quien llama a quien responde. El <a href=\"mapa-tecnico.html\">mapa técnico explorable</a> recorre las cuatro operaciones y el despliegue; los controles del visor están en inglés porque archify solo ofrece inglés y chino. El mapa de paquetes cierra la vista lógica: agrupa los módulos que persiguen un mismo fin.",
   "diagramas": [
     {
       "id": "logico-nucleo", "num": "3.2.1", "tipo": "componentes", "titulo": "Componentes lógicos · núcleo",
@@ -72,6 +72,43 @@
         "3 · Todo hecho de negocio se publica en el bus de eventos.",
         "4 · Custodia consume la recepción y guarda el documento.",
         "5 · Notificaciones y Analítica reaccionan sin estar en el camino crítico."
+      ]
+    },
+    {
+      "id": "paquetes-solucion", "num": "3.2.3", "tipo": "componentes", "paquetes": true, "iconos": false,
+      "titulo": "Paquetes de la solución",
+      "introduccion": "Los once microservicios se agrupan en siete paquetes, cada uno con un fin concreto. El paquete lleva la pestaña de UML y lista los módulos que reúne; las flechas son dependencias entre paquetes, no entre módulos.",
+      "cierre": "Integración es el único paquete que toca el mundo exterior: si GovCarpeta cambia, solo cambia él.",
+      "realiza": "RF-01, RF-02, RF-03, RF-04, RF-06, RD-11, RD-12",
+      "leyenda": [["ln-m", "Dependencia entre paquetes"]],
+      "w": 1056, "h": 560,
+      "nodos": [
+        { "id": "portal", "nombre": "Portal", "sub": "SPA del ciudadano", "x": 440, "y": 56, "w": 176, "h": 72 },
+        { "id": "identidad", "nombre": "Identidad y afiliación", "sub": "MS-01 · MS-02 · MS-03", "x": 44, "y": 208, "w": 176, "h": 72 },
+        { "id": "carpeta", "nombre": "Carpeta", "sub": "MS-04 · MS-05", "x": 308, "y": 208, "w": 176, "h": 72 },
+        { "id": "federacion", "nombre": "Federación", "sub": "MS-06 · MS-07", "x": 572, "y": 208, "w": 176, "h": 72 },
+        { "id": "valor", "nombre": "Servicios de valor", "sub": "MS-09 · MS-10 · MS-11", "x": 836, "y": 208, "w": 176, "h": 72 },
+        { "id": "integracion", "nombre": "Integración", "sub": "MS-08 · pasarela ACL", "x": 176, "y": 360, "w": 176, "h": 72, "acento": true },
+        { "id": "plataforma", "nombre": "Plataforma", "sub": "Bus de eventos · almacén", "x": 704, "y": 360, "w": 176, "h": 72 }
+      ],
+      "flechas": [
+        { "de": "portal", "a": "identidad", "datos": "SESIÓN", "st": 1 },
+        { "de": "portal", "a": "carpeta", "datos": "DOCUMENTOS", "st": 1 },
+        { "de": "portal", "a": "federacion", "datos": "AUTORIZACIONES", "puntos": [[596, 128], [596, 168], [680, 168], [680, 208]], "st": 1 },
+        { "de": "identidad", "a": "integracion", "datos": "AFILIACIÓN", "puntos": [[200, 280], [200, 324], [268, 324], [268, 360]], "st": 2 },
+        { "de": "carpeta", "a": "integracion", "datos": "AUTENTICACIÓN", "st": 3 },
+        { "de": "carpeta", "a": "plataforma", "datos": "BINARIOS · EVENTOS", "puntos": [[440, 280], [440, 404], [704, 404]], "st": 3 },
+        { "de": "federacion", "a": "carpeta", "datos": "CONTENIDO", "st": 4 },
+        { "de": "federacion", "a": "plataforma", "datos": "PAQUETES · EVENTOS", "puntos": [[724, 280], [724, 324], [800, 324], [800, 360]], "st": 4 },
+        { "de": "valor", "a": "plataforma", "datos": "AVISOS · MÉTRICAS", "st": 5 },
+        { "de": "identidad", "a": "plataforma", "datos": "EVENTOS DE ACCESO", "puntos": [[132, 280], [132, 488], [792, 488], [792, 432]], "st": 5 }
+      ],
+      "pasos": [
+        "1 · El portal solo conoce tres paquetes: identidad, carpeta y federación.",
+        "2 · Identidad afilia y da de baja al ciudadano a través de integración.",
+        "3 · Carpeta pide la autenticación al centralizador y publica lo que guarda.",
+        "4 · Federación toma el contenido de carpeta y avisa por el bus.",
+        "5 · Valor y auditoría solo escuchan el bus: nadie los llama en el camino crítico."
       ]
     },
     {

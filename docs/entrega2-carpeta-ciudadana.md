@@ -24,7 +24,7 @@ Estructura tomada del *Software Requirements Specification Template* del curso, 
 | 14 sep 2026 | 1.1 | Verificación en vivo del contrato de GovCarpeta y registro del operador ante el centralizador. | Equipo de arquitectura | Cierra los bloqueos B-09 y B-16. |
 | 18 sep 2026 | 2.0-rc | Arquitectura completa: historias, microservicios, componentes, secuencias, despliegue y doce decisiones en plantilla UAM. | Equipo de arquitectura | Documento extendido de 44 páginas. |
 | 20 sep 2026 | 2.0 | Documento de la entrega 2 en el esqueleto del template del curso, con las historias desarrolladas y las decisiones en plantilla UAM completa. | Equipo de arquitectura | Versión entregable. |
-| 20 sep 2026 | 2.1 | Cada microservicio declara las historias que realiza, la interfaz que ofrece y las que requiere. | Equipo de arquitectura | Atiende la indicación del docente sobre determinar con claridad los microservicios y sus responsabilidades. |
+| 20 sep 2026 | 2.1 | Cada microservicio declara las historias que realiza, la interfaz que ofrece y las que requiere; se añade el diagrama de paquetes. | Equipo de arquitectura | Atiende la indicación del docente sobre determinar con claridad los microservicios y sus responsabilidades. |
 
 ## Aprobación del documento
 
@@ -626,11 +626,15 @@ Cada microservicio se lee como un componente de UML: la **interfaz que ofrece** 
 
 ### 3.3.2 Componentes lógicos
 
-Dos vistas dicen qué piezas hay y qué se piden entre sí, sin nombrar tecnología. Las flechas son dependencias: van de quien llama a quien responde.
+Dos vistas dicen qué piezas hay y qué se piden entre sí, sin nombrar tecnología. Las flechas son dependencias: van de quien llama a quien responde. Una tercera las agrupa en paquetes.
 
 ![Componentes lógicos · núcleo](../../assignment2/diagramas/logico-nucleo.png)
 
 ![Componentes lógicos · federación y valor](../../assignment2/diagramas/logico-federacion.png)
+
+Los once microservicios se agrupan en siete paquetes, cada uno con un fin concreto. El paquete lleva la pestaña de UML y lista los módulos que reúne; las flechas son dependencias entre paquetes, no entre módulos. Integración es el único que toca el mundo exterior: si GovCarpeta cambia, solo cambia él.
+
+![Paquetes de la solución](../../assignment2/diagramas/paquetes-solucion.png)
 
 ### 3.3.3 Componentes técnicos
 

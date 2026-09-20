@@ -308,7 +308,9 @@ decisiones relacionadas. Criterios solo del conjunto cerrado: atributos RNF de A
 
 ## A2.6 Diagramas desde JSON
 
-- Componentes: máximo 9 nodos y 12 flechas.
+- Componentes: máximo 9 nodos y 12 flechas. Un componente propio lleva el icono UML —el rectángulo
+  con las dos pestañas—; un paquete (`"paquetes": true`) lo sustituye por la pestaña superior
+  izquierda y lista en su subtítulo los módulos que reúne.
 - Secuencias: máximo 5 líneas de vida, 12 mensajes y 1 fragmento. Cada mensaje en dos líneas:
   datos que viajan (sustantivos) y operación del contrato en mono.
 - Despliegue: máximo 3 zonas, 6 nodos, 9 artefactos y 8 rutas.

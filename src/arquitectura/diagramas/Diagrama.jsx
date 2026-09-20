@@ -91,12 +91,14 @@ function Svg({ d, w, h, children }) {
   )
 }
 
-function Nodo({ n, icono = true }) {
+function Nodo({ n, icono = true, paquete = false }) {
   const c = caja(n)
   const cx = c.x + c.w / 2
+  const clase = n.externo ? 'n-ext' : `n-sys${n.acento ? ' n-ac' : ''}`
   return (
     <g>
-      <rect x={c.x} y={c.y} width={c.w} height={c.h} rx="4" className={n.externo ? 'n-ext' : `n-sys${n.acento ? ' n-ac' : ''}`} />
+      {paquete && <rect x={c.x} y={c.y - 16} width="72" height="20" rx="2" className={clase} />}
+      <rect x={c.x} y={c.y} width={c.w} height={c.h} rx="4" className={clase} />
       {icono && !n.externo && (
         <g className="uml">
           <rect x={c.x + c.w - 22} y={c.y + 8} width="14" height="16" rx="1" />
@@ -114,7 +116,7 @@ function Componentes({ d }) {
   const porId = Object.fromEntries(d.nodos.map((n) => [n.id, n]))
   return (
     <Svg d={d} w={d.w} h={d.h}>
-      {d.nodos.map((n) => <Nodo key={n.id} n={n} icono={d.iconos !== false} />)}
+      {d.nodos.map((n) => <Nodo key={n.id} n={n} icono={d.iconos !== false} paquete={d.paquetes === true} />)}
       {d.flechas.map((f, i) => (
         <Flecha key={i} id={d.id} puntos={puntosDe(f, porId)} lineas={[f.datos]} acento={f.acento} st={f.st} />
       ))}
