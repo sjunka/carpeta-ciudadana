@@ -80,11 +80,11 @@ function documento(img, ev) {
     tabla(['ID', 'Interfaz que ofrece', 'Interfaces que requiere', 'Eventos', 'Datos propios'],
       ms.filas.map((m) => [m.id, m.api, m.depende, m.eventos, m.datos])),
     md(ms.persistencia),
-    `## 3.2 Componentes lógicos`, md(comp.intro), ...comp.diagramas.slice(0, 2).map((d) => figura(d)),
-    `## 3.3 Componentes técnicos`, ...comp.diagramas.slice(2, 4).map((d) => figura(d)),
+    `## 3.2 Componentes lógicos`, md(comp.intro), ...comp.diagramas.slice(0, 3).map((d) => figura(d)),
+    `## 3.3 Componentes técnicos`, ...comp.diagramas.slice(3, 5).map((d) => figura(d)),
     `### 3.3.3 Tecnología y versión por componente`,
     tabla(['Componente', 'Tecnología', 'Versión', 'Rol'], comp.tecnologias.map((t) => [t.componente, t.tecnologia, t.version, t.rol])),
-    figura(comp.diagramas[4], '##'),
+    figura(comp.diagramas[5], '##'),
 
     h1('seq'), md(seq.intro), ...seq.secuencias.map((d) => figura(d)),
 

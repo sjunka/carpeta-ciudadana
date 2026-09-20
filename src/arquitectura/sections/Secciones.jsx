@@ -137,7 +137,7 @@ export function SeccionHistorias({ meta, comprimido }) {
 }
 
 export function SeccionMicroservicios({ meta, comprimido }) {
-  const [log1, log2, tec1, tec2, entidades] = componentes.diagramas
+  const [log1, log2, paquetes, tec1, tec2, entidades] = componentes.diagramas
   return (
     <Section meta={meta} comprimido={comprimido}>
       <SubTitulo num="3.1" texto="Microservicios y responsabilidades" />
@@ -159,6 +159,7 @@ export function SeccionMicroservicios({ meta, comprimido }) {
       <Rich as="p" className="lede" html={componentes.intro} />
       <Figura d={log1} comprimido={comprimido} />
       <Figura d={log2} comprimido={comprimido} />
+      <Figura d={paquetes} comprimido={comprimido} />
       <Figura d={tec1} comprimido={comprimido} />
       <Figura d={tec2} comprimido={comprimido} />
       <Plegable titulo="3.3.3 · Tecnología y versión por componente" comprimido={comprimido}>
