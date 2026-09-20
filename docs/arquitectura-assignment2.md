@@ -476,29 +476,45 @@ Once microservicios que salen del análisis de granularidad del SRS, en dos vist
 
 ## 3.1 Microservicios y responsabilidades
 
-La tabla sale del análisis de granularidad del SRS (*4.3 de A1): donde el veredicto fue **Partir en dos** hay dos microservicios; donde fue **Aislar** o **Mantener unido**, uno; el centralizador, **Fuera del alcance**, solo tiene su pasarela.
+La descomposición sale del análisis de granularidad del SRS (*4.3 de A1): donde el veredicto fue **Partir en dos** hay dos microservicios; donde fue **Aislar** o **Mantener unido**, uno; el centralizador, **Fuera del alcance**, solo tiene su pasarela. La primera tabla dice qué hace cada microservicio y qué historias realiza; la segunda, con qué interfaz se le llama, qué interfaces necesita de otros y qué datos son suyos. **Interfaz que ofrece** e **interfaces que requiere** son las dos mitades de la notación de componente de UML: lo que el componente publica y lo que espera encontrar.
 
-| ID | Microservicio | Responsabilidad | Dominio · veredicto | API | Eventos | Datos | Estado |
-|---|---|---|---|---|---|---|---|
-| MS-01 | Identidad y acceso | Autentica a ciudadanos y servicios y emite los tokens que el resto valida. | RF-09 · Partir en dos | OIDC · Admin REST de Keycloak | Emite: sesión iniciada, cuenta bloqueada | PostgreSQL keycloak | Implementado |
-| MS-02 | Auditoría | Guarda de forma inalterable quién hizo qué sobre cada carpeta. | RF-09 · Partir en dos | GET /accesos | Consume: todos los eventos de acceso | MongoDB · colección de auditoría solo-append | Diseñado |
-| MS-03 | Afiliación | Registra ciudadanos garantizando afiliación única contra el centralizador. | RF-01 · Aislar | POST /ciudadanos | Emite: ciudadano afiliado | PostgreSQL afiliacion | Implementado |
-| MS-04 | Custodia documental | Guarda el contenido de los documentos y controla quién puede leerlo o escribirlo. | RF-02 · Partir en dos | POST /documentos · confirmacion · autenticacion | Emite: documento cargado, documento autenticado | PostgreSQL custodia + almacén S3 | Implementado |
-| MS-05 | Índice de carpeta | Sirve las consultas de la carpeta separadas de las escrituras de contenido. | RF-02 · Partir en dos | GET /carpeta | Consume: documento cargado, recibido, autenticado | MongoDB · índice de carpeta | Diseñado. En el prototipo la lista la sirve MS-04. Se separa si las lecturas superan 100 por escritura o el p95 pasa de 2 s (RNF-04). |
-| MS-06 | Autorizaciones | Decide si un documento puede salir hacia un tercero según el consentimiento del titular. | RF-04 · Aislar | POST /autorizaciones · DELETE /autorizaciones/{id} | Emite: autorización concedida, revocada | PostgreSQL autorizaciones | Diseñado |
-| MS-07 | Interoperabilidad | Envía y recibe documentos de otros operadores y entidades con reintento idempotente. | RF-03 · Aislar | POST /api/transferCitizen · POST /api/transferCitizenConfirm | Emite: documento recibido, ciudadano trasladado | PostgreSQL bandeja de salida | Diseñado |
-| MS-08 | Pasarela del centralizador | Traduce el contrato de GovCarpeta a un modelo propio y aísla sus fallos. | RF-06 · Fuera del alcance | GET/POST /centralizador/ciudadanos · PUT /centralizador/documentos/autenticacion | Ninguno | Sin base de datos | Implementado |
-| MS-09 | Notificaciones | Avisa al ciudadano por el canal que prefiera. | RF-05 · Mantener unido | Sin API síncrona | Consume: documento recibido, ciudadano afiliado | MongoDB · preferencias de notificación | Diseñado. Función serverless: tráfico esporádico y procesos cortos, como indicó el profesor el 12 de septiembre. |
-| MS-10 | Analítica | Consolida metadatos anonimizados para los tableros del Estado. | RF-08 · Aislar | GET /tableros | Consume: metadatos anonimizados | MongoDB · colecciones analíticas anonimizadas en proyecto aparte | Diseñado. Nunca comparte motor con la base transaccional. |
-| MS-11 | Premium | Gestiona el catálogo, los casos PQRS y la medición de uso de las empresas. | RF-07 · Aislar | POST /casos | Emite: uso medido | PostgreSQL premium | Diseñado |
+| ID | Microservicio | Responsabilidad | Dominio · veredicto | Historias | Estado |
+|---|---|---|---|---|---|
+| MS-01 | Identidad y acceso | Autentica a ciudadanos y servicios y emite los tokens que el resto valida. | RF-09 · Partir en dos | HU-01, HU-02, HU-09 | Implementado |
+| MS-02 | Auditoría | Guarda de forma inalterable quién hizo qué sobre cada carpeta. | RF-09 · Partir en dos | HU-06, HU-11 | Diseñado |
+| MS-03 | Afiliación | Registra ciudadanos garantizando afiliación única contra el centralizador. | RF-01 · Aislar | HU-01, HU-09, HU-13 | Implementado |
+| MS-04 | Custodia documental | Guarda el contenido de los documentos y controla quién puede leerlo o escribirlo. | RF-02 · Partir en dos | HU-03, HU-04, HU-05, HU-06, HU-08, HU-13 | Implementado |
+| MS-05 | Índice de carpeta | Sirve las consultas de la carpeta separadas de las escrituras de contenido. | RF-02 · Partir en dos | HU-05, HU-06 | Diseñado. En el prototipo la lista la sirve MS-04. Se separa si las lecturas superan 100 por escritura o el p95 pasa de 2 s (RNF-04). |
+| MS-06 | Autorizaciones | Decide si un documento puede salir hacia un tercero según el consentimiento del titular. | RF-04 · Aislar | HU-07, HU-08, HU-10 | Diseñado |
+| MS-07 | Interoperabilidad | Envía y recibe documentos de otros operadores y entidades con reintento idempotente. | RF-03 · Aislar | HU-05, HU-08, HU-09, HU-13 | Diseñado |
+| MS-08 | Pasarela del centralizador | Traduce el contrato de GovCarpeta a un modelo propio y aísla sus fallos. | RF-06 · Fuera del alcance | HU-01, HU-04, HU-09, HU-13 | Implementado |
+| MS-09 | Notificaciones | Avisa al ciudadano por el canal que prefiera. | RF-05 · Mantener unido | HU-05, HU-08 | Diseñado. Función serverless: tráfico esporádico y procesos cortos, como indicó el profesor el 12 de septiembre. |
+| MS-10 | Analítica | Consolida metadatos anonimizados para los tableros del Estado. | RF-08 · Aislar | HU-12 | Diseñado. Nunca comparte motor con la base transaccional. |
+| MS-11 | Premium | Gestiona el catálogo, los casos PQRS y la medición de uso de las empresas. | RF-07 · Aislar | HU-10 | Diseñado |
+
+**Interfaces, eventos y datos de cada microservicio**
+
+| ID | Interfaz que ofrece | Interfaces que requiere | Eventos | Datos propios |
+|---|---|---|---|---|
+| MS-01 | OIDC · Admin REST de Keycloak | Ninguna | Emite: sesión iniciada, cuenta bloqueada | PostgreSQL keycloak |
+| MS-02 | GET /accesos | Bus de eventos | Consume: todos los eventos de acceso | MongoDB · colección de auditoría solo-append |
+| MS-03 | POST /ciudadanos | MS-01, MS-08, Registraduría (simulada) | Emite: ciudadano afiliado | PostgreSQL afiliacion |
+| MS-04 | POST /documentos · confirmacion · autenticacion | MS-01, MS-06, MS-08, almacén de objetos | Emite: documento cargado, documento autenticado | PostgreSQL custodia + almacén S3 |
+| MS-05 | GET /carpeta | Bus de eventos | Consume: documento cargado, recibido, autenticado | MongoDB · índice de carpeta |
+| MS-06 | POST /autorizaciones · DELETE /autorizaciones/{id} | Ninguna | Emite: autorización concedida, revocada | PostgreSQL autorizaciones |
+| MS-07 | POST /api/transferCitizen · POST /api/transferCitizenConfirm | MS-04, MS-06, MS-08, operadores pares | Emite: documento recibido, ciudadano trasladado | PostgreSQL bandeja de salida |
+| MS-08 | GET/POST /centralizador/ciudadanos · PUT /centralizador/documentos/autenticacion | GovCarpeta | Ninguno | Sin base de datos |
+| MS-09 | Sin API síncrona | Bus de eventos, proveedor de correo y SMS | Consume: documento recibido, ciudadano afiliado | MongoDB · preferencias de notificación |
+| MS-10 | GET /tableros | Bus de eventos | Consume: metadatos anonimizados | MongoDB · colecciones analíticas anonimizadas en proyecto aparte |
+| MS-11 | POST /casos | MS-06, bus de eventos | Emite: uso medido | PostgreSQL premium |
 
 La persistencia sigue una regla única: **PostgreSQL** donde hace falta transacción y consistencia fuerte (afiliación, cuota y estados de documentos, autorizaciones, bandeja de salida, Premium e identidad), y **MongoDB** donde el dato es un documento de metadatos que se lee mucho más de lo que se escribe y cuyo esquema va a crecer (índice de carpeta, auditoría, preferencias de notificación y analítica). Los binarios nunca van en base de datos: viven en el almacén de objetos. Ningún servicio comparte base con otro (RD-11), y ambos motores corren como servicio gestionado en la nube.
 
-## 3.2 Componentes lógicos y 3.3 técnicos
+## 3.2 Componentes lógicos
 
 Dos vistas lógicas dicen qué piezas hay y qué se piden entre sí, sin tecnología. Dos vistas técnicas dicen con qué están hechas. Las flechas son dependencias: van de quien llama a quien responde. El <a href="mapa-tecnico.html">mapa técnico explorable</a> recorre las cuatro operaciones y el despliegue; los controles del visor están en inglés porque archify solo ofrece inglés y chino.
 
-0 3.2.1 Componentes lógicos · núcleo
+### 3.2.1 Componentes lógicos · núcleo
 
 Las piezas que atienden al ciudadano en las cuatro operaciones implementadas.
 
@@ -514,7 +530,7 @@ Las piezas que atienden al ciudadano en las cuatro operaciones implementadas.
 
 Trazabilidad: RF-01, RF-02, RF-06, RF-09, RD-11, RD-12
 
-1 3.2.2 Componentes lógicos · federación y valor
+### 3.2.2 Componentes lógicos · federación y valor
 
 Las piezas diseñadas que hablan con otros operadores, con entidades y con el Estado. Se comunican por eventos.
 
@@ -530,7 +546,9 @@ Las piezas diseñadas que hablan con otros operadores, con entidades y con el Es
 
 Trazabilidad: RF-03, RF-04, RF-05, RF-07, RF-08, RNF-07
 
-2 3.3.1 Componentes técnicos · prototipo
+## 3.3 Componentes técnicos
+
+### 3.3.1 Componentes técnicos · prototipo
 
 Lo que corre hoy: una SPA, Keycloak y tres servicios Express, con PostgreSQL y un almacén compatible con S3.
 
@@ -546,7 +564,7 @@ Lo que corre hoy: una SPA, Keycloak y tres servicios Express, con PostgreSQL y u
 
 Trazabilidad: RD-02, RD-05, RD-06, RD-08, RNF-10
 
-3 3.3.2 Componentes técnicos · plataforma objetivo
+### 3.3.2 Componentes técnicos · plataforma objetivo
 
 La plataforma para todo el país: borde global, Kafka gestionado como bus de eventos, datos en alta disponibilidad y analítica separada.
 
@@ -597,7 +615,7 @@ Las cuatro operaciones implementadas y el traslado entre operadores, mensaje a m
 
 Cinco secuencias: una por operación implementada y la del traslado entre operadores, que está diseñada. El mismo JSON dibuja el diagrama del sitio, el PNG del documento y el video. Cada mensaje lleva arriba los datos que viajan y debajo la operación del contrato.
 
-0 4.1 Registro y afiliación
+### 4.1 Registro y afiliación
 
 La afiliación única exige consistencia fuerte con el centralizador. Por eso el usuario nace deshabilitado y solo se habilita cuando GovCarpeta confirma.
 
@@ -613,7 +631,7 @@ La afiliación única exige consistencia fuerte con el centralizador. Por eso el
 
 Trazabilidad: HU-01
 
-1 4.2 Ingreso con OIDC y PKCE
+### 4.2 Ingreso con OIDC y PKCE
 
 El portal es una aplicación pública: no puede guardar secretos. PKCE hace que un código robado no sirva sin el verificador que solo tiene el navegador que lo pidió.
 
@@ -629,7 +647,7 @@ El portal es una aplicación pública: no puede guardar secretos. PKCE hace que 
 
 Trazabilidad: HU-02
 
-2 4.3 Carga de documento temporal
+### 4.3 Carga de documento temporal
 
 Custodia autoriza la subida pero no la transporta. El navegador escribe directo en el almacén con una URL que caduca en 5 minutos.
 
@@ -645,7 +663,7 @@ Custodia autoriza la subida pero no la transporta. El navegador escribe directo 
 
 Trazabilidad: HU-03
 
-3 4.4 Autenticación vía GovCarpeta
+### 4.4 Autenticación vía GovCarpeta
 
 El centralizador autentica documentos que no custodia. Recibe una URL de lectura de 15 minutos: puede ir a buscar el documento, pero el contenido nunca viaja por él.
 
@@ -661,7 +679,7 @@ El centralizador autentica documentos que no custodia. Recibe una URL de lectura
 
 Trazabilidad: HU-04
 
-4 4.5 Traslado entre operadores
+### 4.5 Traslado entre operadores
 
 Contrato acordado entre los equipos del curso. El origen no borra nada hasta que el destino confirma: así no se pierde un documento si el destino falla a mitad de la descarga. Diseñado, no implementado.
 
@@ -683,7 +701,7 @@ Dónde corre cada pieza, con qué tecnología, por qué protocolo y en qué form
 
 Hoy el prototipo corre en Docker Compose local y el documento se publica en GitHub Pages. El despliegue 5.1 en GCP `us-east1` es el siguiente paso: usa las mismas imágenes y solo cambia la configuración. La plataforma objetivo añade borde global, eventos y alta disponibilidad. La tabla de conectores cierra lo que los diagramas no alcanzan a rotular.
 
-0 5.1 Despliegue del prototipo
+### 5.1 Despliegue del prototipo
 
 Tres servicios Node y Keycloak en Cloud Run, datos en Cloud SQL y Cloud Storage. Las mismas imágenes corren en Docker Compose.
 
@@ -698,7 +716,7 @@ Tres servicios Node y Keycloak en Cloud Run, datos en Cloud SQL y Cloud Storage.
 
 Trazabilidad: RD-01, RD-04, RD-06, RD-07, RNF-29
 
-1 5.2 Despliegue de la plataforma objetivo
+### 5.2 Despliegue de la plataforma objetivo
 
 Borde global con Cloud Armor, cómputo mixto, PostgreSQL y MongoDB gestionados y Kafka gestionado como bus de eventos.
 

@@ -81,9 +81,12 @@ for (const g of restr.granularidad.filas) {
     fallo(`${dom} (${g.veredicto}): tiene ${suyos.length} microservicio(s), el veredicto pide ${POR_VEREDICTO[g.veredicto]}.`)
   for (const m of suyos) {
     if (m.veredicto !== g.veredicto) fallo(`${m.id}: dice "${m.veredicto}" pero el SRS dio "${g.veredicto}" a ${dom}.`)
-    for (const k of ['responsabilidad', 'api', 'eventos', 'datos', 'estado']) if (!m[k]) fallo(`${m.id}: falta ${k}.`)
+    for (const k of ['responsabilidad', 'historias', 'api', 'depende', 'eventos', 'datos', 'estado']) if (!m[k]) fallo(`${m.id}: falta ${k}.`)
   }
 }
+const realizadas = new Set(ms.filas.flatMap((m) => [...(m.historias ?? '').matchAll(/HU-\d{2}/g)].map(([id]) => id)))
+for (const h of historias.historias)
+  if (!realizadas.has(h.id)) fallo(`${h.id}: ningún microservicio la realiza (regla A2.4).`)
 
 // --- A2.5 Decisiones UAM ---
 const VALORES = new Set(['Cumple', 'Parcial', 'No cumple'])
