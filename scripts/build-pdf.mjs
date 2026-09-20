@@ -17,6 +17,7 @@ const FUENTE = join(RAIZ, arg('fuente', 'docs/srs-assignment1.md'))
 const NOMBRE = arg('nombre', 'srs-carpeta-ciudadana.pdf')
 const DESTINO = join(RAIZ, 'public', NOMBRE)
 const COPIA = join(RAIZ, arg('copia', '../assignment1/srs-carpeta-ciudadana.pdf'))
+const COMPACTO = process.argv.includes('--compacto')
 
 const CHROME = [
   '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
@@ -66,6 +67,15 @@ th { background: var(--canvas-soft); font-weight: 700 }
 
 /* Los diagramas van a página completa, nunca partidos. */
 img { display: block; max-width: 100%; height: auto; margin: 10px auto; break-inside: avoid }
+${COMPACTO ? `
+/* --compacto: documento de entrega. Las secciones fluyen en vez de abrir página
+   y los diagramas se acotan en alto, para que el PDF quepa en la mitad de hojas. */
+h1 { break-before: auto; margin: 26px 0 10px; padding-top: 12px; border-top: 2px solid var(--hairline) }
+h1:first-of-type { border-top: 0; padding-top: 0; margin-top: 0 }
+h4 { font-size: 11.5pt; color: var(--ink); margin: 16px 0 5px }
+img { max-height: 120mm }
+table img { max-height: 58mm; margin: 4px auto }
+` : ''}
 </style></head><body>
 ${cuerpo}
 </body></html>

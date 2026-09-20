@@ -9,8 +9,9 @@ ANSI/IEEE Std. 830-1984 del curso de Arquitecturas Avanzadas de Software.
 
 ## Entrega 2 · Arquitectura
 
+- **Documento de entrega (PDF):** https://sjunka.github.io/carpeta-ciudadana/arquitectura/entrega2-carpeta-ciudadana.pdf — 42 páginas en el esqueleto del *Software Requirements Specification Template* del curso. Fuente en [`docs/entrega2-carpeta-ciudadana.md`](docs/entrega2-carpeta-ciudadana.md).
 - **Sitio:** https://sjunka.github.io/carpeta-ciudadana/arquitectura/
-- **PDF:** https://sjunka.github.io/carpeta-ciudadana/arquitectura/arquitectura-carpeta-ciudadana.pdf
+- **Documento extendido (PDF):** https://sjunka.github.io/carpeta-ciudadana/arquitectura/arquitectura-carpeta-ciudadana.pdf
 - **Mapa técnico:** https://sjunka.github.io/carpeta-ciudadana/arquitectura/mapa-tecnico.html
 - **Implementación «Mi Carpeta Segura»:** [`operador/`](operador/), por ahora solo en local.
 
@@ -60,7 +61,8 @@ escribir. Si tu cambio rompe una regla, el validador lo dice con el motivo exact
 | `npm run dev` | Levanta el sitio en local |
 | `npm run check` | Valida el contenido: identificadores, redacción, contraste, render |
 | `npm run md` | Regenera el documento en markdown, los diagramas y sus PNG |
-| `npm run pdf` | Regenera el PDF. Necesita `pandoc` y Google Chrome |
+| `npm run pdf` | Regenera los PDF del SRS y del documento extendido. Necesita `pandoc` y Google Chrome |
+| `npm run pdf:entrega` | Regenera el PDF del documento de entrega |
 | `npm run build` | `check` + `md` + construcción del sitio |
 
 ## Cómo se versiona
