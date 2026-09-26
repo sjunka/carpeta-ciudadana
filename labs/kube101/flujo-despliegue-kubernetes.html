@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Flujo de despliegue Kubernetes</title>
+<style>
+  :root { --bg:#fafaf7; --fg:#1d1d1b; --muted:#6b6b66; --line:#8a8a82; --box:#ffffff; --cl:#c9c9c0;
+          --cp:#2f6fb3; --cpbg:#e8f0fa; --wk:#3a8a4f; --wkbg:#e8f4ec; --st:#b3542f; --stbg:#faece6; --badge:#1d1d1b; --badgefg:#ffffff; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#161615; --fg:#ececea; --muted:#a3a39c; --line:#8d8d86; --box:#20201e; --cl:#44443f;
+            --cp:#7fb0e6; --cpbg:#1c2a3a; --wk:#7cc98f; --wkbg:#1d3224; --st:#e89572; --stbg:#3a241b; --badge:#ececea; --badgefg:#161615; }
+  }
+  body { margin:0; background:var(--bg); color:var(--fg); font:15px/1.45 -apple-system, system-ui, sans-serif; }
+  main { max-width:1180px; margin:0 auto; padding:24px 16px; }
+  h1 { font-size:22px; margin:0 0 4px; }
+  p.sub { color:var(--muted); margin:0 0 16px; }
+  svg { width:100%; height:auto; display:block; }
+  svg text { fill:var(--fg); font-family:inherit; }
+  .muted { fill:var(--muted); }
+  ol { display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:6px 24px; padding-left:20px; margin:18px 0 0; }
+  li::marker { font-weight:700; }
+  code { font-size:13px; }
+  .key { margin-top:14px; color:var(--muted); }
+</style>
+</head>
+<body>
+<main>
+  <h1>De <code>kubectl apply</code> a contenedores corriendo</h1>
+  <p class="sub">Todos los componentes hablan solo con el API server: observan cambios (watch) y reaccionan. Nadie llama directo al siguiente paso.</p>
+
+  <svg viewBox="0 0 1200 620" role="img" aria-label="Flujo de despliegue: kubectl, API server, etcd, controllers, scheduler, kubelet, runtime, registry, pods, kube-proxy">
+    <defs>
+      <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="var(--line)"/>
+      </marker>
+    </defs>
+
+    <!-- kubectl -->
+    <rect x="30" y="60" width="180" height="76" rx="8" fill="var(--box)" stroke="var(--line)"/>
+    <text x="120" y="92" text-anchor="middle" font-weight="600">Usuario / kubectl</text>
+    <text x="120" y="114" text-anchor="middle" class="muted" font-size="12">deployment.yaml</text>
+
+    <!-- Control plane -->
+    <rect x="245" y="30" width="480" height="570" rx="14" fill="none" stroke="var(--cp)" stroke-dasharray="6 5"/>
+    <text x="265" y="54" font-weight="700" fill="var(--cp)" style="fill:var(--cp)">Control plane (master)</text>
+
+    <rect x="270" y="75" width="200" height="80" rx="8" fill="var(--cpbg)" stroke="var(--cp)"/>
+    <text x="370" y="105" text-anchor="middle" font-weight="600">Controller manager</text>
+    <text x="370" y="125" text-anchor="middle" class="muted" font-size="12">Deployment, ReplicaSet,</text>
+    <text x="370" y="141" text-anchor="middle" class="muted" font-size="12">Endpoints…</text>
+
+    <rect x="500" y="75" width="200" height="80" rx="8" fill="var(--cpbg)" stroke="var(--cp)"/>
+    <text x="600" y="110" text-anchor="middle" font-weight="600">Scheduler</text>
+    <text x="600" y="130" text-anchor="middle" class="muted" font-size="12">elige nodo por recursos</text>
+
+    <rect x="385" y="250" width="200" height="90" rx="10" fill="var(--cp)" stroke="var(--cp)"/>
+    <text x="485" y="290" text-anchor="middle" font-weight="700" style="fill:var(--bg)">API server</text>
+    <text x="485" y="311" text-anchor="middle" font-size="12" style="fill:var(--bg)">única puerta (REST + watch)</text>
+
+    <rect x="385" y="470" width="200" height="80" rx="8" fill="var(--stbg)" stroke="var(--st)"/>
+    <text x="485" y="503" text-anchor="middle" font-weight="600">etcd</text>
+    <text x="485" y="523" text-anchor="middle" class="muted" font-size="12">estado deseado y real</text>
+
+    <!-- Registry -->
+    <rect x="985" y="40" width="185" height="64" rx="8" fill="var(--box)" stroke="var(--line)" stroke-dasharray="4 3"/>
+    <text x="1077" y="68" text-anchor="middle" font-weight="600">Registry</text>
+    <text x="1077" y="88" text-anchor="middle" class="muted" font-size="12">ibmcom/guestbook:v1</text>
+
+    <!-- Worker node -->
+    <rect x="770" y="150" width="415" height="450" rx="14" fill="none" stroke="var(--wk)" stroke-dasharray="6 5"/>
+    <text x="790" y="175" font-weight="700" style="fill:var(--wk)">Worker node</text>
+
+    <rect x="790" y="235" width="160" height="70" rx="8" fill="var(--wkbg)" stroke="var(--wk)"/>
+    <text x="870" y="266" text-anchor="middle" font-weight="600">kubelet</text>
+    <text x="870" y="285" text-anchor="middle" class="muted" font-size="12">agente del nodo</text>
+
+    <rect x="995" y="235" width="170" height="70" rx="8" fill="var(--wkbg)" stroke="var(--wk)"/>
+    <text x="1080" y="266" text-anchor="middle" font-weight="600">Container runtime</text>
+    <text x="1080" y="285" text-anchor="middle" class="muted" font-size="12">containerd</text>
+
+    <rect x="985" y="350" width="190" height="120" rx="10" fill="var(--box)" stroke="var(--wk)"/>
+    <text x="1080" y="374" text-anchor="middle" font-weight="600">Pods</text>
+    <g fill="var(--wkbg)" stroke="var(--wk)">
+      <rect x="1000" y="388" width="50" height="34" rx="5"/><rect x="1055" y="388" width="50" height="34" rx="5"/><rect x="1110" y="388" width="50" height="34" rx="5"/>
+    </g>
+    <g font-size="12" text-anchor="middle"><text x="1025" y="410">pod</text><text x="1080" y="410">pod</text><text x="1135" y="410">pod</text></g>
+    <text x="1080" y="452" text-anchor="middle" class="muted" font-size="12">contenedores corriendo</text>
+
+    <rect x="790" y="490" width="160" height="70" rx="8" fill="var(--wkbg)" stroke="var(--wk)"/>
+    <text x="870" y="521" text-anchor="middle" font-weight="600">kube-proxy</text>
+    <text x="870" y="540" text-anchor="middle" class="muted" font-size="12">red de Services</text>
+
+    <!-- Arrows -->
+    <g stroke="var(--line)" stroke-width="1.7" fill="none">
+      <path d="M210 98 C310 98 330 285 383 285" marker-end="url(#a)"/>
+      <path d="M485 342 V468" marker-end="url(#a)"/>
+      <path d="M390 157 L450 248" marker-start="url(#a)" marker-end="url(#a)"/>
+      <path d="M580 157 L520 248" marker-start="url(#a)" marker-end="url(#a)"/>
+      <path d="M587 275 H788" marker-start="url(#a)" marker-end="url(#a)"/>
+      <path d="M952 270 H993" marker-end="url(#a)"/>
+      <path d="M1077 233 V106" marker-end="url(#a)"/>
+      <path d="M1080 307 V348" marker-end="url(#a)"/>
+      <path d="M788 525 C680 525 640 330 587 320" marker-start="url(#a)" marker-end="url(#a)"/>
+    </g>
+
+    <!-- Step badges -->
+    <g font-size="13" font-weight="700" text-anchor="middle">
+      <circle cx="318" cy="190" r="13" fill="var(--badge)"/><text x="318" y="195" style="fill:var(--badgefg)">1</text>
+      <circle cx="505" cy="405" r="13" fill="var(--badge)"/><text x="505" y="410" style="fill:var(--badgefg)">2</text>
+      <circle cx="400" cy="205" r="13" fill="var(--badge)"/><text x="400" y="210" style="fill:var(--badgefg)">3</text>
+      <circle cx="570" cy="205" r="13" fill="var(--badge)"/><text x="570" y="210" style="fill:var(--badgefg)">4</text>
+      <circle cx="690" cy="258" r="13" fill="var(--badge)"/><text x="690" y="263" style="fill:var(--badgefg)">5</text>
+      <circle cx="1100" cy="170" r="13" fill="var(--badge)"/><text x="1100" y="175" style="fill:var(--badgefg)">6</text>
+      <circle cx="1100" cy="328" r="13" fill="var(--badge)"/><text x="1100" y="333" style="fill:var(--badgefg)">7</text>
+      <circle cx="680" cy="468" r="13" fill="var(--badge)"/><text x="680" y="473" style="fill:var(--badgefg)">8</text>
+    </g>
+    <text x="700" y="296" class="muted" font-size="12" text-anchor="middle">watch</text>
+    <text x="1068" y="200" class="muted" font-size="12" text-anchor="end">pull</text>
+  </svg>
+
+  <ol>
+    <li><b>kubectl apply</b> envía el Deployment al API server (autentica, valida).</li>
+    <li>El API server guarda el <b>estado deseado</b> en etcd. Aún no corre nada.</li>
+    <li>El <b>controller manager</b> ve el Deployment, crea el ReplicaSet y este crea N pods sin nodo.</li>
+    <li>El <b>scheduler</b> ve pods sin nodo y asigna cada uno según <code>requests</code>, afinidad y taints.</li>
+    <li>El <b>kubelet</b> ve un pod asignado a su nodo y pide al runtime que lo arranque.</li>
+    <li>El runtime <b>descarga la imagen</b> del registry si el nodo no la tiene.</li>
+    <li>Arrancan los <b>contenedores</b>; el kubelet reporta el estado (<code>Running</code>) al API server.</li>
+    <li><b>kube-proxy</b> ve Services y Endpoints y programa la red para repartir tráfico entre los pods.</li>
+  </ol>
+  <p class="key">Flechas dobles = watch sobre el API server + escritura de vuelta. Si un pod muere, el paso 3 se repite solo: loop de reconciliación.</p>
+</main>
+</body>
+</html>
